@@ -1,0 +1,55 @@
+{
+  "name": "attire-arena",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build --webpack",
+    "start": "next start --hostname 0.0.0.0",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:db": "bash scripts/test-db.sh",
+    "test:supabase:local": "node scripts/test-supabase-local.mjs",
+    "setup:supabase:local": "node scripts/prepare-supabase-local.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fahim1108/trust-incuubator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Fahim1108/trust-incuubator/issues"
+  },
+  "homepage": "https://github.com/Fahim1108/trust-incuubator#readme",
+  "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "lucide-react": "^1.61.0",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  }
+}
