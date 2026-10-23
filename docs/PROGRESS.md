@@ -5,7 +5,7 @@ Current phase: Phase 0 complete; Phase 1 incomplete. Database security tests pas
 ## Completed
 - Audited an empty repository, clean initial status, unborn `work` branch and empty remote refs; no existing application was overwritten.
 - Added project audit and phased implementation checklist.
-- Added Next.js App Router, React, strict TypeScript, Zod, Supabase server adapter, Lucide and Vitest with a generated lockfile to be reviewed (not yet committed).
+- Added Next.js App Router, React, strict TypeScript, Zod, Supabase server adapter, Lucide and Vitest with a generated lockfile (initially uncommitted; now tracked in local foundation commit 4a621e8).
 - Added responsive branded prelaunch shell, design tokens, skip link, focus indicators and noindex metadata.
 - Admin route fails closed with 404; no staff data or mutation endpoints exist.
 - Added basic security headers and CSP. CSP still permits inline scripts/styles and needs later nonce hardening.

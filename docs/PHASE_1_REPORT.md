@@ -51,4 +51,4 @@ Configure development Supabase, apply migrations through a trusted operator, and
 
 ## Git provenance
 
-The prior tasks left an unborn `work` branch and untracked application files. Historical progress statements were corrected. The verified foundation is recorded in a local repository commit, including the preserved prelaunch site and ordered migrations. Use `git log -1 --oneline` and `git status --short` to verify the current state. No push or production publication was performed. Historical unborn/untracked statements remain as records of earlier tasks.
+The prior tasks left an unborn `work` branch and untracked application files. Historical progress statements were corrected. The verified foundation is recorded in local repository commit `4a621e8`, including the preserved prelaunch site and ordered migrations. Use `git log -1 --oneline` and `git status --short` to verify the current state. No push or production publication was performed. Historical unborn/untracked statements remain as records of earlier tasks.
