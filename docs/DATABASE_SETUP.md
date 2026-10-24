@@ -17,7 +17,7 @@ The bootstrap implements only Supabase's `auth.users` foreign-key target, databa
 ## Apply to a development Supabase project
 
 1. Create/select a separate development project. Do not use production for tests.
-2. Inspect `supabase/migrations/202610240001_foundation.sql` and confirm its tables do not conflict with an existing schema.
+2. Inspect `supabase/migrations/20261024010934_foundation.sql` and confirm its tables do not conflict with an existing schema.
 3. Using your installed Supabase CLI and authenticated project access, link the development project and use its migration deployment workflow (`supabase db push --dry-run`, then `supabase db push`). No CLI linking or hosted deployment has been performed in this task.
 4. Never apply `supabase/tests/bootstrap.sql` to Supabase. The platform already manages its auth schema and roles.
 5. Configure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` securely. Public keys do not authorize schema migrations. Do not put database passwords, secret keys or service-role keys in public variables, source, logs or chat.

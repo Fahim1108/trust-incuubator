@@ -1,6 +1,6 @@
 # Progress
 
-Current phase: Phase 0 complete; Phase 1 incomplete. Database security tests pass locally; application Auth integration is implemented but real Supabase/deployed-app verification is blocked. Not production ready.
+Current phase: Phase 0 complete; Phase 1 incomplete. Real development Supabase Auth/PostgREST, database security and development-browser sessions are verified. Public signup/email delivery and the full browser email callback remain blocked/unverified. Not production ready.
 
 ## Completed
 - Audited an empty repository, clean initial status, unborn `work` branch and empty remote refs; no existing application was overwritten.
@@ -125,3 +125,41 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - Added docs/SUPABASE_DEVELOPMENT_CONNECTION.md with secure configuration requirements and an explicit development-only history/dry-run/apply/verification sequence.
 - Remote dry-run, migration application, actual Auth/RLS/customer isolation and signup/login/logout/session persistence remain blocked and unrun. No hosted database was modified and no production deployment occurred.
 - Local migration rehearsal passed: 53 PostgreSQL assertions plus the two-session inventory concurrency scenario. This applied migrations only inside a disposable local database, not a hosted dry-run. No application code changed, so lint/type/build were not rerun for this documentation/configuration-only attempt.
+
+## Real development Supabase integration — 2026-10-24
+
+### Environment and identity
+- All five required bindings are now present. Auth health and Management API returned HTTP 200; the configured origin and authorized project match `euoannuvovsbwxjqnriw`.
+- A brief execution-environment disconnect interrupted initial checks; after reconnection, verification resumed. No remote write occurred during that disconnect.
+- Updated ignored `.env.local` with the actual application URL/publishable key/site origin, retaining 0600 permissions. No private migration/admin credentials were copied or logged.
+- SITE_URL is loopback HTTP. Added a development-only exception with tests; production HTTPS restrictions remain. Node dev/start commands now use Node 24's supported environment-proxy option.
+
+### Migration safety and actual deployment
+- Read-only inspection found no public/private tables, custom Auth-user triggers or migration history; required Supabase Auth fields were present.
+- Reviewed both migrations and successfully rehearsed their complete statements in an actual remote transaction ending in ROLLBACK. No schema changes/history were left by that dry run.
+- CLI link succeeded, but direct database migration-history access timed out. No successful CLI push/dry-run is claimed. Consulted Supabase's official Management API/MCP source and used its supported migration endpoint instead.
+- Applied foundation and auth_security to development only, recorded by the API as versions 20261024010934 and 20261024010940. Renamed local files to those actual versions, preserving SQL bytes. Original filenames/hashes are in supabase/development-deployment.json. No fabricated history, reset, RLS disabling or production deployment occurred.
+- Read-only hosted verification confirms matching history (no pending local migrations), eight public tables with RLS, private audit RLS/access restrictions, all 42 public constraints, explicit indexes, function privilege modes/search paths and denied privileged customer writes.
+
+### Real hosted and browser checks
+- Added guarded Management/schema helpers and real-development integration scripts. They are fixed to the authorized development reference, use privileged test keys only in process memory and remove disposable fixture data.
+- Main hosted/browser artifact: 14 scenarios passed, zero failed functional scenarios, one blocked public-signup scenario and one unverified SMTP/full-email-callback scenario.
+- Confirmed generated signup/recovery tokens against real Auth without claiming SMTP delivery. Tested unconfirmed-login denial, customer isolation, metadata escalation denial, price/stock/role write denial, concurrent inventory and atomic rollback, refresh/persistence, forged JWT rejection, revocation and logout.
+- Real Chromium/local-development-app checks passed login, HttpOnly cookies, reload persistence, server proxy refresh, logout, protected password-page denial, admin 404 and recovery-session password update (old password subsequently rejected).
+- All six staff roles passed a separate signed-JWT/PostgREST permission matrix: owner, product_manager, order_manager, customer_support, marketing_manager and analyst. Tests verify draft/stock reads, expected adjustment rights, denied direct stock writes and denied public role grants. Disposable staff accounts were removed.
+- Public signup with the reserved synthetic address was rejected by Supabase as email_address_invalid. The initial reporter accidentally also emitted a passing signup label; corrected the runner and removed that false passing row, with an explicit note in the JSON artifact. No successful public registration/email delivery is claimed.
+- Existing-account guard prevents the optional SUPABASE_TEST_SIGNUP_EMAIL test from modifying/deleting an account that already exists. A new owned/approved test mailbox is required to finish email testing.
+- Fixture cleanup checks confirmed no remaining main-run test users/products/injected trigger or permanent owner. Staff fixture cleanup also succeeded. Private provisioning audit records intentionally remain as the record of test grants, without test emails/passwords/tokens.
+
+### Local verification and changes
+- Lint, strict TypeScript, 42 unit tests (7 files), isolated PostgreSQL tests (53 assertions plus independent-session concurrency), read-only hosted schema verification and production build passed. Dependency audit reported zero known vulnerabilities.
+- Added Playwright as a development dependency and used installed Chromium. No browser traces, screenshots containing secrets, token storage files or private credentials were committed.
+- Next dev generated AGENTS.md; verified it against the framework generator and read the installed authentication/server-action guidance. Preserve its instructions with the repository.
+- Prelaunch site, working money utilities and fail-closed admin behavior were preserved. No Phase 2, checkout, product-management or dashboard features were built.
+
+### Completion boundary and next action
+- Phase 1 remains incomplete: public email signup, actual SMTP delivery and received-link browser PKCE confirmation/recovery have not passed. The configured loopback HTTP origin is development-only; staging/production requires HTTPS.
+- Configure a previously unused test mailbox you control as SUPABASE_TEST_SIGNUP_EMAIL and permit delivery through Supabase's provider/SMTP. Verify actual received links in the initiating browser; never disable confirmation or RLS to make tests pass.
+- Owner MFA/reauthentication gates, broader staff lifecycle audits, production abuse controls, CSP hardening, inventory retry idempotency and recovery/backup controls remain risks/work. Current database-principal provisioning audit still needs external human approval attribution for production operations.
+- Keep the detailed Phase 2 plan deferred until Phase 1 passes. The existing broad master plan is retained; Phase 2 implementation has not started.
+- Saved an optional controlled test-mailbox requirement and refreshed development startup instructions to the environment draft. This does not supply a mailbox value, apply runtime changes or deploy production; review/save and publish only the development environment configuration when appropriate.

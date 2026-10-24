@@ -1,6 +1,6 @@
 # Authentication and authorization foundation
 
-Phase 1 is not complete until real application sessions and hosted Supabase integration are verified. No admin/dashboard, checkout, product-management or payment endpoint is enabled.
+Phase 1 remains incomplete while public signup/email delivery and the full browser email callback are unverified; real hosted API and local development-browser sessions are now tested. No admin/dashboard, checkout, product-management or payment endpoint is enabled.
 
 ## Authorization model
 
@@ -33,7 +33,7 @@ Set through environment settings or an ignored `.env.local`:
 
 - `NEXT_PUBLIC_SUPABASE_URL`: clean HTTPS project origin.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: public `sb_publishable_…` key, never a secret or service-role key.
-- `SITE_URL`: canonical HTTPS application origin without a path/query/credentials.
+- `SITE_URL`: canonical HTTPS application origin without a path/query/credentials; HTTP loopback origins are accepted only when NODE_ENV is development. Production always requires HTTPS.
 
 Apply the ordered migrations through an authenticated trusted operator connection to a separate development project. Keep `private` out of exposed API schemas. Public keys alone do not authorize migrations.
 
@@ -43,7 +43,7 @@ Before release verify registration/confirmation, login failure/success, reset em
 
 ## Secure owner provisioning
 
-Migration `202610240002_auth_security.sql` creates an operator-only SECURITY INVOKER function in the unexposed private schema. No execute permission is granted to `anon` or `authenticated`. It requires the exact verified Auth UUID and matching confirmed email, rejects anonymous accounts, and writes a private operator/reason audit record atomically. Public signup creates a customer profile only; it never assigns roles.
+Migration `20261024010940_auth_security.sql` creates an operator-only SECURITY INVOKER function in the unexposed private schema. No execute permission is granted to `anon` or `authenticated`. It requires the exact verified Auth UUID and matching confirmed email, rejects anonymous accounts, and writes a private operator/reason audit record atomically. Public signup creates a customer profile only; it never assigns roles.
 
 An authorized operator must verify the intended identity in Auth and execute through a trusted SQL administration connection to the intended environment:
 
@@ -91,3 +91,12 @@ Stop is not production deployment or a hosted reset. Inspect and archive/remove 
 ## Remaining risks
 
 CSP still permits inline scripts/styles. Production SMTP/CAPTCHA/rate-limit/MFA and session-hardening settings require real environment verification. Profile editing, owner MFA gates, auth browser E2E, audit-controlled role revocation, inventory retry idempotency, complete commerce/storage schema and recovery controls remain pending. Payments and payment statuses do not exist yet; there is no browser payment mutation surface and no claim of tested payment RLS. Never add that surface before server-only financial state transitions and tests.
+
+
+## Current hosted verification
+
+The authorized development project now has both migrations deployed and history verified. Run `npm run verify:supabase:development` for read-only schema checks. `npm run test:supabase:development` runs real hosted Auth/PostgREST plus Chromium against the configured loopback development site; `npm run test:supabase:staff` checks all six roles. These commands create/remove disposable development fixtures and must never be repointed to production. They require Node 24 proxy support, Management authorization and a local Chromium executable (`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`, default `/usr/bin/chromium`). Do not record traces, passwords, cookie storage or token-bearing links.
+
+The runner fetches a test-only admin key in memory through authorized Management access. It never puts that key in `.env.local` or app code. The default synthetic public signup address is rejected by hosted Auth; use `SUPABASE_TEST_SIGNUP_EMAIL` only for a mailbox you control and approve for test messages. Existing accounts at that address cause a block rather than modification/deletion. Generated signup/recovery tokens verify real Auth behavior but do not prove SMTP delivery or a browser PKCE email callback. See PHASE_1_REPORT.md and the JSON result artifacts for exact executed outcomes.
+
+Migration deployment used the supported Management API endpoint after CLI database transport timed out. The API assigned the initial development versions, so local files were aligned once, preserving their SQL hashes and provenance. For future staging/production targets, preserve these versions and use a functioning CLI/direct database transport; do not keep renaming deployed migrations or manufacture history entries. This task does not authorize staging/production deployment.

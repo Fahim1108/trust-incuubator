@@ -1,0 +1,14 @@
+[
+  {
+    "original_file": "202610240001_foundation.sql",
+    "deployed_file": "20261024010934_foundation.sql",
+    "sha256": "7630dce76e542ccbf2c0192926dd8c98d06a1e9c7ea0532abd2ad7574b9b9f2d",
+    "project_ref": "euoannuvovsbwxjqnriw"
+  },
+  {
+    "original_file": "202610240002_auth_security.sql",
+    "deployed_file": "20261024010940_auth_security.sql",
+    "sha256": "421820d7d54d6fe1bad01d3b80801836518b0ccc73ccd2f2fcebae20f8faa34d",
+    "project_ref": "euoannuvovsbwxjqnriw"
+  }
+]

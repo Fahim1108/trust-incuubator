@@ -1,8 +1,9 @@
 import { z } from "zod";
 export function getAuthSiteOrigin(): string | null {
-  const result = z.url({ protocol: /^https$/ }).safeParse(process.env.SITE_URL);
+  const result = z.url({ protocol: /^https?$/ }).safeParse(process.env.SITE_URL);
   if (!result.success) return null;
   const url = new URL(result.data);
   if (url.username || url.password || url.search || url.hash || url.pathname !== "/") return null;
+  if (url.protocol !== "https:" && !(process.env.NODE_ENV === "development" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname))) return null;
   return url.origin;
 }

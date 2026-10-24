@@ -16,3 +16,18 @@ describe("auth validation", () => {
     }
   });
 });
+
+describe("development-only loopback callbacks", () => {
+  it("allows loopback HTTP only in development", () => {
+    vi.stubEnv("NODE_ENV", "development"); vi.stubEnv("SITE_URL", "http://localhost:3000");
+    expect(getAuthSiteOrigin()).toBe("http://localhost:3000");
+  });
+  it("rejects the same HTTP origin in production", () => {
+    vi.stubEnv("NODE_ENV", "production"); vi.stubEnv("SITE_URL", "http://localhost:3000");
+    expect(getAuthSiteOrigin()).toBeNull();
+  });
+  it("still rejects non-loopback HTTP during development", () => {
+    vi.stubEnv("NODE_ENV", "development"); vi.stubEnv("SITE_URL", "http://store.invalid");
+    expect(getAuthSiteOrigin()).toBeNull();
+  });
+});

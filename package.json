@@ -7,15 +7,18 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0",
+    "dev": "node --use-env-proxy node_modules/next/dist/bin/next dev --hostname 0.0.0.0",
     "build": "next build --webpack",
-    "start": "next start --hostname 0.0.0.0",
+    "start": "node --use-env-proxy node_modules/next/dist/bin/next start --hostname 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:db": "bash scripts/test-db.sh",
     "test:supabase:local": "node scripts/test-supabase-local.mjs",
-    "setup:supabase:local": "node scripts/prepare-supabase-local.mjs"
+    "setup:supabase:local": "node scripts/prepare-supabase-local.mjs",
+    "verify:supabase:development": "node --use-env-proxy scripts/verify-supabase-schema.mjs",
+    "test:supabase:development": "node --use-env-proxy scripts/test-supabase-development.mjs",
+    "test:supabase:staff": "node --use-env-proxy scripts/test-supabase-staff.mjs"
   },
   "repository": {
     "type": "git",
@@ -44,6 +47,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

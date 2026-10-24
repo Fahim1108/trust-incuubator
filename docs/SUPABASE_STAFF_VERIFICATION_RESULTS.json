@@ -1,0 +1,29 @@
+{
+  "scope": "real hosted development Auth/PostgREST",
+  "results": [
+    {
+      "role": "owner",
+      "status": "passed"
+    },
+    {
+      "role": "product_manager",
+      "status": "passed"
+    },
+    {
+      "role": "order_manager",
+      "status": "passed"
+    },
+    {
+      "role": "customer_support",
+      "status": "passed"
+    },
+    {
+      "role": "marketing_manager",
+      "status": "passed"
+    },
+    {
+      "role": "analyst",
+      "status": "passed"
+    }
+  ]
+}

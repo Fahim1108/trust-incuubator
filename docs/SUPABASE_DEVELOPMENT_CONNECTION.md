@@ -4,7 +4,11 @@ Target project reference: `euoannuvovsbwxjqnriw`.
 Expected API origin: `https://euoannuvovsbwxjqnriw.supabase.co`.
 This authorization is for development only, not production, reset, RLS disabling or destructive operations.
 
-## Current observations
+## Current status
+
+Bindings and network access are now working. The intended project returned Auth health and Management API 200 responses. Both migrations were remotely rehearsed with rollback, then applied through the supported migration API after direct CLI database history access timed out. Current schema/history and real Auth/PostgREST/browser verification are in PHASE_1_REPORT.md. Public signup/email delivery and the browser email callback remain pending; the missing-credential observations below describe the earlier attempt.
+
+## Earlier observations (historical)
 
 - `.env.local` contains the supplied project URL, is ignored by Git and has mode 0600. It does not contain a publishable key because none is available to the current machine.
 - The process has no `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `DATABASE_URL` or `SITE_URL` binding. Saved configuration requirements do not contain runtime values.
@@ -12,7 +16,7 @@ This authorization is for development only, not production, reset, RLS disabling
 - A keyless project health request failed at the configured proxy with `Tunnel connection failed: 403 Forbidden`; an outside-sandbox retry also failed. This does not establish whether the Supabase project is paused, healthy or authorized.
 - The current restricted allowlist had no custom domains. Exact project/API domain additions were saved to the configuration draft, preserving selected package-manager presets: `euoannuvovsbwxjqnriw.supabase.co` and `api.supabase.com`. Draft saving does not activate network access or inject values.
 
-## Configuration needed from the project owner
+## Earlier configuration prerequisites (now supplied)
 
 Enter values securely through environment settings, never chat, tracked source or command-line flags:
 
@@ -42,4 +46,4 @@ Neither resets the database or disables RLS. They contain unconditional object c
 6. Verify real signup/confirmation/login/logout, refreshed and persisted cookies, two-customer isolation, metadata privilege injection and staff denial using controlled test accounts. Email access/confirmation and Auth security configuration are prerequisites; never disable confirmation/RLS to make tests pass.
 7. Update the Phase 1 report with exact hosted/API/browser outcomes. Local PostgreSQL claims simulation does not count as signed-JWT/Auth verification.
 
-No hosted dry-run, migration application or real Auth/RLS/session test has run in the current attempt because access prerequisites are missing.
+That earlier attempt could not run hosted checks. The later successful deployment and partial hosted verification supersede this historical blocker; see PHASE_1_REPORT.md.

@@ -12,7 +12,7 @@ Use small reviewable increments. Existing task checkouts are isolated; do not cr
 - [x] Add disposable PostgreSQL migration/RLS/inventory/concurrency test harness with isolated fixtures.
 - [ ] Add full development seed data and hosted Supabase/API tests.
 - [ ] Verify Supabase auth, refresh/session flow, account pages and server permission checks. Integration code and operator-only audited owner provisioning are implemented; real application/hosted verification remains required.
-- [ ] Test customer isolation and each staff permission against actual PostgreSQL/Supabase.
+- [x] Test customer isolation and currently defined staff permissions against real development Auth/PostgREST (plus isolated PostgreSQL tests); see hosted result artifacts.
 - [ ] Add CI, Tailwind/shared UI primitives and comprehensive environment validation.
 
 ## Phase 2 — persisted storefront
@@ -53,3 +53,5 @@ Use small reviewable increments. Existing task checkouts are isolated; do not cr
 A development Supabase project and public URL/publishable key are needed for real Auth/database validation. Configure public values in environment settings, never send credentials in chat. Do not request a privileged key until a specific server operation needs it; no privileged key is used in the initial shell. Providers, production domain, business shipping rules and policies remain undecided. These do not block independent schema and test development.
 
 Current security verification boundary and required configuration: [Phase 1 report](PHASE_1_REPORT.md). Do not begin checkout, management or dashboard work before those foundation gates pass.
+
+Hosted migrations and core Auth/browser sessions are now verified. Public email signup/delivery and the complete browser email callback remain Phase 1 gates; do not start Phase 2 until the final report passes.

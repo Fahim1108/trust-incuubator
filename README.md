@@ -30,3 +30,7 @@ See [audit](docs/PROJECT_AUDIT.md), [plan](docs/IMPLEMENTATION_PLAN.md) and [pro
 Run `npm run test:db` with Docker and Python 3. It uses a disposable, network-isolated PostgreSQL container and never touches a remote database. See [database setup and owner provisioning](docs/DATABASE_SETUP.md) for scope and development deployment instructions. Hosted Supabase Auth/API/RLS verification remains pending.
 
 See [authentication and security setup](docs/AUTH_SECURITY.md) for migrations, account routes, owner provisioning, verification levels and real local Supabase commands. `SITE_URL` is also required for registration and recovery callbacks.
+
+## Current development verification
+
+The first two migrations are applied to the authorized development project; local filenames match its actual recorded versions. `npm run verify:supabase:development` is read-only. Real hosted/browser and staff fixtures are exercised with `npm run test:supabase:development` and `npm run test:supabase:staff`; read AUTH_SECURITY.md before running these development-only mutation tests. A live loopback development server must not already occupy the configured test port. A rejected synthetic signup address is a blocked result, never a passing email-delivery test. See PHASE_1_REPORT.md for the remaining email gates; Phase 2 is not started.

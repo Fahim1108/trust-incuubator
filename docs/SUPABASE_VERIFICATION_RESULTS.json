@@ -1,0 +1,73 @@
+{
+  "project_ref": "euoannuvovsbwxjqnriw",
+  "verification_scope": "real hosted development Supabase and local development browser",
+  "results": [
+    {
+      "name": "project health and migration history use intended development project",
+      "status": "passed"
+    },
+    {
+      "name": "real generated signup links enforce and verify email confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "public customer signup and email delivery",
+      "status": "blocked",
+      "reason": "email_address_invalid"
+    },
+    {
+      "name": "real customer profile isolation and cross-customer write denial",
+      "status": "passed"
+    },
+    {
+      "name": "user metadata cannot grant staff privileges",
+      "status": "passed"
+    },
+    {
+      "name": "anonymous/catalogue and staff draft-read policies use real JWTs",
+      "status": "passed"
+    },
+    {
+      "name": "customers and read-only analysts cannot mutate stock or prices",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent real PostgREST inventory transactions cannot oversell",
+      "status": "passed"
+    },
+    {
+      "name": "real inventory RPC rolls back on audit-write failure",
+      "status": "passed"
+    },
+    {
+      "name": "refresh tokens work and forged signed-token requests fail",
+      "status": "passed"
+    },
+    {
+      "name": "persisted SDK session survives a new client instance",
+      "status": "passed"
+    },
+    {
+      "name": "browser login, HttpOnly cookies, reload persistence and proxy refresh",
+      "status": "passed"
+    },
+    {
+      "name": "real recovery OTP grants a session for protected browser password update",
+      "status": "passed"
+    },
+    {
+      "name": "staff-role revocation denies subsequent requests with an existing JWT",
+      "status": "passed"
+    },
+    {
+      "name": "real logout clears the SDK session",
+      "status": "passed"
+    },
+    {
+      "name": "SMTP email delivery and browser PKCE email-link callback",
+      "status": "unverified",
+      "reason": "Generated links verified Auth tokens without delivering email; full browser email callback not exercised"
+    }
+  ],
+  "reporting_note": "The initial runner also emitted a passing signup label after recording the provider block. That incorrect label was removed; the runner now records the blocked outcome only. No signup or email delivery success is claimed."
+}
