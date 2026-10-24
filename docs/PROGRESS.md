@@ -176,3 +176,10 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - The process then encountered closed stdin while awaiting human verification and exited, discarding its in-memory generated customer password. Login, confirmation, roles and refresh are NOT counted as verified for this account. No email address, password, session or confirmation link is written here.
 - Added a preflight TTY requirement to stop before signup when the test cannot wait interactively; syntax and lint passed. Requested confirmation and a choice of fresh same-mailbox alias or customer recovery for further testing. No duplicate signup or recovery email was sent automatically.
 - Frontend work remains paused per the user's latest instruction; no feature branch or UI changes were made in this attempt.
+
+## Cloud preview recovery prerequisite — 2026-10-24
+
+- Checked Vercel environment names/linkage files, repository documentation and Supabase development Auth URL metadata. No verified public development origin was discoverable. GitHub deployment lookup was transport-blocked even after an outside-sandbox retry; no exact preview URL is invented.
+- Current SITE_URL and configured Auth URLs remain loopback. Recovery already derives its callback from SITE_URL; it cannot safely be changed to an unknown preview origin.
+- Added DEVELOPMENT_PREVIEW_AUTH.md with Preview-only Vercel setup, exact callback path templates, development-project-only settings and same-browser PKCE recovery steps.
+- No deployment, Auth setting mutation, additional email, account/address change or administrator-based customer test was performed. Waiting for a verified accessible Preview URL before another recovery attempt. Frontend remains paused.
