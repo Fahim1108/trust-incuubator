@@ -9,6 +9,7 @@ const expected='https://euoannuvovsbwxjqnriw.supabase.co';
 if(process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/,'')!==expected)throw new Error('Refusing a different project');
 const key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 if(!key?.startsWith('sb_publishable_'))throw new Error('A public publishable key is required');
+if (!process.stdin.isTTY) { console.error('INTERACTIVE_TERMINAL_REQUIRED: start this customer test in a persistent TTY; no signup was attempted.'); process.exit(2); }
 const lines=createInterface({input:process.stdin,terminal:false});
 const iterator=lines[Symbol.asyncIterator]();
 const read=async()=>{const next=await iterator.next();if(next.done)throw new Error('Customer test input closed');return next.value.trim();};

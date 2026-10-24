@@ -169,3 +169,10 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - Verified development Auth health HTTP 200 using only the public publishable key. No administrator credentials, secret/service-role key, Management API or admin Auth method was used in this follow-up.
 - Added scripts/test-customer-auth.mjs: public-client-only interactive signup/login, generated password/session in memory, human email-confirmation pause, validated customer identity/no staff roles, refresh and logout. No sensitive values or links are printed/stored; it does not reset or delete existing users.
 - Script syntax, lint and whitespace checks passed. Its live signup/login steps have not run: SUPABASE_TEST_SIGNUP_EMAIL is unset and a dedicated controlled mailbox address has been requested. Do not count this preparation as successful customer registration or email verification.
+
+## Dedicated customer signup attempt — 2026-10-24
+
+- Supabase accepted the configured dedicated customer signup through the public publishable-key client and required email confirmation. No administrator credentials, Management API or privileged Auth method was used.
+- The process then encountered closed stdin while awaiting human verification and exited, discarding its in-memory generated customer password. Login, confirmation, roles and refresh are NOT counted as verified for this account. No email address, password, session or confirmation link is written here.
+- Added a preflight TTY requirement to stop before signup when the test cannot wait interactively; syntax and lint passed. Requested confirmation and a choice of fresh same-mailbox alias or customer recovery for further testing. No duplicate signup or recovery email was sent automatically.
+- Frontend work remains paused per the user's latest instruction; no feature branch or UI changes were made in this attempt.
