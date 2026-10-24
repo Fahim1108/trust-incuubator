@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ProductCard } from "@/components/storefront/product-card";
 import { Campaign, PromotionalBanners } from "@/components/storefront/campaign";
 import { BrandSection, StoreFooter } from "@/components/storefront/sections";
 import {
@@ -222,19 +223,12 @@ export default async function Home({
             <>
               <div className="product-preview-grid">
                 {catalogue.products.map((product) => (
-                  <article className="product-preview" key={product.id}>
-                    <span className="eyebrow">CATALOGUE PREVIEW</span>
-                    <h3>{product.name}</h3>
-                    <p>{product.description.slice(0, 180)}</p>
-                    <small>
-                      Product details and purchasing are not yet available.
-                    </small>
-                  </article>
+                  <ProductCard key={product.id} product={product} />
                 ))}
               </div>
               <p className="section-note">
-                Showing up to 24 published products. Product photography,
-                pricing and purchasing will be integrated in the next increment.
+                Discover the latest pieces from our published collection.
+                Shopping opens at launch.
               </p>
             </>
           ) : (
@@ -259,6 +253,22 @@ export default async function Home({
               )}
             </div>
           )}
+        </section>
+        <section
+          id="featured"
+          className="store-section featured-section"
+          aria-labelledby="featured-heading"
+        >
+          <div className="section-heading">
+            <h2 id="featured-heading">Featured Products</h2>
+            <span className="small-label">The Attires Arena edit</span>
+          </div>
+          <div className="featured-empty">
+            <p>A considered selection, coming soon.</p>
+            <span>
+              Discover our featured pieces here when the edit launches.
+            </span>
+          </div>
         </section>
         <PromotionalBanners />
       </main>

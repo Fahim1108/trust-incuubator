@@ -8,12 +8,29 @@ const categorySchema = z.object({
   name: z.string(),
   slug: z.string(),
 });
+const variantSchema = z
+  .object({
+    price_minor: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
+    sale_price_minor: z
+      .number()
+      .int()
+      .nonnegative()
+      .max(Number.MAX_SAFE_INTEGER)
+      .nullable(),
+    active: z.boolean(),
+  })
+  .refine(
+    (variant) =>
+      variant.sale_price_minor === null ||
+      variant.sale_price_minor <= variant.price_minor,
+  );
 const productSchema = z.object({
   id: z.uuid(),
   name: z.string(),
   slug: z.string(),
   description: z.string(),
   category_id: z.uuid().nullable(),
+  product_variants: z.array(variantSchema).default([]),
 });
 export type Category = z.infer<typeof categorySchema>;
 export type CatalogueProduct = z.infer<typeof productSchema>;
@@ -59,8 +76,11 @@ export async function getPublicCatalogue(
       return { categories, products: [], state: "ready" as const };
     let request = db
       .from("products")
-      .select("id,name,slug,description,category_id")
-      .eq("status", "published");
+      .select(
+        "id,name,slug,description,category_id,product_variants(price_minor,sale_price_minor,active)",
+      )
+      .eq("status", "published")
+      .eq("product_variants.active", true);
     if (selected) request = request.eq("category_id", selected.id);
     const term = query.replace(/[%_\\]/g, "").slice(0, 100);
     if (term) request = request.ilike("name", `%${term}%`);

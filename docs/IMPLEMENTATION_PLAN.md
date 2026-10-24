@@ -67,3 +67,10 @@ The user authorized homepage implementation before completing the outstanding pu
 - [ ] Next increment after review: persisted catalogue cards with validated variant prices, approved image data integration, pagination and accurate public availability; review schema separately before expanding it.
 - [ ] Brand discovery remains an empty state until business-approved records/schema exist; do not publish example labels as real stock.
 - [ ] Product detail, wishlist, cart and checkout remain later increments, subject to the required backend/security foundations.
+
+### Homepage price-card follow-up
+
+- [x] Add reusable published-product cards with integer-poisha BDT/sale formatting and anonymous active-variant price reads; verified query against development PostgREST (empty catalogue).
+- [x] Add Featured Products section with an honest empty state while curated-selection persistence is absent.
+- [ ] Integrate original logo file and real product-image/featured/brand records; these remain required for a fully populated, reference-matching homepage.
+- [ ] Await homepage visual review before starting the remaining storefront pages.

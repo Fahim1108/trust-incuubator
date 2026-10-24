@@ -35,7 +35,7 @@ try {
     );
     for (const surface of await page
       .locator(
-        ".store-header,.store-search,.category-card,.store-footer,.catalogue-empty",
+        ".store-header,.store-search,.category-card,.store-footer,.catalogue-empty,.featured-empty",
       )
       .all()) {
       assert.equal(
@@ -45,6 +45,9 @@ try {
         "rgb(255, 255, 255)",
       );
     }
+    await expect(
+      page.getByRole("heading", { name: "Featured Products", exact: true }),
+    ).toBeVisible();
     const backgroundsLoaded = await page.evaluate(async () => {
       const urls = [
         ...new Set(

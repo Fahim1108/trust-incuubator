@@ -65,6 +65,10 @@ describe("public storefront catalogue boundary (mocked SDK)", () => {
       detectSessionInUrl: false,
     });
     expect(productQuery.eq).toHaveBeenCalledWith("status", "published");
+    expect(productQuery.eq).toHaveBeenCalledWith(
+      "product_variants.active",
+      true,
+    );
     expect(productQuery.limit).toHaveBeenCalledWith(24);
   });
   it("does not broaden an unknown category into all products", async () => {
@@ -87,6 +91,41 @@ describe("public storefront catalogue boundary (mocked SDK)", () => {
   });
   it("rejects malformed database records", async () => {
     mocks.products.data = [{ id: "bad", name: "Invalid" }];
+    expect((await getPublicCatalogue("", "", "newest")).state).toBe("error");
+  });
+  it("accepts validated public variant prices", async () => {
+    const variant = {
+      price_minor: 249000,
+      sale_price_minor: 189000,
+      active: true,
+    };
+    mocks.products.data = [
+      {
+        id: "11111111-1111-4111-8111-111111111111",
+        name: "Test only",
+        slug: "test-only",
+        description: "",
+        category_id: null,
+        product_variants: [variant],
+      },
+    ];
+    const result = await getPublicCatalogue("", "", "newest");
+    expect(result.state).toBe("ready");
+    expect(result.products[0].product_variants).toEqual([variant]);
+  });
+  it("fails closed on a database sale amount above its regular price", async () => {
+    mocks.products.data = [
+      {
+        id: "11111111-1111-4111-8111-111111111111",
+        name: "Test only",
+        slug: "test-only",
+        description: "",
+        category_id: null,
+        product_variants: [
+          { price_minor: 100, sale_price_minor: 101, active: true },
+        ],
+      },
+    ];
     expect((await getPublicCatalogue("", "", "newest")).state).toBe("error");
   });
 });
