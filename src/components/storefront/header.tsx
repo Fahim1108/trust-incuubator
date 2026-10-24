@@ -81,9 +81,6 @@ export function StoreHeader({ query }: { query: string }) {
             <BrandLogo />
           </Link>
           <div className="header-controls">
-            <div className="desktop-search">
-              <SearchForm initialQuery={query} />
-            </div>
             <Link
               href="/account"
               className="icon-control account-link"
@@ -108,6 +105,9 @@ export function StoreHeader({ query }: { query: string }) {
               <ShoppingBag size={22} />
             </button>
           </div>
+        </div>
+        <div className="header-search-row desktop-search">
+          <SearchForm initialQuery={query} />
         </div>
         <div className="mobile-search">
           <SearchForm initialQuery={query} id="mobile-search" />

@@ -132,6 +132,26 @@ try {
       true,
       "Complete symbol and original lettering fit inside the logo frame",
     );
+    const visibleSearch = page.locator(
+      width < 768 ? "#mobile-search" : "#header-search",
+    );
+    const searchBox = await visibleSearch.boundingBox();
+    const logoBox = await page
+      .locator(".store-header .brand-logo")
+      .boundingBox();
+    assert.ok(
+      logoBox.height <= (width < 768 ? 60 : 74),
+      "Header logo has compact dimensions",
+    );
+    assert.ok(
+      searchBox.y >= logoBox.y + logoBox.height,
+      "Search is directly below the logo",
+    );
+    assert.ok(
+      searchBox.y - (logoBox.y + logoBox.height) < 30,
+      "Search remains close to the logo",
+    );
+
     await page.screenshot({
       path: `artifacts/storefront/home-${width}.png`,
       fullPage: true,

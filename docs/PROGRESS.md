@@ -252,3 +252,10 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - Retained white page/navigation/card surfaces and the existing maroon action tokens. No authentication, RLS, migrations, inventory functions, database records or environment settings were changed.
 - Lint, TypeScript, 58 unit/component tests and five-width browser checks passed. Added browser assertions for the original logo URL, successful logo/cover loading, exact logo centering, full artwork bounds and cover containment. Production build and refreshed production-rendered screenshots are verified before this increment is reported complete.
 - The missing-original-logo blocker is now resolved. Empty real catalogue/brands/featured data and unfinished commerce interfaces remain as previously documented. No production deployment occurred.
+
+## Compact logo and search placement — 2026-10-24
+
+- Reduced the official header logo frame to 64×58px on mobile and 80×72px on larger screens, preserving its original image, symbol, embedded lettering and proportions. Reduced the footer logo consistently and tightened header height.
+- Moved desktop search out of the side controls into a centered row directly beneath the logo; mobile search remains prominently positioned immediately below its logo row. Search submits the same real URL-backed catalogue query.
+- Added browser checks for compact logo dimensions and search placement immediately below the logo. Existing centering, complete-artwork, cover, carousel, navigation, search/filter, white-surface and no-overflow checks continue to pass across all five widths.
+- Lint, strict TypeScript and all 58 unit/component tests passed; production build and refreshed production-rendered screenshots are verified before reporting this increment. No original artwork, backend, database or production setting was changed.
