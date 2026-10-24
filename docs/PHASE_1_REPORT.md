@@ -32,7 +32,7 @@ Hosted Supabase, deployed Next.js sessions, email-link delivery, password-reset 
 
 ## Missing environment configuration
 
-No project URL, publishable key or canonical site URL is injected. Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SITE_URL` securely in environment settings. Public keys alone cannot deploy migrations; a trusted operator must apply the reviewed migrations to a separate development Supabase project. Enable email confirmation and configure exact callback URLs, SMTP and Auth security settings as described in AUTH_SECURITY.md. No privileged key is required by application code.
+The development project is now identified as `euoannuvovsbwxjqnriw`; its URL is saved in ignored, mode-0600 `.env.local`. The publishable key, migration credentials and canonical site URL are not available to this machine. Configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `SITE_URL` securely in environment settings. Public keys alone cannot deploy migrations; a trusted operator must apply the reviewed migrations to a separate development Supabase project. Enable email confirmation and configure exact callback URLs, SMTP and Auth security settings as described in AUTH_SECURITY.md. No privileged key is required by application code.
 
 Variable requirements and reusable install/start instructions were saved to the cloud draft. Saving does not apply runtime values or publish a snapshot. Review/save the environment settings and publish the development environment when appropriate; this is not production release approval.
 
@@ -52,3 +52,10 @@ Configure development Supabase, apply migrations through a trusted operator, and
 ## Git provenance
 
 The prior tasks left an unborn `work` branch and untracked application files. Historical progress statements were corrected. The verified foundation is recorded in local repository commit `4a621e8`, including the preserved prelaunch site and ordered migrations. Use `git log -1 --oneline` and `git status --short` to verify the current state. No push or production publication was performed. Historical unborn/untracked statements remain as records of earlier tasks.
+
+
+## Development-project connection follow-up
+
+See [connection status and resume procedure](SUPABASE_DEVELOPMENT_CONNECTION.md). CLI read access confirmed missing account authorization; project health was blocked by a proxy 403 before any Auth check. Exact API domains and missing binding requirements were saved to the environment draft. No key was printed or committed; no hosted migration, signup/login/logout, RLS or session-persistence test was performed. Phase 1 remains incomplete.
+
+Local migration rehearsal was repeated successfully in this follow-up: 53 SQL assertions and the independent-session inventory concurrency check passed. This does not establish hosted schema compatibility or pending migration history.

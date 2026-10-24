@@ -112,3 +112,16 @@ Implement normalized development migrations and executable RLS/transaction tests
 - Keep checkout, product management and dashboards blocked until the necessary authentication/authorization/Supabase integration gates pass. Next increment is real development-project Auth/API/browser verification and protected staff access, not commerce UI.
 
 See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning commands. Historical statements about unborn/untracked files describe earlier task states; the local foundation commit records the current source and migrations. No push or production publication is implied.
+
+
+## Development project connection attempt — 2026-10-24
+
+- User identified development project `euoannuvovsbwxjqnriw` and authorized safe migration review/dry-run/application to development only.
+- Inspected actual process bindings, local env-file presence, saved configuration metadata, CLI authorization-file presence and project-link state without exposing values. No publishable key or migration credentials are injected; a key obtained outside this machine is not accessible automatically.
+- Created ignored `.env.local` with the exact API URL only and file mode 0600. Verified Git does not track it. No invented key, token or password was written.
+- Read-only CLI project listing failed with missing access token. Unauthenticated health requests failed at the proxy with 403, including an outside-sandbox retry; neither establishes project health or Auth readiness.
+- Saved the exact project/API allowlist additions, URL suggestion and missing credential/site-origin requirements in the environment draft. Preserved package-manager presets. Draft save is not runtime application, publication or an authenticated connection.
+- Reviewed both ordered migrations. They enable RLS and use transactions; no reset or disable-RLS statement was introduced. Migration 002 backfills profiles and changes signup triggers/grants, so live history/schema inspection is required before applying. Hosted pending state remains unknown.
+- Added docs/SUPABASE_DEVELOPMENT_CONNECTION.md with secure configuration requirements and an explicit development-only history/dry-run/apply/verification sequence.
+- Remote dry-run, migration application, actual Auth/RLS/customer isolation and signup/login/logout/session persistence remain blocked and unrun. No hosted database was modified and no production deployment occurred.
+- Local migration rehearsal passed: 53 PostgreSQL assertions plus the two-session inventory concurrency scenario. This applied migrations only inside a disposable local database, not a hosted dry-run. No application code changed, so lint/type/build were not rerun for this documentation/configuration-only attempt.
