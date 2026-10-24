@@ -183,3 +183,11 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - Current SITE_URL and configured Auth URLs remain loopback. Recovery already derives its callback from SITE_URL; it cannot safely be changed to an unknown preview origin.
 - Added DEVELOPMENT_PREVIEW_AUTH.md with Preview-only Vercel setup, exact callback path templates, development-project-only settings and same-browser PKCE recovery steps.
 - No deployment, Auth setting mutation, additional email, account/address change or administrator-based customer test was performed. Waiting for a verified accessible Preview URL before another recovery attempt. Frontend remains paused.
+
+
+## Preview branch preparation — 2026-10-24
+
+- User approved the Git-based transfer preparation after file download was unavailable. Created local branch preview/customer-auth, preserving application/backend history and working code.
+- GitHub remote reported no branches. No Vercel linkage/authorization metadata is available in this checkout. Asked for the existing project's Production branch or confirmation that no project is connected before any push.
+- Added vercel.json (Next.js, npm ci, npm run build), secret/build exclusions in .vercelignore and ignored .vercel CLI state. No migrations run in deployment/build commands.
+- Push and deployment remain pending that check. No production setting, Auth setting, test email or customer data was changed. Frontend work remains paused.

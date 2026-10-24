@@ -31,3 +31,16 @@ The application already constructs recovery emailRedirectTo from SITE_URL in src
 Open the verified Preview /account page and initiate Reset your password for the existing dedicated test email. Open only the newest message in the same browser used to request it; PKCE needs that browser's verifier cookie. Set a customer password privately on the recovery page, then test login/logout there. Never share the email password, customer password, received link, code, tokens or secret keys in chat. Prior localhost links are not a valid preview test.
 
 Current status: public customer signup was accepted previously; confirmation and login remain unverified for that exact account. No preview-dependent Auth success is claimed.
+
+
+## Prepared Git transfer
+
+The local `preview/customer-auth` branch contains the application and explicit Vercel Next.js/install/build settings. `.vercelignore` excludes local environment files, dependencies and build output; `.vercel/` CLI metadata is ignored by Git. There is no custom build step applying database migrations.
+
+The intended transfer command, pending confirmation of Vercel's production-branch configuration, is:
+
+```sh
+git push --set-upstream origin preview/customer-auth
+```
+
+This command is not a production deployment command, but a connected Vercel Git integration can trigger deployment on push. Confirm this branch is not a Production source (or that no Vercel project is connected) before running it. The remote reported no branches during preparation. Do not change the default branch, push main, use --prod or assume the first imported branch will be treated as Preview. Configuration here does not itself force Vercel to choose Preview.
