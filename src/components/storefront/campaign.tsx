@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 const campaigns = [
   {
@@ -27,44 +28,64 @@ export function Campaign() {
   const campaign = campaigns[active];
   return (
     <section className="campaign-grid" aria-label="Style Elevated campaign">
-      <div className="campaign-main">
-        <div
-          className={`campaign-photo photo-tile ${campaign.photo}`}
-          role="img"
-          aria-label={`Fashion editorial: ${campaign.title.join(" ")}`}
-        />
-        <div className="campaign-shade" />
-        <div className="campaign-copy">
-          <p className="eyebrow">NEW SEASON</p>
-          <h1 aria-live="polite">
-            {campaign.title[0]}
-            <br />
-            {campaign.title[1]}
-          </h1>
-          <p>{campaign.copy}</p>
-          <Link href={campaign.href} className="primary-button">
-            SHOP NOW <ArrowRight size={16} />
+      <div className="campaign-main official-campaign">
+        <div className="campaign-stage">
+          {active === 0 ? (
+            <>
+              <h1 className="sr-only" aria-live="polite">
+                STYLE ELEVATED
+              </h1>
+              <Image
+                src="/images/cover pic copy.jpg"
+                alt="ATTIRES ARENA — STYLE ELEVATED. Official cover with the original brand lettering, fashion photography and contact details."
+                fill
+                sizes="(max-width: 767px) 100vw, 72vw"
+                preload
+                className="official-cover"
+              />
+            </>
+          ) : (
+            <>
+              <div
+                className={`campaign-photo photo-tile ${campaign.photo}`}
+                role="img"
+                aria-label={`Fashion editorial: ${campaign.title.join(" ")}`}
+              />
+              <div className="campaign-shade" />
+              <div className="campaign-copy">
+                <p className="eyebrow">THE ATTIRES ARENA EDIT</p>
+                <h1 aria-live="polite">
+                  {campaign.title[0]}
+                  <br />
+                  {campaign.title[1]}
+                </h1>
+                <p>{campaign.copy}</p>
+                <Link href={campaign.href} className="primary-button">
+                  SHOP NOW <ArrowRight size={16} />
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="campaign-toolbar">
+          <Link href={campaign.href}>
+            Explore the collection <ArrowRight size={15} />
           </Link>
-          <div className="campaign-bottom">
-            <span>
-              Thoughtful details <i /> Curated style <i /> Everyday essentials
-            </span>
-            <div
-              className="campaign-dots"
-              role="group"
-              aria-label="Campaign slides"
-            >
-              {campaigns.map((item, index) => (
-                <button
-                  key={item.photo}
-                  aria-label={`Show campaign ${index + 1}: ${item.title.join(" ")}`}
-                  aria-pressed={active === index}
-                  onClick={() => setActive(index)}
-                >
-                  <span />
-                </button>
-              ))}
-            </div>
+          <div
+            className="campaign-dots"
+            role="group"
+            aria-label="Campaign slides"
+          >
+            {campaigns.map((item, index) => (
+              <button
+                key={item.photo}
+                aria-label={`Show campaign ${index + 1}: ${item.title.join(" ")}`}
+                aria-pressed={active === index}
+                onClick={() => setActive(index)}
+              >
+                <span />
+              </button>
+            ))}
           </div>
         </div>
       </div>

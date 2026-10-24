@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "./brand-logo";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 export function BrandSection() {
   return (
@@ -18,10 +19,9 @@ export function StoreFooter() {
   return (
     <footer className="store-footer" id="about">
       <div className="footer-brand">
-        <span className="brand-name">
-          <strong>ATTIRES</strong>
-          <span>ARENA</span>
-        </span>
+        <Link href="/" className="brand-link" aria-label="Attires Arena home">
+          <BrandLogo />
+        </Link>
         <p>
           Style elevated. Everyday essentials.
           <br />A fashion destination for Bangladesh.

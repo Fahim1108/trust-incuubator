@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BrandLogo } from "./brand-logo";
 import {
   Menu,
   Search,
@@ -76,9 +77,8 @@ export function StoreHeader({ query }: { query: string }) {
               </Link>
             ))}
           </nav>
-          <Link href="/" className="brand-name" aria-label="Attires Arena home">
-            <strong>ATTIRES</strong>
-            <span>ARENA</span>
+          <Link href="/" className="brand-link" aria-label="Attires Arena home">
+            <BrandLogo />
           </Link>
           <div className="header-controls">
             <div className="desktop-search">

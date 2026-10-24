@@ -93,6 +93,45 @@ try {
       })
       .click();
     await expect(page.locator("h1")).toHaveText(/STYLE\s*ELEVATED/);
+    const headerLogo = page.locator(".store-header .brand-logo-image");
+    await expect(headerLogo).toHaveAttribute("src", "/images/BRAND-LOGO.jpg");
+    await expect(page.locator(".official-cover")).toBeVisible();
+    assert.equal(
+      await page
+        .locator(".official-cover")
+        .evaluate(
+          (image) =>
+            image.complete &&
+            image.naturalWidth > 0 &&
+            getComputedStyle(image).objectFit === "contain",
+        ),
+      true,
+      "Original cover loads without cropping",
+    );
+    const logoGeometry = await headerLogo.evaluate((image) => {
+      const rect = image.getBoundingClientRect();
+      const frame = image.parentElement.getBoundingClientRect();
+      const scale = rect.width / 540;
+      return {
+        loaded: image.complete && image.naturalWidth > 0,
+        center: (frame.left + frame.right) / 2,
+        artworkFits:
+          rect.left + 120 * scale >= frame.left &&
+          rect.left + 420 * scale <= frame.right &&
+          rect.top + 128 * scale >= frame.top &&
+          rect.top + 412 * scale <= frame.bottom,
+      };
+    });
+    assert.equal(logoGeometry.loaded, true);
+    assert.ok(
+      Math.abs(logoGeometry.center - width / 2) < 2,
+      "Official logo is centered",
+    );
+    assert.equal(
+      logoGeometry.artworkFits,
+      true,
+      "Complete symbol and original lettering fit inside the logo frame",
+    );
     await page.screenshot({
       path: `artifacts/storefront/home-${width}.png`,
       fullPage: true,

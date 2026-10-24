@@ -63,7 +63,8 @@ The user authorized homepage implementation before completing the outstanding pu
 - [x] Initial responsive header/search/navigation, editorial hero and promotions, category cards, brand empty state, catalogue empty/error states, story and footer.
 - [x] Anonymous published catalogue reads with URL search/category/newest/name controls; bounded to 24 items, not a complete paginated catalogue.
 - [x] Local mobile/tablet/desktop screenshots and browser interaction checks.
-- [ ] Homepage user review and exact official logo asset integration.
+- [x] Exact official logo and original cover integration from the uploaded files.
+- [ ] Homepage user visual review.
 - [ ] Next increment after review: persisted catalogue cards with validated variant prices, approved image data integration, pagination and accurate public availability; review schema separately before expanding it.
 - [ ] Brand discovery remains an empty state until business-approved records/schema exist; do not publish example labels as real stock.
 - [ ] Product detail, wishlist, cart and checkout remain later increments, subject to the required backend/security foundations.
@@ -72,5 +73,6 @@ The user authorized homepage implementation before completing the outstanding pu
 
 - [x] Add reusable published-product cards with integer-poisha BDT/sale formatting and anonymous active-variant price reads; verified query against development PostgREST (empty catalogue).
 - [x] Add Featured Products section with an honest empty state while curated-selection persistence is absent.
-- [ ] Integrate original logo file and real product-image/featured/brand records; these remain required for a fully populated, reference-matching homepage.
+- [x] Integrate the uploaded original logo file with its embedded wordmark/font and the full official cover.
+- [ ] Integrate real product-image/featured/brand records; these remain required for a fully populated homepage.
 - [ ] Await homepage visual review before starting the remaining storefront pages.
