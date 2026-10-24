@@ -18,7 +18,8 @@
     "setup:supabase:local": "node scripts/prepare-supabase-local.mjs",
     "verify:supabase:development": "node --use-env-proxy scripts/verify-supabase-schema.mjs",
     "test:supabase:development": "node --use-env-proxy scripts/test-supabase-development.mjs",
-    "test:supabase:staff": "node --use-env-proxy scripts/test-supabase-staff.mjs"
+    "test:supabase:staff": "node --use-env-proxy scripts/test-supabase-staff.mjs",
+    "test:storefront": "node scripts/test-storefront.mjs"
   },
   "repository": {
     "type": "git",

@@ -55,3 +55,15 @@ A development Supabase project and public URL/publishable key are needed for rea
 Current security verification boundary and required configuration: [Phase 1 report](PHASE_1_REPORT.md). Do not begin checkout, management or dashboard work before those foundation gates pass.
 
 Hosted migrations and core Auth/browser sessions are now verified. Public email signup/delivery and the complete browser email callback remain Phase 1 gates; do not start Phase 2 until the final report passes.
+
+## Current direct-code storefront checkpoint
+
+The user authorized homepage implementation before completing the outstanding public-email Auth verification. The homepage now uses the approved white/maroon design on feature/attires-arena-premium-storefront. This changes frontend sequencing only; Phase 1's unresolved public-preview/email recovery gate is still open and no commerce readiness is claimed.
+
+- [x] Initial responsive header/search/navigation, editorial hero and promotions, category cards, brand empty state, catalogue empty/error states, story and footer.
+- [x] Anonymous published catalogue reads with URL search/category/newest/name controls; bounded to 24 items, not a complete paginated catalogue.
+- [x] Local mobile/tablet/desktop screenshots and browser interaction checks.
+- [ ] Homepage user review and exact official logo asset integration.
+- [ ] Next increment after review: persisted catalogue cards with validated variant prices, approved image data integration, pagination and accurate public availability; review schema separately before expanding it.
+- [ ] Brand discovery remains an empty state until business-approved records/schema exist; do not publish example labels as real stock.
+- [ ] Product detail, wishlist, cart and checkout remain later increments, subject to the required backend/security foundations.
