@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdir } from "node:fs/promises";
-import { chromium } from "@playwright/test";
+import { chromium, expect } from "@playwright/test";
 const origin = process.env.STOREFRONT_TEST_ORIGIN ?? "http://localhost:3000";
 if (!["127.0.0.1", "localhost"].includes(new URL(origin).hostname))
   throw new Error("This screenshot test is restricted to the local preview.");
@@ -45,14 +45,51 @@ try {
         "rgb(255, 255, 255)",
       );
     }
-    assert.ok(
-      await page
-        .locator("img")
-        .evaluateAll((images) =>
-          images.every((image) => image.complete && image.naturalWidth > 0),
+    const backgroundsLoaded = await page.evaluate(async () => {
+      const urls = [
+        ...new Set(
+          [
+            ...document.querySelectorAll(".photo-tile,.category-photography"),
+          ].flatMap((element) => {
+            const background = getComputedStyle(element).backgroundImage;
+            return [...background.matchAll(/url\(["']?([^"')]+)/g)].map(
+              (match) => match[1],
+            );
+          }),
         ),
-      "Campaign imagery loads",
+      ];
+      const loaded = await Promise.all(
+        urls.map(
+          (src) =>
+            new Promise((resolve) => {
+              const image = new Image();
+              image.onload = () => resolve(true);
+              image.onerror = () => resolve(false);
+              image.src = src;
+            }),
+        ),
+      );
+      return urls.length >= 2 && loaded.every(Boolean);
+    });
+    assert.equal(
+      backgroundsLoaded,
+      true,
+      "Campaign and category photographs load",
     );
+    await page
+      .getByRole("button", {
+        name: "Show campaign 2: NEW ARRIVALS",
+        exact: true,
+      })
+      .click();
+    await expect(page.locator("h1")).toHaveText(/NEW\s*ARRIVALS/);
+    await page
+      .getByRole("button", {
+        name: "Show campaign 1: STYLE ELEVATED",
+        exact: true,
+      })
+      .click();
+    await expect(page.locator("h1")).toHaveText(/STYLE\s*ELEVATED/);
     await page.screenshot({
       path: `artifacts/storefront/home-${width}.png`,
       fullPage: true,

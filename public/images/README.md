@@ -5,3 +5,9 @@ campaign.webp and category-editorial.webp are generated editorial illustrations 
 Images were compressed to WebP for delivery. The campaign uses Next.js responsive image optimization. The category contact sheet uses six CSS positions from one shared local asset.
 
 The official logo supplied in the conversation was not available as a workspace file. The header currently displays plain brand-name text, not a recreated or substitute logo. Replace that text with the exact supplied artwork once the original PNG/SVG is available in the repository; preserve its colors and proportions.
+
+## Reference-aligned revision
+
+editorial-main.webp, editorial-tailoring.webp, editorial-footwear.webp and editorial-knitwear.webp are generated campaign photographs for the reference-aligned revision. A generated four-panel source was split into separate assets so CSS can crop each photograph with `background-size: cover` without stretching people or products. These are editorial illustrations, not actual inventory. The previous campaign.webp is retained but is no longer rendered on the homepage.
+
+The exact supplied logo remains unavailable as a repository-accessible file. No traced, generated or substitute emblem was introduced. A PNG/SVG file attachment is required to finish the official artwork integration; the current plain text is a disclosed fallback.

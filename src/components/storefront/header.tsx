@@ -1,8 +1,15 @@
 "use client";
 import Link from "next/link";
-import { Menu, Search, UserRound, X, ArrowUpRight } from "lucide-react";
+import {
+  Menu,
+  Search,
+  UserRound,
+  X,
+  Heart,
+  ShoppingBag,
+  Truck,
+} from "lucide-react";
 import { useState } from "react";
-
 export function SearchForm({
   initialQuery = "",
   id = "header-search",
@@ -15,22 +22,22 @@ export function SearchForm({
       <label className="sr-only" htmlFor={id}>
         Search the catalogue
       </label>
-      <Search size={18} aria-hidden="true" />
+      <button aria-label="Search products" type="submit">
+        <Search size={17} />
+      </button>
       <input
         id={id}
         name="q"
         defaultValue={initialQuery}
-        placeholder="Search your next everyday favourite"
+        placeholder="Search for shirts, pants, sneakers..."
         maxLength={100}
       />
-      <button aria-label="Search products" type="submit">
-        <ArrowUpRight size={19} />
-      </button>
     </form>
   );
 }
 const links = [
   { label: "Home", href: "/" },
+  { label: "Shop", href: "/#arrivals" },
   { label: "Categories", href: "/#categories" },
   { label: "Brands", href: "/#brands" },
   { label: "New Arrivals", href: "/#arrivals" },
@@ -41,8 +48,11 @@ export function StoreHeader({ query }: { query: string }) {
   return (
     <>
       <div className="store-announcement">
-        <span>ATTIRES ARENA · BANGLADESH</span>
-        <span>Considered style. A fresh perspective.</span>
+        <span>
+          <Truck size={13} /> Style elevated, everyday <i /> A fashion
+          destination for Bangladesh
+        </span>
+        <a href="mailto:attiresarena664@gmail.com">Help</a>
       </div>
       <header className="store-header">
         <div className="header-main">
@@ -55,28 +65,53 @@ export function StoreHeader({ query }: { query: string }) {
           >
             {open ? <X /> : <Menu />}
           </button>
-          <div className="desktop-search">
-            <SearchForm initialQuery={query} />
-          </div>
+          <nav className="desktop-nav" aria-label="Main navigation">
+            {links.map(({ href, label }) => (
+              <Link
+                key={label}
+                href={href}
+                aria-current={label === "Home" ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
           <Link href="/" className="brand-name" aria-label="Attires Arena home">
-            <span>ATTIRES ARENA</span>
-            <small>STYLE ELEVATED</small>
+            <strong>ATTIRES</strong>
+            <span>ARENA</span>
           </Link>
-          <Link className="account-link" href="/account">
-            <UserRound size={21} />
-            <span>My account</span>
-          </Link>
+          <div className="header-controls">
+            <div className="desktop-search">
+              <SearchForm initialQuery={query} />
+            </div>
+            <Link
+              href="/account"
+              className="icon-control account-link"
+              aria-label="Your account"
+            >
+              <UserRound size={21} />
+            </Link>
+            <button
+              className="icon-control unavailable-control"
+              disabled
+              title="Wishlist is not available yet"
+              aria-label="Wishlist unavailable"
+            >
+              <Heart size={21} />
+            </button>
+            <button
+              className="icon-control unavailable-control"
+              disabled
+              title="Shopping bag is not available yet"
+              aria-label="Shopping bag unavailable"
+            >
+              <ShoppingBag size={22} />
+            </button>
+          </div>
         </div>
         <div className="mobile-search">
           <SearchForm initialQuery={query} id="mobile-search" />
         </div>
-        <nav className="desktop-nav" aria-label="Main navigation">
-          {links.map(({ href, label }) => (
-            <Link key={label} href={href}>
-              {label}
-            </Link>
-          ))}
-        </nav>
         {open && (
           <nav
             id="mobile-menu"
@@ -94,7 +129,6 @@ export function StoreHeader({ query }: { query: string }) {
             {links.map(({ href, label }) => (
               <Link key={label} href={href} onClick={() => setOpen(false)}>
                 {label}
-                <ArrowUpRight size={16} />
               </Link>
             ))}
           </nav>

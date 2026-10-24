@@ -1,62 +1,62 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, Mail, Phone } from "lucide-react";
 export function BrandSection() {
   return (
     <section className="brand-section store-section" id="brands">
-      <div>
-        <p className="eyebrow">DISCOVER SOMETHING DISTINCTIVE</p>
-        <h2>Good style has a story.</h2>
-        <p>
-          Our brand selection is being prepared.
-          <br />
-          Discover the labels we offer here when they launch.
-        </p>
+      <div className="section-heading">
+        <h2>Shop by Brand</h2>
+        <span className="small-label">Our selection is coming soon</span>
       </div>
-      <div className="brand-outline">
-        <span>THE BRAND EDIT</span>
-        <span>
-          Coming into focus <ArrowUpRight size={20} />
-        </span>
+      <div className="brand-empty">
+        <p>Our brand collection is being curated.</p>
+        <span>Published labels will appear here when available.</span>
       </div>
     </section>
   );
 }
 export function StoreFooter() {
   return (
-    <footer className="store-footer">
+    <footer className="store-footer" id="about">
       <div className="footer-brand">
-        <span className="brand-name">ATTIRES ARENA</span>
+        <span className="brand-name">
+          <strong>ATTIRES</strong>
+          <span>ARENA</span>
+        </span>
         <p>
-          Premium fashion.
-          <br />A fresh perspective.
+          Style elevated. Everyday essentials.
+          <br />A fashion destination for Bangladesh.
         </p>
       </div>
       <div>
-        <h2>Discover</h2>
-        <Link href="#categories">Our categories</Link>
-        <Link href="#brands">The brand edit</Link>
-        <Link href="#arrivals">New arrivals</Link>
+        <h2>Explore</h2>
+        <Link href="#categories">Shop by Category</Link>
+        <Link href="#brands">Shop by Brand</Link>
+        <Link href="#arrivals">New Arrivals</Link>
       </div>
       <div>
-        <h2>Here for you</h2>
+        <h2>Customer care</h2>
         <Link href="/account">Your account</Link>
-        <Link href="#about">Our story</Link>
-        <p>
-          Shopping and checkout
-          <br />
-          are not available yet.
-        </p>
+        <a href="mailto:attiresarena664@gmail.com">
+          <Mail size={13} /> attiresarena664@gmail.com
+        </a>
+        <a href="tel:+8801886456664">
+          <Phone size={13} /> 01886456664
+        </a>
       </div>
       <div className="footer-note">
-        <h2>From Bangladesh, with style.</h2>
+        <h2>The next chapter in everyday style.</h2>
         <p>
-          A considered collection is on its way.
-          <br />
-          Thank you for being here from the start.
+          Our store is being prepared. Shopping, wishlist and checkout will open
+          after the collection and commerce services are ready.
         </p>
+        <Link href="/account">
+          Explore your account <ArrowRight size={13} />
+        </Link>
       </div>
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} Attires Arena</span>
+        <span>
+          © {new Date().getFullYear()} Attires Arena. All rights reserved.
+        </span>
         <span>STYLE ELEVATED</span>
       </div>
     </footer>

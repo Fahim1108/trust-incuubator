@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Campaign } from "@/components/storefront/campaign";
+import { Campaign, PromotionalBanners } from "@/components/storefront/campaign";
 import { BrandSection, StoreFooter } from "@/components/storefront/sections";
 import {
   ArrowRight,
-  ArrowUpRight,
   Shirt,
   Footprints,
   Watch,
@@ -12,8 +11,10 @@ import {
   Grid2X2,
   Home as HomeIcon,
   UserRound,
-  Sparkles,
   PackageCheck,
+  ShieldCheck,
+  Truck,
+  ShoppingBag,
   Heart,
   SlidersHorizontal,
 } from "lucide-react";
@@ -92,36 +93,41 @@ export default async function Home({
         <Campaign />
         <div className="principles">
           <div>
-            <Sparkles />
+            <PackageCheck />
             <span>
-              Considered style<small>A focus on the details</small>
+              Premium edit<small>Considered everyday style</small>
             </span>
           </div>
           <div>
-            <PackageCheck />
+            <Truck />
             <span>
-              Made for everyday<small>Discover your essentials</small>
+              For Bangladesh<small>Our home, your style</small>
             </span>
           </div>
           <div>
             <Heart />
             <span>
-              A personal approach<small>Your style, your perspective</small>
+              Customer care<small>Here to help</small>
+            </span>
+          </div>
+          <div>
+            <ShieldCheck />
+            <span>
+              Your account<small>Secure sign-in</small>
             </span>
           </div>
         </div>
         <section className="store-section" id="categories">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">BUILD YOUR EVERYDAY</p>
-              <h2>Shop by category</h2>
+              <h2>Shop by Category</h2>
             </div>
             <Link href="#arrivals">
-              Explore all <ArrowRight size={16} />
+              View All <ArrowRight size={16} />
             </Link>
           </div>
           <div className="category-grid">
-            {categories.map(({ name, slug, icon: Icon, detail }) => (
+            {categories.map(({ name, slug, icon: Icon }) => (
               <Link
                 key={slug}
                 href={`/?category=${encodeURIComponent(slug)}#arrivals`}
@@ -141,16 +147,33 @@ export default async function Home({
                 </div>
                 <div>
                   <h3>{name}</h3>
-                  <p>{detail}</p>
                 </div>
-                <ArrowUpRight size={17} aria-hidden="true" />
               </Link>
             ))}
+            {!catalogue.categories.length && (
+              <Link
+                className="category-card category-mobile-extra"
+                href="/?category=accessories#arrivals"
+              >
+                <div className="category-art">
+                  <Watch size={28} strokeWidth={1} />
+                </div>
+                <h3>Accessories</h3>
+              </Link>
+            )}
+            <Link
+              className="category-card category-mobile-extra"
+              href="#arrivals"
+            >
+              <div className="category-art">
+                <Grid2X2 size={25} strokeWidth={1} />
+              </div>
+              <h3>View All →</h3>
+            </Link>
           </div>
           {!catalogue.categories.length && (
             <p className="section-note">
-              An introduction to our planned collections. Published products
-              will appear as they become available.
+              Explore our upcoming collections. New pieces are on their way.
             </p>
           )}
         </section>
@@ -158,42 +181,43 @@ export default async function Home({
         <section className="store-section" id="arrivals">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">THE LATEST FROM ATTIRES ARENA</p>
               <h2>
                 {q
                   ? `Results for “${q}”`
                   : category
                     ? `${categories.find((c) => c.slug === category)?.name ?? "Collection"}`
-                    : "New arrivals"}
+                    : "New Arrivals"}
               </h2>
             </div>
             <span className="small-label">Published catalogue</span>
           </div>
-          <form action="/#arrivals" className="catalogue-tools">
-            <label>
-              <SlidersHorizontal size={16} /> Category
-              <select name="category" defaultValue={category}>
-                <option value="">All categories</option>
-                {categories.map((item) => (
-                  <option key={item.slug} value={item.slug}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Sort by
-              <select name="sort" defaultValue={sort}>
-                <option value="newest">Newest first</option>
-                <option value="name">Name: A–Z</option>
-              </select>
-            </label>
-            <input type="hidden" name="q" value={q} />
-            <button type="submit" className="outline-button">
-              Apply
-            </button>
-            {(q || category) && <Link href="/#arrivals">Clear filters</Link>}
-          </form>
+          {(q || category) && (
+            <form action="/#arrivals" className="catalogue-tools">
+              <label>
+                <SlidersHorizontal size={16} /> Category
+                <select name="category" defaultValue={category}>
+                  <option value="">All categories</option>
+                  {categories.map((item) => (
+                    <option key={item.slug} value={item.slug}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Sort by
+                <select name="sort" defaultValue={sort}>
+                  <option value="newest">Newest first</option>
+                  <option value="name">Name: A–Z</option>
+                </select>
+              </label>
+              <input type="hidden" name="q" value={q} />
+              <button type="submit" className="outline-button">
+                Apply
+              </button>
+              {(q || category) && <Link href="/#arrivals">Clear filters</Link>}
+            </form>
+          )}
           {catalogue.products.length ? (
             <>
               <div className="product-preview-grid">
@@ -226,7 +250,7 @@ export default async function Home({
               <p>
                 {catalogue.state === "error"
                   ? "Please try again shortly. Your account is still available."
-                  : "Our catalogue is being prepared. Published pieces will appear here — no sample products, just the real collection."}
+                  : "Our new collection is on its way. Check back soon to discover your next favourites."}
               </p>
               {(q || category) && (
                 <Link href="/#arrivals">
@@ -236,22 +260,7 @@ export default async function Home({
             </div>
           )}
         </section>
-        <section className="story-banner store-section" id="about">
-          <p className="eyebrow">THE ATTIRES ARENA PHILOSOPHY</p>
-          <h2>
-            Everyday dressing.
-            <br />
-            <em>Exceptionally considered.</em>
-          </h2>
-          <p>
-            Style is in the details. We’re creating a fresh fashion destination
-            for Bangladesh, with a simple idea: make finding your everyday
-            favourites feel effortless.
-          </p>
-          <Link href="/account">
-            Make yourself at home <ArrowUpRight size={17} />
-          </Link>
-        </section>
+        <PromotionalBanners />
       </main>
       <StoreFooter />
       <nav className="mobile-bottom" aria-label="Quick navigation">
@@ -263,6 +272,14 @@ export default async function Home({
           <Grid2X2 size={20} />
           Categories
         </Link>
+        <button disabled title="Shopping bag is not available yet">
+          <ShoppingBag size={20} />
+          Cart
+        </button>
+        <button disabled title="Wishlist is not available yet">
+          <Heart size={20} />
+          Wishlist
+        </button>
         <Link href="/account">
           <UserRound size={20} />
           Account
