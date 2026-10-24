@@ -163,3 +163,9 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - Owner MFA/reauthentication gates, broader staff lifecycle audits, production abuse controls, CSP hardening, inventory retry idempotency and recovery/backup controls remain risks/work. Current database-principal provisioning audit still needs external human approval attribution for production operations.
 - Keep the detailed Phase 2 plan deferred until Phase 1 passes. The existing broad master plan is retained; Phase 2 implementation has not started.
 - Saved an optional controlled test-mailbox requirement and refreshed development startup instructions to the environment draft. This does not supply a mailbox value, apply runtime changes or deploy production; review/save and publish only the development environment configuration when appropriate.
+
+## Customer-only signup/login follow-up — 2026-10-24
+
+- Verified development Auth health HTTP 200 using only the public publishable key. No administrator credentials, secret/service-role key, Management API or admin Auth method was used in this follow-up.
+- Added scripts/test-customer-auth.mjs: public-client-only interactive signup/login, generated password/session in memory, human email-confirmation pause, validated customer identity/no staff roles, refresh and logout. No sensitive values or links are printed/stored; it does not reset or delete existing users.
+- Script syntax, lint and whitespace checks passed. Its live signup/login steps have not run: SUPABASE_TEST_SIGNUP_EMAIL is unset and a dedicated controlled mailbox address has been requested. Do not count this preparation as successful customer registration or email verification.
