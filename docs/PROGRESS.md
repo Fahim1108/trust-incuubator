@@ -191,3 +191,9 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - GitHub remote reported no branches. No Vercel linkage/authorization metadata is available in this checkout. Asked for the existing project's Production branch or confirmation that no project is connected before any push.
 - Added vercel.json (Next.js, npm ci, npm run build), secret/build exclusions in .vercelignore and ignored .vercel CLI state. No migrations run in deployment/build commands.
 - Push and deployment remain pending that check. No production setting, Auth setting, test email or customer data was changed. Frontend work remains paused.
+
+## Development branch transfer completed — 2026-10-24
+
+- User confirmed no Vercel project is connected to the repository. Pushed only preview/customer-auth to origin and established its upstream tracking successfully.
+- Application source and credential-free deployment configuration are now available on that GitHub branch. No secrets/local environment files were added, and no Vercel deployment or production-setting change was performed.
+- Next step is a Vercel Preview-target deployment. An initial dashboard import may target Production by default; do not assume importing this branch automatically makes it Preview.
