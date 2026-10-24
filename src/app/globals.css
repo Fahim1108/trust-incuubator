@@ -1525,3 +1525,93 @@ select {
     min-width: 38px;
   }
 }
+
+.official-campaign .campaign-stage {
+  aspect-ratio: 1.72;
+}
+.campaign-toolbar .slideshow-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-height: 40px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+.campaign-toolbar > a {
+  margin-right: auto;
+}
+.campaign-stage .campaign-copy {
+  padding: 48px 6% 24px;
+}
+.campaign-stage .campaign-copy h1 {
+  font-size: clamp(48px, 6.3vw, 91px);
+}
+@media (max-width: 767px) {
+  .official-campaign .campaign-stage {
+    aspect-ratio: 1.2;
+  }
+  .campaign-stage .campaign-copy {
+    padding: 32px 22px 18px;
+  }
+  .campaign-stage .campaign-copy h1 {
+    font-size: 37px;
+    margin: 12px 0;
+  }
+  .campaign-stage .campaign-copy > p:not(.eyebrow) {
+    font-size: 11px;
+    line-height: 1.5;
+    max-width: 165px;
+  }
+  .campaign-toolbar {
+    padding: 2px 6px;
+  }
+  .campaign-toolbar > a {
+    font-size: 9px;
+    gap: 4px;
+  }
+  .campaign-toolbar .campaign-dots button {
+    min-width: 30px;
+  }
+  .campaign-toolbar .slideshow-toggle {
+    width: 32px;
+    flex-shrink: 0;
+  }
+}
+.official-campaign {
+  position: relative;
+}
+.official-campaign:not(.is-cover) .campaign-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.35));
+  color: #fff;
+  z-index: 2;
+}
+.official-campaign:not(.is-cover) .campaign-toolbar > a {
+  color: #fff;
+}
+.official-campaign:not(.is-cover) .slideshow-toggle {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #fff;
+}
+.official-campaign:not(.is-cover) .campaign-dots button > span {
+  background: #fff;
+}
+.official-campaign:not(.is-cover) .campaign-toolbar button:focus-visible {
+  outline-color: #fff;
+}
+@media (max-width: 767px) {
+  .official-campaign:not(.is-cover) .campaign-toolbar > a {
+    display: none;
+  }
+  .official-campaign:not(.is-cover) .campaign-dots {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

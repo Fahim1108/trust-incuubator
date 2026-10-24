@@ -20,6 +20,17 @@ try {
     page.on("pageerror", (error) => errors.push(error.message));
     const response = await page.goto(origin, { waitUntil: "networkidle" });
     assert.equal(response.status(), 200);
+    await page
+      .getByRole("button", { name: "Pause slideshow", exact: true })
+      .click();
+    assert.equal(
+      await page.evaluate(() =>
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--primary")
+          .trim(),
+      ),
+      "#6b0202",
+    );
     assert.equal(
       await page.evaluate(
         () => document.documentElement.scrollWidth > innerWidth,
@@ -48,6 +59,7 @@ try {
     await expect(
       page.getByRole("heading", { name: "Featured Products", exact: true }),
     ).toBeVisible();
+    await expect(page.locator("#brands .brand-empty")).toBeVisible();
     const backgroundsLoaded = await page.evaluate(async () => {
       const urls = [
         ...new Set(
@@ -95,7 +107,20 @@ try {
     await expect(page.locator("h1")).toHaveText(/STYLE\s*ELEVATED/);
     const headerLogo = page.locator(".store-header .brand-logo-image");
     await expect(headerLogo).toHaveAttribute("src", "/images/BRAND-LOGO.jpg");
+    await page
+      .getByRole("button", {
+        name: "Show campaign 3: ATTIRES ARENA",
+        exact: true,
+      })
+      .click();
     await expect(page.locator(".official-cover")).toBeVisible();
+    await expect
+      .poll(() =>
+        page
+          .locator(".official-cover")
+          .evaluate((image) => image.complete && image.naturalWidth > 0),
+      )
+      .toBe(true);
     assert.equal(
       await page
         .locator(".official-cover")
@@ -108,6 +133,13 @@ try {
       true,
       "Original cover loads without cropping",
     );
+    await page
+      .getByRole("button", {
+        name: "Show campaign 1: STYLE ELEVATED",
+        exact: true,
+      })
+      .click();
+    await expect(page.locator("h1")).toHaveText(/STYLE\s*ELEVATED/);
     const logoGeometry = await headerLogo.evaluate((image) => {
       const rect = image.getBoundingClientRect();
       const frame = image.parentElement.getBoundingClientRect();

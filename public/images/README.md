@@ -18,5 +18,7 @@ The user uploaded BRAND-LOGO.png, BRAND-LOGO.jpg and cover pic copy.jpg in commi
 
 - BRAND-LOGO.jpg is now rendered in the header and footer. The complete symbol and original ATTIRES ARENA lettering are part of this exact image; no replacement typeface, tracing, recoloring or generated logo is used. CSS clips only the empty outer maroon canvas. The visible logo artwork is preserved at its original proportions.
 - BRAND-LOGO.png is the supplied transparent white version and is retained unchanged. The maroon-background JPG is used on the white storefront so the white artwork remains visible without recoloring it.
-- cover pic copy.jpg is the first homepage campaign. Next.js serves responsive versions with object-fit: contain and a matching 3:2 image stage; the entire cover, brand name, embedded typography and contact strip remain visible. There is no added text overlay over this cover.
+- cover pic copy.jpg is retained as a homepage carousel campaign. Next.js serves responsive versions with object-fit: contain and a matching 3:2 image stage; the entire cover, brand name, embedded typography and contact strip remain visible. There is no added text overlay over this cover.
 - All three uploaded source files remain byte-for-byte unchanged. Existing generated campaign assets are retained for the secondary slides, side panels and editorial category illustrations; they are not misidentified as uploaded stock.
+
+The latest homepage approval revision starts with the reference-style editorial slide and rotates every three seconds. The original uploaded cover is slide 3 and remains fully contained with its original text intact.

@@ -1,6 +1,6 @@
 # Cloud development preview for customer recovery
 
-No public preview URL could be verified in the current checkout. VERCEL_URL/branch URL/project IDs/token are unset; .vercel/project.json and vercel.json are absent. Supabase Auth has no non-loopback HTTPS origin configured. GitHub deployment metadata could not be read through the network. These observations do not prove that no Vercel project exists in the owner's account.
+No public preview URL could be verified in the current checkout. VERCEL_URL/branch URL/project IDs/token are unset and .vercel/project.json is absent. A tracked vercel.json now supplies build settings but does not establish a Vercel account or project connection. Supabase Auth has no non-loopback HTTPS origin configured. GitHub deployment metadata could not be read through the network. These observations do not prove that no Vercel project exists in the owner's account.
 
 No production settings were changed, no deployment was made, and no new recovery email was sent. The selected customer email remains unchanged. No Vercel or mailbox credentials should be pasted into chat.
 
@@ -8,7 +8,7 @@ No production settings were changed, no deployment was made, and no new recovery
 
 Open the existing project in Vercel and inspect Deployments. If a Ready deployment marked Preview already exists, open it and copy its actual HTTPS URL (prefer a stable preview-branch URL). Confirm it serves this application and can be reached from the email-opening browser. Do not substitute a Production deployment.
 
-If no Preview exists, create a deployment from a non-production Git branch using the existing project's preview workflow. The repository code must be available to Vercel first; this checkout's commits have not been pushed by the assistant. Never push main or trigger production merely to obtain a preview. If the dashboard cannot access the source, return to Codex for a dedicated preview-branch publishing step after checking that branch's deployment target. CLI deployments, if used, must remain Preview; never use --prod.
+If no Preview exists, create a deployment from a non-production Git branch using the existing project's preview workflow. The repository code must be available to Vercel first; the current source and screenshots have been pushed on feature/attires-arena-premium-storefront; earlier transfer notes below are historical. Never push main or trigger production merely to obtain a preview. If the dashboard cannot access the source, return to Codex for a dedicated preview-branch publishing step after checking that branch's deployment target. CLI deployments, if used, must remain Preview; never use --prod.
 
 Set these variables for Vercel's **Preview** environment only: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SITE_URL. Use the development project euoannuvovsbwxjqnriw. Do not add Management tokens, database passwords or service-role keys to the web app. Set SITE_URL to the actual stable HTTPS preview origin and redeploy Preview after variable changes. Keep production variables/settings untouched.
 

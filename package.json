@@ -19,7 +19,8 @@
     "verify:supabase:development": "node --use-env-proxy scripts/verify-supabase-schema.mjs",
     "test:supabase:development": "node --use-env-proxy scripts/test-supabase-development.mjs",
     "test:supabase:staff": "node --use-env-proxy scripts/test-supabase-staff.mjs",
-    "test:storefront": "node scripts/test-storefront.mjs"
+    "test:storefront": "node scripts/test-storefront.mjs",
+    "test:slideshow": "node scripts/test-homepage-slideshow.mjs"
   },
   "repository": {
     "type": "git",
