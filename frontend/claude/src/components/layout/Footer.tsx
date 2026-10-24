@@ -1,12 +1,16 @@
 "use client";
-
-import { Facebook, Instagram, Music2, MessageCircle, Youtube } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Music2,
+  MessageCircle,
+  Youtube,
+} from "lucide-react";
 import Link from "next/link";
-import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { useStorefront } from "@/context/StorefrontContext";
 import type { SocialLink } from "@/types";
 import { Logo } from "./Logo";
-
+import styles from "./Footer.module.css";
 const socialIcons: Record<SocialLink["network"], typeof Facebook> = {
   facebook: Facebook,
   instagram: Instagram,
@@ -14,66 +18,93 @@ const socialIcons: Record<SocialLink["network"], typeof Facebook> = {
   tiktok: Music2,
   whatsapp: MessageCircle,
 };
-
-/** Light footer from the approved desktop mockup. */
+function configuredUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url.href
+      : null;
+  } catch {
+    return null;
+  }
+}
 export function Footer() {
   const { footer, demo } = useStorefront();
   return (
-    <footer className="mt-10 border-t border-line bg-surface pb-20 md:pb-0">
-      <div className="container py-7">
-        <div className="grid gap-8 sm:grid-cols-3 lg:grid-cols-[1fr_1fr_1fr_1fr_1.6fr] [&>*]:min-w-0">
-          <div className="sm:col-span-3 lg:col-span-1">
-            <Logo small />
-            <p className="mt-3 max-w-xs text-xs leading-relaxed text-ink-muted lg:hidden">{footer.tagline}</p>
+    <footer className={styles.footer}>
+      <div className={`container ${styles.content}`}>
+        <div className={styles.grid}>
+          <div className={styles.identity}>
+            <Logo variant="inverse" small />
+            <ul className={styles.social} aria-label="Social media">
+              {footer.social.map((s) => {
+                const Icon = socialIcons[s.network];
+                const href = configuredUrl(s.href);
+                const label =
+                  s.network === "tiktok"
+                    ? "TikTok"
+                    : s.network === "youtube"
+                      ? "YouTube"
+                      : s.network.charAt(0).toUpperCase() + s.network.slice(1);
+                return (
+                  <li key={s.network}>
+                    {href ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                      >
+                        <Icon aria-hidden size={19} />
+                      </a>
+                    ) : (
+                      <span
+                        className={styles.unconfigured}
+                        role="img"
+                        aria-label={`${label} — link not configured`}
+                        title={`${label} link not configured`}
+                      >
+                        <Icon aria-hidden size={19} />
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
           {footer.columns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <h2 className="text-[13px] font-semibold text-ink">{col.title}</h2>
-              <ul className="mt-2 space-y-1">
-                {col.links.map((l) => (
-                  <li key={l.href + l.label}>
-                    <Link href={l.href} className="text-xs text-ink-muted transition-colors hover:text-primary">
-                      {l.label}
-                    </Link>
+              <h2>{col.title}</h2>
+              <ul className={styles.links}>
+                {col.links.map((link) => (
+                  <li key={link.href + link.label}>
+                    <Link href={link.href}>{link.label}</Link>
                   </li>
                 ))}
               </ul>
             </nav>
           ))}
-          {footer.newsletter.enabled && (
-            <div className="sm:col-span-3 lg:col-span-1">
-              <h2 className="text-[13px] font-semibold text-ink">{footer.newsletter.title}</h2>
-              <p className="mt-1 text-xs text-ink-muted">{footer.newsletter.description}</p>
-              <NewsletterForm className="mt-3" compact />
-            </div>
-          )}
         </div>
-      </div>
-      <div className="border-t border-line">
-        <div className="container flex flex-col items-center gap-3 py-3 text-xs text-ink-muted sm:flex-row sm:justify-between">
-          <p>{footer.copyright.replace("{year}", String(new Date().getFullYear()))}</p>
-          <div className="flex items-center gap-4">
-            <ul className="flex items-center gap-3">
-              {footer.social.map((s) => {
-                const Icon = socialIcons[s.network];
-                return (
-                  <li key={s.network}>
-                    <a href={s.href} aria-label={s.network} className="flex h-8 w-8 items-center justify-center rounded-full text-ink transition-colors hover:text-primary">
-                      <Icon className="h-4 w-4" aria-hidden />
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-            <span className="h-4 w-px bg-line" aria-hidden />
-            <span>Style Elevated. Always.</span>
+        <div className={styles.bottom}>
+          <div className={styles.copyright}>
+            <p>
+              {footer.copyright.replace(
+                "{year}",
+                String(new Date().getFullYear()),
+              )}
+            </p>
+            <p className={styles.tagline}>Style Elevated. Always.</p>
           </div>
+          {demo.showNotices && (
+            <p className={styles.disclaimer}>
+              Frontend demonstration: products, prices, reviews and brand
+              listings are sample data. Brand names are shown for interface
+              demonstration only and do not imply affiliation or authorised
+              resale.
+            </p>
+          )}
+          <p className={styles.credit}>Created by Firoj Ahamed Fahim</p>
         </div>
-        {demo.showNotices && (
-          <p className="container pb-4 text-center text-[11px] leading-relaxed text-ink-muted/70 sm:text-left">
-            Frontend demonstration: products, prices, reviews and brand listings are sample data. Brand names are shown for interface demonstration only and do not imply affiliation or authorised resale.
-          </p>
-        )}
       </div>
     </footer>
   );

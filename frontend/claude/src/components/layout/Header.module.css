@@ -1,0 +1,67 @@
+@media (min-width: 1024px) {
+  .header {
+    background: #fff;
+    backdrop-filter: none;
+  }
+  .row {
+    height: 92px;
+    grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
+    gap: 16px;
+  }
+  .row > div {
+    min-width: 0;
+  }
+  .navigation {
+    width: 100%;
+  }
+  .navigation > ul {
+    height: auto;
+    justify-content: flex-start;
+    gap: clamp(10px, 1.2vw, 22px);
+  }
+  .navigation > ul > li > a {
+    font-size: clamp(10px, 0.9vw, 13px);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .controls {
+    gap: clamp(8px, 1vw, 16px);
+  }
+  .controls > a,
+  .controls > button {
+    flex-shrink: 0;
+    min-width: 32px;
+    min-height: 44px;
+  }
+  .search {
+    flex: 1;
+    min-width: 115px;
+    max-width: 300px;
+  }
+  .search input {
+    font-size: clamp(10px, 0.85vw, 13px);
+    height: 42px;
+    padding-left: 32px;
+  }
+  .search form > svg {
+    left: 10px;
+    width: 15px;
+  }
+  .search form > button[type="submit"] {
+    width: 36px;
+  }
+  .search form > button[type="button"] {
+    right: 38px;
+  }
+  .search input {
+    padding-right: 22px;
+  }
+  .row > a {
+    justify-self: center;
+  }
+  .row > a img {
+    height: 76px;
+    width: auto;
+  }
+}
+@media(min-width:1024px){.navigation>ul>li>div{left:0;transform:none}}
