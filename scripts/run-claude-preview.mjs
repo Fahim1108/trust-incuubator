@@ -1,0 +1,11 @@
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+const mode=process.argv[2];
+if(!['dev','start','build'].includes(mode))throw new Error('Expected dev, start or build');
+if(process.env.VERCEL_ENV === 'production')throw new Error('Sample-data preview cannot run in Vercel Production');
+const env={...process.env,CLAUDE_DESIGN_PREVIEW:'1'};
+for(const key of Object.keys(env))if(/SUPABASE|DATABASE_URL|SITE_URL/.test(key))delete env[key];
+const cwd=fileURLToPath(new URL('../frontend/claude/',import.meta.url));
+const child=spawn(process.execPath,['node_modules/next/dist/bin/next',mode,...(mode==='build'?['--webpack']:['--hostname','0.0.0.0','--port','3001'])],{cwd,env,stdio:'inherit'});
+child.on('error',()=>{process.exitCode=1;});
+child.on('exit',code=>{process.exitCode=code??1;});

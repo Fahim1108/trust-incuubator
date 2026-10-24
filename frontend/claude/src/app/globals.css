@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Theme variables are injected from src/config/theme.ts by <ThemeStyle />.
+ * These fallbacks only apply if the injection is missing.
+ */
+:root {
+  --aa-primary: 107 2 2;
+  --aa-primary-dark: 70 1 1;
+  --aa-background: 255 255 255;
+  --aa-surface: 255 255 255;
+  --aa-text: 23 23 23;
+  --aa-text-muted: 116 112 108;
+  --aa-border: 234 234 234;
+  --aa-selected: 246 234 234;
+  --aa-heading-weight: 500;
+  --aa-radius-card: 6px;
+  --aa-radius-control: 6px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-page font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: rgb(var(--aa-primary) / 0.15);
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--aa-primary) / 0.5);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+    }
+  }
+}
+
+@layer components {
+  .font-serif {
+    font-weight: var(--aa-heading-weight);
+  }
+  .prose-policy h2 {
+    @apply mb-3 mt-10 font-serif text-2xl text-ink sm:text-[28px];
+  }
+  .prose-policy h3 {
+    @apply mb-2 mt-6 text-base font-semibold text-ink;
+  }
+  .prose-policy p,
+  .prose-policy li {
+    @apply text-[15px] leading-7 text-ink-muted;
+  }
+  .prose-policy ul {
+    @apply my-3 list-disc space-y-1.5 pl-5;
+  }
+  .prose-policy ol {
+    @apply my-3 list-decimal space-y-1.5 pl-5;
+  }
+  .prose-policy a {
+    @apply text-primary underline underline-offset-4;
+  }
+  .prose-policy strong {
+    @apply font-semibold text-ink;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+:root{--font-cormorant:"Cormorant Garamond Variable";--font-inter:"Inter Variable";--font-display:"Playfair Display Variable";--font-script:"Allura"}
+.design-preview-notice{background:#fff;color:#6b0202;border-bottom:1px solid #eaeaea;padding:8px 16px;text-align:center;font:11px/1.5 Arial,sans-serif;position:relative;z-index:90}

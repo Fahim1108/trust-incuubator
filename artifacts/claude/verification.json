@@ -1,0 +1,202 @@
+[
+  {
+    "width": 390,
+    "route": "/",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/shop",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/categories",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/brands",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/product/premium-cotton-shirt",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/cart",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/checkout",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/account",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/account/login",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/account/register",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/account/forgot-password",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/wishlist",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/track-order",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/about",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/contact",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/faq",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/shipping-policy",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/return-policy",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/privacy-policy",
+    "status": "passed"
+  },
+  {
+    "width": 390,
+    "route": "/terms",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/shop",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/categories",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/brands",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/product/premium-cotton-shirt",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/cart",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/checkout",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/account",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/account/login",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/account/register",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/account/forgot-password",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/wishlist",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/track-order",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/about",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/contact",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/faq",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/shipping-policy",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/return-policy",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/privacy-policy",
+    "status": "passed"
+  },
+  {
+    "width": 1440,
+    "route": "/terms",
+    "status": "passed"
+  }
+]

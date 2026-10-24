@@ -34,3 +34,5 @@ See [authentication and security setup](docs/AUTH_SECURITY.md) for migrations, a
 ## Current development verification
 
 The first two migrations are applied to the authorized development project; local filenames match its actual recorded versions. `npm run verify:supabase:development` is read-only. Real hosted/browser and staff fixtures are exercised with `npm run test:supabase:development` and `npm run test:supabase:staff`; read AUTH_SECURITY.md before running these development-only mutation tests. A live loopback development server must not already occupy the configured test port. A rejected synthetic signup address is a blocked result, never a passing email-delivery test. See PHASE_1_REPORT.md for the remaining email gates; Phase 2 is not started.
+
+Claude frontend design review is staged independently under `frontend/claude` on the frontend integration branch. Use `npm run dev:claude` or build/start scripts; see [setup](docs/CLAUDE_FRONTEND_SETUP.md) and [audit/contracts](docs/CLAUDE_FRONTEND_AUDIT.md). This package contains explicitly labelled sample data and is not the production storefront or a replacement for Supabase authentication.

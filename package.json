@@ -20,7 +20,13 @@
     "test:supabase:development": "node --use-env-proxy scripts/test-supabase-development.mjs",
     "test:supabase:staff": "node --use-env-proxy scripts/test-supabase-staff.mjs",
     "test:storefront": "node scripts/test-storefront.mjs",
-    "test:slideshow": "node scripts/test-homepage-slideshow.mjs"
+    "test:slideshow": "node scripts/test-homepage-slideshow.mjs",
+    "dev:claude": "node scripts/run-claude-preview.mjs dev",
+    "check:claude": "npm --prefix frontend/claude run lint && npm --prefix frontend/claude run typecheck",
+    "build:claude": "node scripts/run-claude-preview.mjs build",
+    "start:claude": "node scripts/run-claude-preview.mjs start",
+    "test:claude": "vitest run --config frontend/claude/vitest.config.mts",
+    "test:claude:browser": "node scripts/test-claude-frontend.mjs"
   },
   "repository": {
     "type": "git",
