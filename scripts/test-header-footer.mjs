@@ -25,7 +25,7 @@ try{
  const footer=p.locator('footer');assert.equal(await footer.evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(64, 0, 0)');
  await expect(footer.getByText('Created by Firoj Ahamed Fahim',{exact:true})).toBeVisible();assert.equal(await footer.locator('input,form').count(),0);
  assert.equal(await footer.locator('nav').count(),3);assert.equal(await footer.locator('a[href="#"]').count(),0);
- assert.equal(await footer.locator('img').getAttribute('src').then(src=>decodeURIComponent(src).includes('logo-white.png')),true);
+ assert.equal(await footer.locator('img').first().getAttribute('src').then(src=>decodeURIComponent(src).includes('logo-white.png')),true);
  const credit=await footer.getByText('Created by Firoj Ahamed Fahim',{exact:true}).boundingBox();assert.ok(Math.abs(credit.x+credit.width/2-width/2)<1);
  for(const link of await footer.locator('nav a').all()){const href=await link.getAttribute('href');assert.ok(href.startsWith('/'));}
  if(width===1440){for(const link of await footer.locator('nav a').all()){const response=await p.request.get('http://localhost:3001'+await link.getAttribute('href'));assert.equal(response.status(),200,'Existing footer route works');}}

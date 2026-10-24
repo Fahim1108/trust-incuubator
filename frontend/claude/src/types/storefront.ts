@@ -1,3 +1,4 @@
+import type { CompleteLook, MerchandisingRules } from "@/lib/merchandising";
 /** Storefront / appearance configuration contracts. */
 
 export interface ThemeColors {
@@ -85,10 +86,14 @@ export type HomepageSectionType =
   | "new-arrivals"
   | "featured"
   | "best-sellers"
+  | "trending"
+  | "most-popular"
+  | "complete-look"
   | "promo-banners"
   | "newsletter";
 
-export interface HomepageSection {
+export interface HomepageSection extends MerchandisingRules {
+  looks?: CompleteLook[];
   id: string;
   type: HomepageSectionType;
   /** Label used in the Appearance Editor. */

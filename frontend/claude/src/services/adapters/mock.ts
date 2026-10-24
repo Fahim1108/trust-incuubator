@@ -15,6 +15,10 @@ const notConnected = (what: string): ActionResult<never> => ({
 const byId = new Map(mockProducts.map((p) => [p.id, p]));
 
 export const mockDataSource: StorefrontDataSource = {
+  async getHomepageProducts() {
+    // Isolated preview fixtures only: simulated publication dates, NOT verified live timestamps.
+    return mockProducts.map(product => ({ product, status: "published" as const, publishedAt: product.createdAt }));
+  },
   async getProducts(query = {}) {
     return queryProducts(mockProducts, mockCategories, mockBrands, query);
   },

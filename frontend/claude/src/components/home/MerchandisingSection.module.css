@@ -1,0 +1,9 @@
+.grid.grid { gap: 20px 12px; }
+.grid > li:nth-child(n+5) { display: none; }
+.look { display: grid; gap: 24px; }
+.lookPhoto { position: relative; aspect-ratio: 4/5; overflow: hidden; border-radius: 8px; }
+@media (min-width: 768px) {
+  .grid.grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 20px; }
+  .grid > li:nth-child(n+5) { display: list-item; }
+  .look { grid-template-columns: 1fr 1fr; align-items: start; }
+}

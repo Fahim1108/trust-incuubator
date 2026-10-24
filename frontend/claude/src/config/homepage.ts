@@ -83,13 +83,18 @@ export const valueProps: ValueProp[] = [
  */
 export const homepageSections: HomepageSection[] = [
   { id: "hero", type: "hero", adminLabel: "Hero banner", enabled: true },
-  { id: "categories", type: "categories", adminLabel: "Categories / Brands tabs", enabled: true, title: "Shop by Category", cta: { label: "View All", href: "/categories" } },
-  { id: "brands", type: "brands", adminLabel: "Top Brands", enabled: true, title: "Top Brands", cta: { label: "See All Brands", href: "/brands" } },
-  { id: "featured", type: "featured", adminLabel: "Featured Products", enabled: true, title: "Featured Products", cta: { label: "View All Products", href: "/shop" }, limit: 6 },
-  { id: "value-props", type: "value-props", adminLabel: "Value propositions", enabled: true },
-  // Not in the approved mockups — kept ready; switch on in the Appearance Editor.
-  { id: "new-arrivals", type: "new-arrivals", adminLabel: "New Arrivals", enabled: false, title: "New Arrivals", cta: { label: "View All", href: "/shop?sort=newest" }, limit: 6 },
+  { id: "categories", type: "categories", adminLabel: "Shop by Categories", enabled: true, title: "Shop by Categories", cta: { label: "View All", href: "/categories" } },
+  { id: "brands", type: "brands", adminLabel: "Shop by Brands", enabled: true, title: "Shop by Brands", cta: { label: "See All Brands", href: "/brands" } },
+  { id: "new-arrivals", type: "new-arrivals", adminLabel: "New Arrivals", enabled: true, title: "New Arrivals", subtitle: "Just landed. Ready to wear.", cta: { label: "View All", href: "/collections/new-arrivals" }, limit: 8, softCategoryCap: 2, preferInStock: true },
+  { id: "featured", type: "featured", adminLabel: "Featured Picks", enabled: true, title: "Featured Picks", subtitle: "Handpicked for your everyday style.", cta: { label: "View All", href: "/collections/featured" }, limit: 8, softCategoryCap: 2, preferInStock: true,
+    // Explicit preview curation order; replace through a trusted CMS adapter on integration.
+    productIds: ["p002", "p102", "p202", "p301", "p402", "p502", "p003", "p105", "p203", "p503"] },
+  { id: "trending", type: "trending", adminLabel: "Trending Now", enabled: false, title: "Trending Now", subtitle: "In focus. In style.", cta: { label: "View All", href: "/collections/trending" }, limit: 8, productIds: [], softCategoryCap: 2 },
+  { id: "complete-look", type: "complete-look", adminLabel: "Complete the Look", enabled: false, title: "Complete the Look", subtitle: "Every detail makes the difference.", looks: [] },
+  { id: "most-popular", type: "most-popular", adminLabel: "Most Popular", enabled: false, title: "Most Popular", cta: { label: "View All", href: "/collections/most-popular" }, limit: 8 },
+  // Retained optional sections; disabled to preserve the requested launch order.
+  { id: "value-props", type: "value-props", adminLabel: "Value propositions", enabled: false },
   { id: "promo-banners", type: "promo-banners", adminLabel: "Promotional banners", enabled: false },
-  { id: "best-sellers", type: "best-sellers", adminLabel: "Best Sellers", enabled: false, title: "Best Sellers", cta: { label: "View All", href: "/shop?sort=rating" }, limit: 6 },
+  { id: "best-sellers", type: "best-sellers", adminLabel: "Best Sellers (legacy)", enabled: false },
   { id: "newsletter", type: "newsletter", adminLabel: "Newsletter", enabled: false },
 ];

@@ -1,3 +1,4 @@
+import type { MerchandisingCandidate } from "@/lib/merchandising";
 import type {
   ActionResult,
   Address,
@@ -42,6 +43,7 @@ export interface ProductSuggestion {
  */
 export interface StorefrontDataSource {
   // ---- Catalogue (read) ----
+  getHomepageProducts(): Promise<MerchandisingCandidate[]>;
   getProducts(query?: ProductQueryInput): Promise<Paginated<Product> & { facets: CatalogFacets }>;
   getProductBySlug(slug: string): Promise<Product | null>;
   getProductsByIds(ids: string[]): Promise<Product[]>;

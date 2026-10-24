@@ -7,6 +7,7 @@ import {
   Youtube,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useStorefront } from "@/context/StorefrontContext";
 import type { SocialLink } from "@/types";
 import { Logo } from "./Logo";
@@ -35,7 +36,10 @@ export function Footer() {
       <div className={`container ${styles.content}`}>
         <div className={styles.grid}>
           <div className={styles.identity}>
-            <Logo variant="inverse" small />
+            <div className={styles.branding}>
+              <Logo variant="inverse" small />
+              <Image src="/brand/wordmark-white.png" alt="Attires Arena" width={222} height={19} className={styles.wordmark} />
+            </div>
             <ul className={styles.social} aria-label="Social media">
               {footer.social.map((s) => {
                 const Icon = socialIcons[s.network];
