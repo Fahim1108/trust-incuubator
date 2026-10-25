@@ -10,7 +10,7 @@ export function ActiveFilters({ facets }: { facets: CatalogFacets }) {
   const chips: { label: string; remove: () => void }[] = [];
   if (!locked.category) query.categorySlugs?.forEach((s) => chips.push({ label: facets.categories.find((c) => c.slug === s)?.name ?? s, remove: () => update({ categorySlugs: query.categorySlugs!.filter((x) => x !== s) }) }));
   if (!locked.brand) query.brandSlugs?.forEach((s) => chips.push({ label: facets.brands.find((b) => b.slug === s)?.name ?? s, remove: () => update({ brandSlugs: query.brandSlugs!.filter((x) => x !== s) }) }));
-  query.sizes?.forEach((s) => chips.push({ label: `Size ${s}`, remove: () => update({ sizes: query.sizes!.filter((x) => x !== s) }) }));
+  query.sizes?.forEach((s) => chips.push({ label: `Size ${facets.sizeLabels?.[s] ?? s}`, remove: () => update({ sizes: query.sizes!.filter((x) => x !== s) }) }));
   query.colorIds?.forEach((s) => chips.push({ label: facets.colors.find((c) => c.id === s)?.name ?? s, remove: () => update({ colorIds: query.colorIds!.filter((x) => x !== s) }) }));
   if (query.minPrice !== undefined || query.maxPrice !== undefined)
     chips.push({

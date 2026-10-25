@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./AttiresArenaLoader.module.css";
 
@@ -55,13 +55,20 @@ export function AttiresArenaLoader({
   size = "lg",
 }: LoaderProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setMobile(media.matches);
+    update(); media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   // Use actual device-sized geometry: scaling a 185px SVG down to 24px
   // also scaled its 4px stroke to an almost invisible half-pixel.
   const diameter = { sm: 24, md: 40, lg: 80 }[size];
   const stroke = { sm: 2, md: 3, lg: 4 }[size];
   useEffect(() => {
     const node = ref.current;
-    if (!active || !fullScreen || !node) return;
+    if (!active || !fullScreen || !node || !mobile) return;
     const previousFocus = document.activeElement;
     const touched: HTMLElement[] = [];
     let branch: HTMLElement = node;
@@ -123,7 +130,7 @@ export function AttiresArenaLoader({
         previousFocus.focus({ preventScroll: true });
       if (!node.isConnected) fadeOut(node);
     };
-  }, [active, fullScreen]);
+  }, [active, fullScreen, mobile]);
   if (!active) return null;
   return (
     <div
@@ -133,6 +140,7 @@ export function AttiresArenaLoader({
       data-loader-size={size}
       data-aa-loader={fullScreen ? "overlay" : "inline"}
     >
+      <span className={styles.desktopProgress} aria-hidden="true">{label}</span>
       <div className={styles.art} aria-hidden="true">
         <svg
           className={styles.ring}

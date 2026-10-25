@@ -423,3 +423,22 @@ See PHASE_1_REPORT.md for the report and AUTH_SECURITY.md for setup/provisioning
 - Removed the old Vecteezy attribution from checkout because that artwork is no longer rendered. Archived JPG/licence retained; no attribution added for the replacement PNGs. Shared COD/full-payment UI, receiving configuration and disabled live submissions preserved.
 - Passed Claude ESLint, TypeScript, 41 unit tests, production build and local Chromium payment checks at 360/390/430/768/1440px: both PNGs load, no attribution UI, correct copy/amount behaviour, keyboard navigation, no overflow, no order/payment POSTs or false confirmations. Mobile and desktop screenshots visually reviewed in `artifacts/payment-receiving/`.
 - These changes have not been committed, pushed or deployed. Existing hosted Preview still serves its previously deployed commit. No backend, Supabase or production changes.
+
+### 2026-10-25 — Supplied payment logos deployed and hosted-browser verified
+
+- Logo replacement committed and pushed on `feature/claude-frontend-integration`: `a37ccd56d22f3799fd5467f3649e0bd69c4e0e00`. Previous local-only status above is historical.
+- New separate Preview deployment `dpl_8XSLyJJSqbDR2DTt5sLSxfteLkfd` is READY at https://attires-arena-frontend-preview-7en094yts-fahim-s-projects1.vercel.app/checkout; Vercel API confirmed exact commit, project and Preview (`staging`) target. Root remains `frontend/claude`.
+- Re-ran Claude lint, TypeScript and all 41 unit tests successfully; production build passed before this unchanged source commit was deployed, and hosted build reached READY.
+- Actual hosted Chromium checks passed at 390px and 1440px after resolving the test session's Vercel protection cookie (TLS verification remained enabled). Both original PNGs loaded, bKash/Nagad tabs and clipboard worked in COD/full UI, reference input worked, no attribution UI, no overflow/browser errors, synthetic submission blocked and zero order/payment POSTs. Hosted screenshots and machine-readable results: `artifacts/payment-logos-hosted/`. Mobile and desktop images visually reviewed.
+- Project authentication preserved. Temporary verification access revoked in finally; users must sign in to the owning Vercel account if prompted. No production/Supabase changes, live orders or payments enabled.
+- This post-deployment evidence is local/uncommitted and is not claimed to be part of the deployed source commit.
+
+- Additional screenshot recapture encountered Vercel sign-in instead of checkout (test-access propagation/session issue); no application assertions executed in that retry. Earlier completed hosted run and its verification JSON remain valid. Initial full-page screenshots caught existing header transitions; no unrelated header code was modified. All temporary access from retries was revoked.
+
+### 2026-10-25 — Final UI refinement excluding payment UI
+
+Implemented the uploaded final refinement prompt's safe non-payment work: navigation/product readability, guide-derived clothing labels with raw variant keys, same-variant size/color filtering, no Quick View or price-filter controls, dominant burgundy Buy Now and outlined Add to Cart, mobile-only circular loading, current-stage tracking animation with terminal/reduced-motion stop, signed-out account menu/protected account redirect, and footer WhatsApp/bold name. Removed fake customer sessions and public sample-order lookup; retained honest sample-catalogue/availability disclosures. Payment components and receiving configuration unchanged; no root app/Supabase/database/production changes.
+
+Verification: root lint/TypeScript/58 tests passed; Claude lint/TypeScript/47 tests/production build passed; 40-route browser suite passed at 390/1440px. New refinement browser suite passed at 360/390/430/768/1024/1280/1440px; screenshot/video evidence is being refreshed with capture-only transition settling. Earlier strict typing errors were fixed; browser FFmpeg uses existing `/workspace/.playwright` cache. A mistaken test selector selected Home instead of the logo at desktop; corrected to the actual image link and all geometry checks passed.
+
+Integration blockers: Claude app still uses fixture catalogue/local cart/wishlist; Supabase authentication is not connected to this separate app. Auth mutations truthfully fail closed; live sign-out/session and private tracking need integration. Tracking animation test data is isolated on gated `/motion-preview`. No live payment/order or confirmed-order video is claimed. See `docs/UI_REFINEMENT_REPORT.md` for exact scope and commands.

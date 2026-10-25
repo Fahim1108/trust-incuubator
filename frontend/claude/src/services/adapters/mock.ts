@@ -2,7 +2,7 @@ import { defaultStorefrontSettings } from "@/config";
 import { previewPaymentConfiguration } from "@/config/payment-receiving";
 import { queryProducts } from "@/lib/catalog-query";
 import { findVariant, imagesForColor } from "@/lib/product";
-import { mockBrands, mockCartSeed, mockCategories, mockCustomer, mockOrders, mockProducts, mockReviewsFor, mockSizeGuides } from "@/mocks";
+import { mockBrands, mockCartSeed, mockCategories, mockProducts, mockReviewsFor, mockSizeGuides } from "@/mocks";
 import type { ActionResult, CartItem } from "@/types";
 import type { StorefrontDataSource } from "../types";
 
@@ -10,7 +10,7 @@ import type { StorefrontDataSource } from "../types";
 const notConnected = (what: string): ActionResult<never> => ({
   ok: false,
   reason: "not_connected",
-  message: `${what} is not connected yet. This is a frontend demonstration — no data was sent or saved.`,
+  message: `${what} is not connected yet. No data was sent or saved.`,
 });
 
 const byId = new Map(mockProducts.map((p) => [p.id, p]));
@@ -121,14 +121,13 @@ export const mockDataSource: StorefrontDataSource = {
   },
 
   async getCurrentCustomer() {
-    return mockCustomer;
+    return null;
   },
   async getOrders() {
-    return mockOrders;
+    return [];
   },
-  async getOrderByNumber(orderNumber) {
-    const n = orderNumber.trim().toUpperCase();
-    return mockOrders.find((o) => o.orderNumber === n) ?? null;
+  async getOrderByNumber() {
+    return null;
   },
 
   async placeOrder() {

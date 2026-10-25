@@ -1,4 +1,6 @@
 import type { Product, ProductBadge, ProductImage, ProductVariant } from "@/types";
+import { sizeLabelsFromGuide } from "@/lib/size-labels";
+import { mockSizeGuides } from "./size-guides";
 import { COLORS, type ColorKey } from "./colors";
 
 /**
@@ -106,6 +108,7 @@ function build(seed: ProductSeed): Product {
     compareAtPrice: seed.compareAtPrice,
     colors: seed.colors.map((c) => COLORS[c]),
     sizes,
+    sizeLabels: sizeLabelsFromGuide(mockSizeGuides[SIZE_GUIDE_BY_CATEGORY[seed.category] ?? ""]),
     variants,
     imagesByColor,
     defaultImages: imagesByColor[first] ?? [],

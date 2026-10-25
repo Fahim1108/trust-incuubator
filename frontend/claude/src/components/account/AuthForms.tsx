@@ -55,7 +55,7 @@ export function LoginForm() {
       <Input label="Email or Mobile" leftIcon={<Mail className="h-4 w-4" />} autoComplete="username" placeholder="you@example.com or 01XXXXXXXXX" value={identifier} onChange={(e) => setIdentifier(e.target.value)} error={errors.identifier} />
       <PasswordInput label="Password" autoComplete="current-password" placeholder="Your password" value={password} onChange={(e) => setPassword(e.target.value)} error={errors.password} />
       <div className="flex items-center justify-between">
-        <Checkbox label="Remember me" />
+        <span className="text-xs text-ink-muted">Sign in is currently unavailable</span>
         <Link href="/account/forgot-password" className="text-xs text-primary hover:underline">
           Forgot password?
         </Link>

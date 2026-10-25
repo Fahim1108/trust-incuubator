@@ -19,7 +19,7 @@ export function OrderDetail({ order }: { order: Order }) {
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <section className="rounded-card border border-line p-5" aria-label="Tracking">
           <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-ink-muted">Tracking</h3>
-          <OrderTimeline events={order.timeline} />
+          <OrderTimeline events={order.timeline} status={order.status} />
           {order.courier && (
             <p className="mt-6 rounded-control bg-[#F9F8F7] p-3 text-xs text-ink-muted">
               Courier: <span className="text-ink">{order.courier.name}</span> · Tracking code <span className="text-ink">{order.courier.trackingCode}</span>

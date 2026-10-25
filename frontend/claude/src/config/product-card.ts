@@ -5,7 +5,7 @@ export const productCard: ProductCardSettings = {
   showBrand: false,
   showRating: false,
   showColorSwatches: false,
-  showQuickAdd: true,
+  showQuickAdd: false,
   showWishlist: true,
   showDiscountBadge: false,
   showAddToCart: true,

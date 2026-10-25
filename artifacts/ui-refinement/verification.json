@@ -1,0 +1,34 @@
+{
+  "origin": "http://localhost:3001",
+  "results": [
+    {
+      "width": 360,
+      "status": "passed"
+    },
+    {
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "width": 430,
+      "status": "passed"
+    },
+    {
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "width": 1280,
+      "status": "passed"
+    },
+    {
+      "width": 1440,
+      "status": "passed"
+    }
+  ],
+  "limitations": "No live authentication, tracking or payment services. Tracking fixture only on gated motion-preview."
+}

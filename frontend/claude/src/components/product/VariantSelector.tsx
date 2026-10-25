@@ -37,7 +37,7 @@ export function ColorSelector({ colors, value, onChange }: { colors: ColorOption
   );
 }
 
-export function SizeSelector({ sizes, value, onChange, isAvailable, onSizeGuide, error }: { sizes: string[]; value?: string; onChange: (s: string) => void; isAvailable: (s: string) => boolean; onSizeGuide?: () => void; error?: string }) {
+export function SizeSelector({ sizes, labels, value, onChange, isAvailable, onSizeGuide, error }: { sizes: string[]; labels?: Record<string, string>; value?: string; onChange: (s: string) => void; isAvailable: (s: string) => boolean; onSizeGuide?: () => void; error?: string }) {
   if (sizes.length === 1 && sizes[0] === "One Size") {
     return <p className="text-sm text-ink">Size: <span className="font-medium">One Size</span></p>;
   }
@@ -45,7 +45,7 @@ export function SizeSelector({ sizes, value, onChange, isAvailable, onSizeGuide,
     <fieldset>
       <div className="mb-2.5 flex items-center justify-between">
         <legend className="text-sm text-ink">
-          Size: <span className="font-medium">{value ?? "Select a size"}</span>
+          Size: <span className="font-medium">{value ? labels?.[value] ?? value : "Select a size"}</span>
         </legend>
         {onSizeGuide && (
           <button type="button" onClick={onSizeGuide} className="text-xs text-primary underline underline-offset-4 hover:text-primary-dark">
@@ -53,7 +53,7 @@ export function SizeSelector({ sizes, value, onChange, isAvailable, onSizeGuide,
           </button>
         )}
       </div>
-      <div className="grid grid-cols-5 gap-2 sm:grid-cols-6" role="radiogroup" aria-invalid={error ? true : undefined}>
+      <div className="flex flex-wrap gap-2" role="radiogroup" aria-invalid={error ? true : undefined}>
         {sizes.map((s) => {
           const available = isAvailable(s);
           const active = s === value;
@@ -67,12 +67,12 @@ export function SizeSelector({ sizes, value, onChange, isAvailable, onSizeGuide,
               disabled={!available}
               onClick={() => onChange(s)}
               className={cn(
-                "aa-press relative h-11 rounded-control border text-sm transition-colors",
+                "aa-press relative h-11 min-w-14 px-3 rounded-control border text-sm transition-colors",
                 active ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-ink/50",
                 !available && "cursor-not-allowed text-ink-muted/50 after:absolute after:left-1/2 after:top-1/2 after:h-px after:w-[70%] after:-translate-x-1/2 after:-rotate-[20deg] after:bg-ink/25 hover:border-line",
               )}
             >
-              {s}
+              {labels?.[s] ?? s}
             </button>
           );
         })}

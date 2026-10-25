@@ -75,3 +75,11 @@
     will-change: auto;
   }
 }
+
+.desktopProgress { display: none; }
+@media (min-width: 768px) {
+  .art { display: none; }
+  .desktopProgress { display: inline; font-size: 13px; }
+  .loader { width: auto; height: auto; }
+  .fullscreen { position: static; min-height: 128px; }
+}

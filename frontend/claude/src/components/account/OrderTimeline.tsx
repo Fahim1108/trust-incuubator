@@ -1,35 +1,36 @@
-import { Check } from "lucide-react";
-import { cn } from "@/lib/cn";
-import { formatDateTime } from "@/lib/format";
-import type { OrderTimelineEvent } from "@/types";
+import { Check } from 'lucide-react';
+import { cn } from '@/lib/cn';
+import { formatDateTime } from '@/lib/format';
+import type { OrderStatus, OrderTimelineEvent } from '@/types';
+import styles from './OrderTimeline.module.css';
 
-export function OrderTimeline({ events }: { events: OrderTimelineEvent[] }) {
-  return (
-    <ol className="relative space-y-6">
-      {events.map((e, i) => {
-        const done = Boolean(e.at);
-        const cancelled = e.status === "cancelled";
-        const isLastDone = done && !events[i + 1]?.at;
-        return (
-          <li key={`${e.status}-${i}`} className="relative flex gap-4">
-            {i < events.length - 1 && <span className={cn("absolute left-[13px] top-7 h-[calc(100%+0.5rem)] w-px", done && events[i + 1]?.at ? "bg-primary" : "bg-line")} aria-hidden />}
-            <span
-              className={cn(
-                "relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2",
-                cancelled ? "border-danger bg-danger text-white" : done ? "border-primary bg-primary text-white" : "border-line bg-surface",
-                isLastDone && !cancelled && "ring-4 ring-primary/15",
-              )}
-            >
-              {done && <Check className="h-3.5 w-3.5" aria-hidden />}
-            </span>
-            <div className="pt-0.5">
-              <p className={cn("text-sm font-medium", done ? "text-ink" : "text-ink-muted")}>{e.label}</p>
-              {e.at && <p className="text-xs text-ink-muted">{formatDateTime(e.at)}</p>}
-              {e.description && <p className="mt-0.5 text-xs text-ink-muted">{e.description}</p>}
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  );
+const stages: {status: OrderStatus; label: string}[] = [
+  {status:'pending',label:'Order Placed'}, {status:'confirmed',label:'Order Confirmed'},
+  {status:'packed',label:'Processing'}, {status:'shipped',label:'Shipped'},
+  {status:'out-for-delivery',label:'Out for Delivery'}, {status:'delivered',label:'Delivered'},
+];
+
+/** Status and timestamps must come from an authorised order response, never from URL parameters. */
+export function OrderTimeline({events,status}: {events:OrderTimelineEvent[];status?:OrderStatus}) {
+  const current=status ?? [...events].reverse().find(event=>event.at)?.status;
+  const terminal=current==='delivered'||current==='cancelled'||current==='returned';
+  const visible=terminal&&current!=='delivered'?[...stages,{status:current,label:current==='cancelled'?'Cancelled':'Returned'}]:stages;
+  return <div className={styles.container}><ol className={styles.timeline} aria-label="Order progress">
+    {visible.map((stage,index)=>{
+      const event=events.find(e=>e.status===stage.status);
+      const active=stage.status===current;
+      // A later status alone does not invent timestamps or completion for missing events.
+      const completed=Boolean(event?.at)&&(!active||terminal);
+      const next=events.find(e=>e.status===visible[index+1]?.status);
+      return <li key={stage.status} className={styles.stage} aria-current={active?'step':undefined}>
+        {index<visible.length-1&&<span className={cn(styles.line,completed&&next?.at&&styles.completedLine)} aria-hidden />}
+        <span data-tracking-indicator className={cn(styles.indicator,(completed||active)&&styles.filled,active&&!terminal&&styles.active)} aria-hidden>{completed&&<Check size={15}/>}</span>
+        <div><p className={cn('text-sm font-medium',active?'text-primary':'text-ink')}>{stage.label}</p>
+          {active&&<span className="text-xs text-primary">{terminal?'Final status':'Current stage'}</span>}
+          {event?.at&&<p className="text-xs text-ink-muted">{formatDateTime(event.at)}</p>}
+          {event?.description&&<p className="mt-1 text-xs text-ink-muted">{event.description}</p>}
+        </div>
+      </li>;
+    })}
+  </ol></div>;
 }

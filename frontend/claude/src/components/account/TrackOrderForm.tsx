@@ -2,7 +2,7 @@
 
 import { PackageSearch } from "lucide-react";
 import { useState, useTransition } from "react";
-import { Button, DemoNotice, EmptyState, Input } from "@/components/ui";
+import { Button, EmptyState, Input } from "@/components/ui";
 import { getOrderByNumberAction } from "@/services/actions";
 import type { Order } from "@/types";
 import { OrderStatusBadge } from "./OrderStatusBadge";
@@ -30,13 +30,13 @@ export function TrackOrderForm() {
           });
         }}
       >
-        <Input label="Order Number" placeholder="e.g. DEMO-10241" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} error={error} />
+        <Input label="Order Number" placeholder="Your order reference" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} error={error} />
         <Input label="Phone Number (optional)" type="tel" placeholder="01XXXXXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        <Button type="submit" size="lg" loading={pending}>
+        <Button type="submit" size="lg" loading={pending} disabled>
           Track
         </Button>
       </form>
-      <DemoNotice>Tracking uses sample orders. Try <strong>DEMO-10241</strong> or <strong>DEMO-10198</strong>.</DemoNotice>
+      <p role="status" className="text-sm text-ink-muted">Order tracking is currently unavailable. Contact us on WhatsApp for assistance with an existing order.</p>
       {order === null && <EmptyState icon={<PackageSearch className="h-7 w-7" />} title="Order not found" description="Check the order number from your confirmation SMS and try again." />}
       {order && (
         <section className="rounded-card border border-line p-5 sm:p-6" aria-live="polite">
@@ -44,7 +44,7 @@ export function TrackOrderForm() {
             <h2 className="font-serif text-2xl text-ink">{order.orderNumber}</h2>
             <OrderStatusBadge status={order.status} />
           </div>
-          <OrderTimeline events={order.timeline} />
+          <OrderTimeline events={order.timeline} status={order.status} />
         </section>
       )}
     </div>

@@ -8,7 +8,6 @@ const toggles: { key: keyof ProductCardSettings; label: string }[] = [
   { key: "showBrand", label: "Show brand name" },
   { key: "showRating", label: "Show rating" },
   { key: "showColorSwatches", label: "Show colour swatches" },
-  { key: "showQuickAdd", label: "Show Quick Add (desktop hover)" },
   { key: "showWishlist", label: "Show wishlist heart" },
   { key: "showDiscountBadge", label: "Show discount badge" },
   { key: "showAddToCart", label: "Show Add to Cart button" },

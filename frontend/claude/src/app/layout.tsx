@@ -41,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <style>{motionVariables}</style>
       </head>
       <body>
-        <aside className="design-preview-notice" aria-label="Design preview notice">CLAUDE DESIGN PREVIEW · Sample products, prices, brands, customers and shipping · No live purchases or payments · Do not enter real passwords or personal details.</aside>
+        <aside className="design-preview-notice" aria-label="Design preview notice">Shopping is not yet available. Catalogue and delivery details are samples. Do not enter real passwords or payment details.</aside>
         <StorefrontProvider settings={settings}>
           <ToastProvider>
             <WishlistProvider>

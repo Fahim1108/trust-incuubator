@@ -78,6 +78,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, onColorChang
 
       <SizeSelector
         sizes={product.sizes}
+        labels={product.sizeLabels}
         value={size}
         onChange={(s) => {
           setSize(s);
@@ -99,12 +100,12 @@ export function ProductPurchasePanel({ product, brandName, colorId, onColorChang
 
       <div className="space-y-2.5">
         <div className="flex gap-2.5">
-          <Button size="lg" fullWidth onClick={() => add(false)} disabled={!colorHasStock || (variant && stock < 1)} leftIcon={<ShoppingBag className="h-4 w-4" />}>
+          <Button size="lg" variant="outline" className="border-primary bg-white text-primary hover:bg-selected hover:text-primary" fullWidth onClick={() => add(false)} disabled={!colorHasStock || (variant && stock < 1)} leftIcon={<ShoppingBag className="h-4 w-4" />}>
             {colorHasStock ? "Add to Cart" : "Sold Out"}
           </Button>
           {!compact && <WishlistButton productId={product.id} productName={product.name} variant="inline" className="h-12 w-12 shrink-0" />}
         </div>
-        <Button size="lg" variant="secondary" fullWidth onClick={() => add(true)} disabled={!colorHasStock || (variant && stock < 1)} leftIcon={<Zap className="h-4 w-4" />}>
+        <Button size="lg" variant="burgundy" fullWidth onClick={() => add(true)} disabled={!colorHasStock || (variant && stock < 1)} leftIcon={<Zap className="h-4 w-4" />}>
           Buy Now
         </Button>
         {compact && (

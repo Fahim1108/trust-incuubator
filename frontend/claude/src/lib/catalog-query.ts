@@ -90,8 +90,9 @@ export function queryProducts(
     (p) =>
       (!catIds?.length || catIds.includes(p.categoryId)) &&
       (!brandIds?.length || brandIds.includes(p.brandId)) &&
-      (!query.sizes?.length || p.sizes.some((s) => query.sizes!.includes(s))) &&
-      (!query.colorIds?.length || p.colors.some((c) => query.colorIds!.includes(c.id))) &&
+      ((!query.sizes?.length && !query.colorIds?.length) || p.variants.some(v =>
+        (!query.sizes?.length || query.sizes.includes(v.size)) &&
+        (!query.colorIds?.length || query.colorIds.includes(v.colorId)))) &&
       (query.minPrice === undefined || p.price >= query.minPrice) &&
       (query.maxPrice === undefined || p.price <= query.maxPrice),
   );
@@ -118,10 +119,11 @@ export function queryProducts(
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const page = Math.min(Math.max(1, query.page ?? 1), totalPages);
 
+  const facetProducts = base.filter(p => (!catIds?.length || catIds.includes(p.categoryId)) && (!brandIds?.length || brandIds.includes(p.brandId)));
   const colorMap = new Map<string, Product["colors"][number]>();
-  base.forEach((p) => p.colors.forEach((c) => colorMap.set(c.id, c)));
+  facetProducts.forEach((p) => p.colors.forEach((c) => colorMap.set(c.id, c)));
   const sizeOrder = ["S", "M", "L", "XL", "XXL"];
-  const sizes = Array.from(new Set(base.flatMap((p) => p.sizes))).sort((a, b) => {
+  const sizes = Array.from(new Set(facetProducts.flatMap((p) => p.sizes))).sort((a, b) => {
     const ia = sizeOrder.indexOf(a), ib = sizeOrder.indexOf(b);
     if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
     return Number(a) - Number(b) || a.localeCompare(b);
@@ -142,6 +144,10 @@ export function queryProducts(
         .map((b) => ({ slug: b.slug, name: b.name, count: base.filter((p) => p.brandId === b.id).length }))
         .filter((b) => b.count > 0),
       sizes,
+      sizeLabels: Object.fromEntries(sizes.flatMap(size => {
+        const labels = new Set(base.filter(p => (!catIds?.length || catIds.includes(p.categoryId)) && p.sizes.includes(size)).map(p => p.sizeLabels?.[size] ?? size));
+        return labels.size === 1 ? [[size, [...labels][0] ?? size]] : [];
+      })),
       colors: Array.from(colorMap.values()),
       priceRange: { min: prices.length ? Math.min(...prices) : 0, max: prices.length ? Math.max(...prices) : 0 },
     },

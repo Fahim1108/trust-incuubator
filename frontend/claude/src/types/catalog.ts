@@ -45,6 +45,8 @@ export interface Product {
   compareAtPrice?: Money;
   colors: ColorOption[];
   sizes: string[];
+  /** Display labels from this catalogue entry’s own clothing guide; raw variant keys remain unchanged. */
+  sizeLabels?: Record<string, string>;
   variants: ProductVariant[];
   /** Images per color id. Falls back to `defaultImages` when a color has none. */
   imagesByColor: Record<string, ProductImage[]>;
@@ -137,6 +139,8 @@ export interface CatalogFacets {
   categories: { slug: string; name: string; count: number }[];
   brands: { slug: string; name: string; count: number }[];
   sizes: string[];
+  /** Display labels from this catalogue entry’s own clothing guide; raw variant keys remain unchanged. */
+  sizeLabels?: Record<string, string>;
   colors: ColorOption[];
   priceRange: { min: number; max: number };
 }

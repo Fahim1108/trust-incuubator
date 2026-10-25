@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Badge, Price, Rating, SmartImage } from "@/components/ui";
@@ -11,7 +11,7 @@ import { findVariant, firstAvailableSize, imagesForColor, toCartLine, totalStock
 import { useCart } from "@/context/CartContext";
 import type { Product } from "@/types";
 import { ColorSwatches } from "./ColorSwatches";
-import { QuickAddModal } from "./QuickAddModal";
+import { useRouter } from "next/navigation";
 import { WishlistButton } from "./WishlistButton";
 
 export interface ProductCardProps {
@@ -25,10 +25,10 @@ export interface ProductCardProps {
 export function ProductCard({ product, brandName, priority, sizes = "(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw", className }: ProductCardProps) {
   const { productCard: cfg } = useStorefront();
   const [colorId, setColorId] = useState(product.colors[0]?.id);
-  const [quickAdd, setQuickAdd] = useState(false);
+  const router = useRouter();
   const { addItem, openDrawer } = useCart();
 
-  /** One-size items go straight to the cart; sized items open the size picker (Quick View). */
+  /** One-size items go straight to the cart; sized items open their product details for variant selection. */
   const addToCart = () => {
     // Prefer the shown colour, then any in-stock colour (one-size items only).
     const colors = [colorId, ...product.colors.map((c) => c.id)].filter((c): c is string => Boolean(c));
@@ -39,7 +39,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
       addItem(toCartLine(product, variant, brandName));
       openDrawer();
     } else {
-      setQuickAdd(true);
+      router.push(href);
     }
   };
   const images = imagesForColor(product, colorId);
@@ -71,22 +71,11 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
           )}
         </div>
         {cfg.showWishlist && <WishlistButton productId={product.id} productName={product.name} className="absolute right-2.5 top-2.5" />}
-        {cfg.showQuickAdd && !soldOut && (
-          // Desktop pointer devices reveal it on hover; keyboard users get it on focus.
-          // Touch devices simply tap the card to open the product page (no hover-only features).
-          <button
-            type="button"
-            onClick={() => setQuickAdd(true)}
-            aria-label={`Quick view: ${product.name}`}
-            className="absolute inset-x-2.5 bottom-2.5 hidden h-10 translate-y-2 items-center justify-center gap-1.5 rounded-control bg-surface/95 text-xs font-medium text-ink opacity-0 shadow-sm backdrop-blur transition-[opacity,transform,background-color,color] duration-300 ease-out hover:bg-primary hover:text-white focus-visible:translate-y-0 focus-visible:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 [@media(hover:hover)]:md:flex"
-          >
-            <Eye className="h-3.5 w-3.5" aria-hidden /> Quick View
-          </button>
-        )}
+
       </div>
       <div className="mt-3 space-y-1.5 px-0.5">
         {cfg.showBrand && brandName && <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">{brandName}</p>}
-        <h3 className="line-clamp-1 text-[13px] text-ink sm:text-sm">
+        <h3 className="line-clamp-1 text-sm text-ink sm:text-[15px]">
           <Link href={href} className="hover:text-primary">
             {product.name}
           </Link>
@@ -106,7 +95,6 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
           </button>
         )}
       </div>
-      <QuickAddModal open={quickAdd} product={product} brandName={brandName} initialColorId={colorId} onClose={() => setQuickAdd(false)} />
     </article>
   );
 }

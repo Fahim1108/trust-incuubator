@@ -20,6 +20,7 @@ import { useStorefront } from "@/context/StorefrontContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { cn } from "@/lib/cn";
 import { AnnouncementBar } from "./AnnouncementBar";
+import { CustomerMenu } from "./CustomerMenu";
 import { Logo } from "./Logo";
 import { MobileMenu } from "./MobileMenu";
 import { SearchBar } from "./SearchBar";
@@ -141,17 +142,7 @@ export function Header() {
               >
                 <Search className="h-5 w-5" strokeWidth={1.6} />
               </IconButton>
-              <Link
-                href="/account"
-                aria-label="Account"
-                className="aa-press hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
-              >
-                <User
-                  className="h-5 w-5 lg:h-[22px] lg:w-[22px]"
-                  strokeWidth={1.5}
-                />
-                <span className="hidden text-[11px] lg:block">Account</span>
-              </Link>
+              <CustomerMenu />
               <Link
                 href="/wishlist"
                 aria-label={`Wishlist${wishlist.ids.length ? ` (${wishlist.ids.length})` : ""}`}

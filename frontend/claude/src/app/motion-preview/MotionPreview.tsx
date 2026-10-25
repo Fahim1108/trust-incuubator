@@ -1,5 +1,6 @@
 "use client";
 
+import { OrderTimeline } from "@/components/account/OrderTimeline";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AttiresArenaLoader } from "@/components/loading/AttiresArenaLoader";
@@ -49,6 +50,16 @@ export function MotionPreview() {
         <p className="text-sm text-ink-muted">Shows an overlay for three seconds. Real storefront requests have no artificial delay.</p>
         <p role="status" className="min-h-5 text-sm" data-demo-result>{finished ? "Demonstration finished. Storefront interactions use their actual pending state." : ""}</p>
       </div>
+      <section className="space-y-5 border-t border-line pt-6" aria-label="Tracking component test">
+        <h2 className="font-display text-2xl">Tracking animation test</h2>
+        <p className="text-sm text-ink-muted">Isolated component fixture. This is not a customer order or shipment.</p>
+        <OrderTimeline status="shipped" events={[
+          {status:"pending",label:"Order Placed",at:"2026-10-20T09:00:00Z"},
+          {status:"confirmed",label:"Order Confirmed",at:"2026-10-20T10:00:00Z"},
+          {status:"packed",label:"Processing",at:"2026-10-21T10:00:00Z"},
+          {status:"shipped",label:"Shipped",at:"2026-10-22T10:00:00Z"},
+        ]}/>
+      </section>
       <AttiresArenaLoader active={active} fullScreen label="Loading animation demonstration" />
     </main>
   );

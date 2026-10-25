@@ -101,13 +101,11 @@ export function Footer() {
           </div>
           {demo.showNotices && (
             <p className={styles.disclaimer}>
-              Frontend demonstration: products, prices, reviews and brand
-              listings are sample data. Brand names are shown for interface
-              demonstration only and do not imply affiliation or authorised
-              resale.
+              Catalogue imagery, prices and reviews are samples. Brand listings do not imply affiliation or authorised resale.
             </p>
           )}
-          <p className={styles.credit}>Created by Firoj Ahamed Fahim</p>
+          <p className="mt-5 text-center text-sm text-[#D6C8C8]"><a href="https://wa.me/8801632915921" target="_blank" rel="noopener noreferrer" className="rounded hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">WhatsApp: <strong>01632915921</strong></a></p>
+          <p className={styles.credit}>Created by <strong>Firoj Ahamed Fahim</strong></p>
         </div>
       </div>
     </footer>
