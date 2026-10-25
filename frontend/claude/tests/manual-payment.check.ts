@@ -61,7 +61,7 @@ describe("manual payment validation and fail-closed action", () => {
   it("never accepts repeated transaction submissions as verified payments", async () => {
     const results = await Promise.all([submitManualPaymentAction(input), submitManualPaymentAction(input)]);
     expect(results.every(result => !result.ok && result.reason === "not_connected")).toBe(true);
-    expect((await mockDataSource.getManualPaymentConfiguration()).destinations).toEqual([]);
+    expect((await mockDataSource.getManualPaymentConfiguration()).available).toBe(false);
   });
 });
 

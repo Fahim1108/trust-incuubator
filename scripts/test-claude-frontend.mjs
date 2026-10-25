@@ -23,7 +23,7 @@ try{
    }
    if(route.startsWith('/product/')){
     const second=page.getByRole('button',{name:/^Show image 2 of/});await second.click();await expect(second).toHaveAttribute('aria-current','true');
-    await page.getByRole('button',{name:'Open zoomed image',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+    await page.getByRole('button',{name:'Open zoomed image',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByRole('dialog').getByRole('button',{name:'Close',exact:true})).toBeFocused();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
    }
    if(['/shop','/product/premium-cotton-shirt','/checkout'].includes(route))await page.screenshot({path:`artifacts/claude/${route.split('/')[1]}-${width}.png`,fullPage:true});
    report.push({width,route,status:'passed'});
@@ -33,7 +33,7 @@ try{
   await page.goto(origin+'/',{waitUntil:'networkidle'});
   const cartButton=page.getByRole('button',{name:width<768?/^Cart \(/:/^Open cart/}).last();
   await cartButton.click();await expect(page.getByRole('dialog')).toBeVisible();
-  await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('dialog').getByRole('button',{name:'Close',exact:true})).toBeFocused();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
   console.log(`PASS ${width}px: 20 routes, white pages, no overflow or browser exceptions, logo, cart drawer, admin 404`);
   const wish=page.getByRole('button',{name:/^Add .* to wishlist$/}).first();
   const removedName=(await wish.getAttribute('aria-label')).replace(/^Add /,'Remove ').replace(/ to wishlist$/,' from wishlist');

@@ -1,0 +1,66 @@
+{
+  "origin": "http://localhost:3001",
+  "results": [
+    {
+      "width": 360,
+      "modes": [
+        "cod",
+        "online"
+      ],
+      "numberCopy": "passed",
+      "amounts": "passed: 70/130/full total",
+      "liveSubmission": "disabled, zero POSTs",
+      "logo": "bKash loaded",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "modes": [
+        "cod",
+        "online"
+      ],
+      "numberCopy": "passed",
+      "amounts": "passed: 70/130/full total",
+      "liveSubmission": "disabled, zero POSTs",
+      "logo": "bKash loaded",
+      "overflow": false
+    },
+    {
+      "width": 430,
+      "modes": [
+        "cod",
+        "online"
+      ],
+      "numberCopy": "passed",
+      "amounts": "passed: 70/130/full total",
+      "liveSubmission": "disabled, zero POSTs",
+      "logo": "bKash loaded",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "modes": [
+        "cod",
+        "online"
+      ],
+      "numberCopy": "passed",
+      "amounts": "passed: 70/130/full total",
+      "liveSubmission": "disabled, zero POSTs",
+      "logo": "bKash loaded",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "modes": [
+        "cod",
+        "online"
+      ],
+      "numberCopy": "passed",
+      "amounts": "passed: 70/130/full total",
+      "liveSubmission": "disabled, zero POSTs",
+      "logo": "bKash loaded",
+      "overflow": false
+    }
+  ],
+  "backend": "No payment/order submission enabled."
+}

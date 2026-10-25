@@ -1,4 +1,5 @@
 import { defaultStorefrontSettings } from "@/config";
+import { previewPaymentConfiguration } from "@/config/payment-receiving";
 import { queryProducts } from "@/lib/catalog-query";
 import { findVariant, imagesForColor } from "@/lib/product";
 import { mockBrands, mockCartSeed, mockCategories, mockCustomer, mockOrders, mockProducts, mockReviewsFor, mockSizeGuides } from "@/mocks";
@@ -16,7 +17,7 @@ const byId = new Map(mockProducts.map((p) => [p.id, p]));
 
 export const mockDataSource: StorefrontDataSource = {
   async getManualPaymentConfiguration() {
-    return { available: false, destinations: [], policy: { insideDhakaMinor: 7000, outsideDhakaMinor: 13000, credit: "against-order-total" } };
+    return previewPaymentConfiguration();
   },
   async submitManualPayment() {
     return { ok: false, reason: "not_connected", message: "Payment submission is unavailable. No payment details were saved and no order was confirmed. Do not send money." };

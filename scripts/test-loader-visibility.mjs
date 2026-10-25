@@ -151,20 +151,9 @@ try {
   await page.getByRole('button', { name: 'Continue to Payment', exact: true }).click();
   await page.getByRole('button', { name: 'Review Order', exact: true }).click();
   const place = page.getByRole('button', { name: /Place Order/ });
-  const releaseCheckout = await holdActions(page);
-  await checkPending(place);
-  await page.screenshot({ path: `${directory}/checkout-pending.png` });
-  await releaseCheckout();
-  await expect(page.getByRole('heading', { name: 'Order not placed', exact: true })).toBeVisible();
-  await expect(place).toBeEnabled();
-  await page.unroute('**/*');
-  await page.keyboard.press('Escape');
-  await page.route('**/*', route => route.request().method() === 'POST' && route.request().headers()['next-action'] ? route.abort('failed') : route.continue());
-  await place.click();
-  await expect(page.getByRole('heading', { name: 'Order not confirmed', exact: true })).toBeVisible();
-  await expect(place).toBeEnabled();
-  await page.unroute('**/*');
-  console.log('PASS checkout: genuine action pending, no layout shift, no fake order, failure cleanup');
+  await expect(place).toBeDisabled();
+  await expect(page.getByRole('heading', { name: 'Your Order Is Confirmed!', exact: true })).toHaveCount(0);
+  console.log('PASS checkout: live submission stays disabled until payment services are configured');
   await context.close();
 
   const reduced = await browser.newContext({ ...contextOptions, reducedMotion: 'reduce', viewport: { width: 390, height: 950 } });
@@ -177,5 +166,5 @@ try {
   await expect(rp.locator('[data-aa-loader-exit]')).toHaveCount(0);
   await reduced.close();
   console.log('PASS reduced motion: static official logo/ring, demo closes and restores interaction');
-  await writeFile(`${directory}/verification.json`, JSON.stringify({ origin, results, realSearchSubmission: 'passed', realSignupAction: 'passed (not-connected response)', realCheckoutAction: 'passed (not-connected response and transport failure)', reducedMotion: 'passed', note: 'Controlled slow requests are test-only. No real authentication/order backend was enabled.' }, null, 2));
+  await writeFile(`${directory}/verification.json`, JSON.stringify({ origin, results, realSearchSubmission: 'passed', realSignupAction: 'passed (not-connected response)', checkoutSubmission: 'disabled until services are configured', reducedMotion: 'passed', note: 'Controlled slow requests are test-only. No real authentication/order backend was enabled.' }, null, 2));
 } finally { await browser.close(); }

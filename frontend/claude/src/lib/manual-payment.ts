@@ -22,6 +22,16 @@ export function formatPaymentAmount(minor: number) {
   return `৳${new Intl.NumberFormat("en-BD", { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(minor / 100)}`;
 }
 
+export function manualPaymentBreakdown(mode: "cod" | "online", totalMinor: number, division: string, district: string, policy: AdvancePolicy) {
+  if (mode === "cod") {
+    const advance = advanceBreakdown(totalMinor, division, district, policy);
+    return advance ? { ...advance, amountDueMinor: advance.advanceMinor } : null;
+  }
+  const zone = classifyAdvanceLocation(division, district);
+  if (!zone || !Number.isSafeInteger(totalMinor) || totalMinor <= 0) return null;
+  return { zone, totalMinor, amountDueMinor: totalMinor, remainingMinor: 0 };
+}
+
 export function validatePaymentDetails(input: unknown):
   | { ok: true; data: PaymentSubmissionInput }
   | { ok: false; errors: Partial<Record<"transactionId" | "senderNumber" | "note" | "form", string>> } {

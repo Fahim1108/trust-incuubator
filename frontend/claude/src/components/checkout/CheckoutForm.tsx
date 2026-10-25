@@ -2,7 +2,6 @@
 
 import { ArrowLeft, ArrowRight, Lock, PackageCheck, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { CouponField } from "@/components/cart/CouponField";
 import { OrderSummary } from "@/components/cart/OrderSummary";
@@ -26,7 +25,6 @@ type Field = "fullName" | "phone" | "email" | "division" | "district" | "area" |
 const STEPS = ["Delivery", "Payment", "Review"];
 
 export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConfiguration: ManualPaymentConfiguration }) {
-  const router = useRouter();
   const { items, hydrated, getSummary } = useCart();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<Record<Field, string>>({ fullName: "", phone: "", email: "", division: "", district: "", area: "", addressLine: "" });
@@ -74,7 +72,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
   };
 
   const placeOrder = () => {
-    if (pending) return;
+    if (pending || !manualPaymentConfiguration.available) return;
     if (!validate()) return setStep(0);
     const payload: CheckoutPayload = {
       customer: { fullName: form.fullName.trim(), phone: normalizePhone(form.phone), email: form.email.trim() || undefined },
@@ -88,13 +86,8 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
     startTransition(async () => {
       try {
       const res = await placeOrderAction(payload);
-      if (res.ok && payment !== "cod") {
-        // COD confirmation additionally requires verified advance evidence.
-        router.push(`/account/orders?placed=${encodeURIComponent(res.data.orderNumber)}`);
-        return;
-      }
       if (res.ok) {
-        setResult({ title: "Order not confirmed", message: "Your advance must be verified before a COD order can be confirmed. Contact support using your pending-order reference.", payload });
+        setResult({ title: "Order not confirmed", message: "Your payment must be verified before an order can be confirmed. Contact support using your pending-order reference.", payload });
         return;
       }
       setResult({ title: res.reason === "not_connected" ? "Order not placed" : "Could not place order", message: res.message, payload });
@@ -173,8 +166,8 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
 
           {step === 1 && (
             <div className="space-y-6">
-              <PaymentMethodSelector value={payment} onChange={setPayment} onlineEnabled={commerce.onlinePaymentEnabled} />
-              {payment === "cod" && <ManualAdvancePayment configuration={manualPaymentConfiguration} totalMinor={summary.total * 100} division={form.division} district={form.district} />}
+              <PaymentMethodSelector value={payment} onChange={setPayment} onlineEnabled={commerce.onlinePaymentEnabled} previewEnabled />
+              <ManualAdvancePayment mode={payment} configuration={manualPaymentConfiguration} totalMinor={summary.total * 100} division={form.division} district={form.district} />
               <Textarea label="Order note (optional)" placeholder="Anything we should know? e.g. preferred delivery time" value={note} onChange={(e) => setNote(e.target.value)} className="min-h-[80px]" />
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                 <Button variant="ghost" onClick={() => setStep(0)} leftIcon={<ArrowLeft className="h-4 w-4" />}>
@@ -237,7 +230,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
                 <Button variant="ghost" onClick={() => setStep(1)} leftIcon={<ArrowLeft className="h-4 w-4" />}>
                   Back
                 </Button>
-                <Button variant="burgundy" size="lg" onClick={placeOrder} loading={pending} leftIcon={<Lock className="h-4 w-4" />}>
+                <Button variant="burgundy" size="lg" onClick={placeOrder} loading={pending} disabled={!manualPaymentConfiguration.available} leftIcon={<Lock className="h-4 w-4" />}>
                   Place Order ({payment === "cod" ? "COD" : "Online"}) · {formatPrice(summary.total)}
                 </Button>
               </div>
@@ -268,11 +261,11 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
           </ul>
           <CouponField />
           <OrderSummary summary={summary} title={null} deliveryNote={deliveryLabel} />
-          {payment === "cod" && <div className="space-y-2 border-t border-line pt-3 text-sm" aria-label="COD advance summary" aria-live="polite">
-            <div className="flex justify-between gap-3"><span>Required advance</span><strong data-summary-advance>{advance ? formatPaymentAmount(advance.advanceMinor) : "Select location"}</strong></div>
-            <div className="flex justify-between gap-3"><span>Remaining on delivery</span><strong data-summary-remaining>{advance ? formatPaymentAmount(advance.remainingMinor) : "—"}</strong></div>
-            <p className="text-xs leading-relaxed text-ink-muted">Advance counts toward the total, including delivery. Payment is not yet verified.</p>
-          </div>}
+          <div className="space-y-2 border-t border-line pt-3 text-sm" aria-label="Payment summary" aria-live="polite">
+            <div className="flex justify-between gap-3"><span>{payment === "cod" ? "Required advance" : "Full payment amount"}</span><strong data-summary-advance>{payment === "online" ? formatPaymentAmount(summary.total * 100) : advance ? formatPaymentAmount(advance.advanceMinor) : "Select location"}</strong></div>
+            <div className="flex justify-between gap-3"><span>Remaining on delivery</span><strong data-summary-remaining>{payment === "online" ? formatPaymentAmount(0) : advance ? formatPaymentAmount(advance.remainingMinor) : "—"}</strong></div>
+            <p className="text-xs leading-relaxed text-ink-muted">{payment === "cod" ? "Advance counts toward the total, including delivery." : "Full payment includes delivery."} Payment is not yet verified.</p>
+          </div>
         </div>
       </aside>
 

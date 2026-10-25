@@ -2,10 +2,10 @@ import { Banknote, CreditCard } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { PaymentMethod } from "@/types";
 
-export function PaymentMethodSelector({ value, onChange, onlineEnabled }: { value: PaymentMethod; onChange: (m: PaymentMethod) => void; onlineEnabled: boolean }) {
+export function PaymentMethodSelector({ value, onChange, onlineEnabled, previewEnabled = false }: { value: PaymentMethod; onChange: (m: PaymentMethod) => void; onlineEnabled: boolean; previewEnabled?: boolean }) {
   const options = [
     { id: "cod" as const, title: "Cash on Delivery", description: "Location-based advance, then the remaining balance on delivery. Advance must be verified before confirmation.", Icon: Banknote, disabled: false },
-    { id: "online" as const, title: "Online Payment", description: onlineEnabled ? "bKash, Nagad, cards" : "bKash, Nagad & cards — coming soon", Icon: CreditCard, disabled: !onlineEnabled },
+    { id: "online" as const, title: "Full Online Payment", description: onlineEnabled ? "Pay the full order total." : previewEnabled ? "bKash or Nagad · UI preview only. Collection is disabled." : "Currently unavailable.", Icon: CreditCard, disabled: !onlineEnabled && !previewEnabled },
   ];
   return (
     <fieldset>
