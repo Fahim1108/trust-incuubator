@@ -130,7 +130,10 @@ export function Hero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png
     const sync = () => {
       window.clearInterval(timer);
       if (media.matches || document.hidden) return;
-      timer = window.setInterval(() => setIndex(i => (i + 1) % slides.length), hero.autoplayMs);
+      timer = window.setInterval(() => {
+        // Also guard the tick itself: preference/visibility events may be delivered later.
+        if (!media.matches && !document.hidden) setIndex(i => (i + 1) % slides.length);
+      }, hero.autoplayMs);
     };
     sync();
     media.addEventListener("change", sync);
