@@ -50,13 +50,13 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
   const href = `/product/${product.slug}${colorId && colorId !== product.colors[0]?.id ? `?color=${colorId}` : ""}`;
 
   return (
-    <article className={cn("group relative", className)}>
+    <article className={cn("aa-product-card group relative", className)}>
       <div className={cn("relative overflow-hidden rounded-card", cfg.imageAspect === "portrait" ? "aspect-[4/5]" : cfg.imageAspect === "landscape" ? "aspect-[4/3]" : "aspect-square")} style={{ backgroundColor: cfg.imageBackground }}>
-        <Link href={href} aria-label={product.name} className="absolute inset-0">
+        <Link href={href} aria-label={product.name} className="aa-press absolute inset-0">
           {/* Hover (pointer devices only): gentle 1.05 zoom + cross-fade to the secondary image. */}
-          <span className="absolute inset-0 transition-transform duration-[450ms] ease-out will-change-transform [@media(hover:hover)]:group-hover:scale-[1.05]">
-            {main && <SmartImage src={main.src} alt={main.alt} fill priority={priority} sizes={sizes} className={cn("object-cover transition-opacity duration-[400ms] ease-out", hover && "[@media(hover:hover)]:group-hover:opacity-0")} />}
-            {hover && <SmartImage src={hover.src} alt="" fill sizes={sizes} className="object-cover opacity-0 transition-opacity duration-[400ms] ease-out [@media(hover:hover)]:group-hover:opacity-100" />}
+          <span className="aa-product-photo absolute inset-0">
+            {main && <SmartImage src={main.src} alt={main.alt} fill priority={priority} sizes={sizes} className={cn("aa-product-secondary object-cover", hover && "[@media(hover:hover)]:group-hover:opacity-0")} />}
+            {hover && <SmartImage src={hover.src} alt="" fill sizes={sizes} className="aa-product-secondary object-cover opacity-0 [@media(hover:hover)]:group-hover:opacity-100" />}
           </span>
         </Link>
         <div className="pointer-events-none absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
@@ -100,7 +100,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
             onClick={addToCart}
             disabled={soldOut}
             aria-label={soldOut ? `${product.name} is sold out` : `Add ${product.name} to cart`}
-            className="group/btn mt-1 flex h-9 w-full items-center justify-center gap-2 rounded-control bg-primary text-xs font-medium text-white transition-colors duration-300 hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-ink/30"
+            className="aa-press group/btn mt-1 flex h-9 w-full items-center justify-center gap-2 rounded-control bg-primary text-xs font-medium text-white transition-colors duration-300 hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-ink/30"
           >
             <ShoppingCart className="h-3.5 w-3.5" aria-hidden /> {soldOut ? "Sold Out" : "Add to Cart"}
           </button>

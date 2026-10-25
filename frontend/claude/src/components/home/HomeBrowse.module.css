@@ -13,6 +13,7 @@
   border-radius: 8px;
   overflow: hidden;
   color: #171717;
+  transition: border-color var(--motion-normal), scale var(--motion-fast) var(--motion-ease);
 }
 .category { display: block; }
 .photo {
@@ -21,8 +22,8 @@
   aspect-ratio: 1.8;
   overflow: hidden;
 }
-.photo img { transition: transform 240ms ease; }
-.category:hover .photo img { transform: scale(1.04); }
+.photo img { transition: transform var(--motion-slow) var(--motion-ease); }
+
 .caption {
   display: flex;
   align-items: center;
@@ -40,18 +41,18 @@
   height: 20px;
   border: 1px solid #eaeaea;
   border-radius: 50%;
-  transition: background-color 220ms, color 220ms;
+  transition: background-color var(--motion-normal), color var(--motion-normal);
 }
-.category:hover .arrow { background: #6b0202; color: #fff; }
+
 .brand {
   height: 48px;
   padding: 8px 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 220ms;
+  transition: border-color var(--motion-normal), scale var(--motion-fast) var(--motion-ease);
 }
-.brand:hover { border-color: #6b0202; }
+
 .brandLogo { position: relative; height: 24px; width: 100%; }
 .wordmark { font-size: clamp(10px, 2.6vw, 13px); }
 .category:focus-visible, .brand:focus-visible {
@@ -69,5 +70,17 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .photo img, .arrow, .brand { transition: none; }
+  .category:hover .photo img { transform: none; }
+}
+
+.category:active, .brand:active { scale: .98; transition-duration: 0ms; }
+@media (hover: hover) and (pointer: fine) {
+  .category:hover, .brand:hover { border-color: #6b0202; }
+  .category:hover .photo img { transform: scale(1.03); }
+  .category:hover .arrow { background: #6b0202; color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .category, .brand { transition: none; }
+  .category:active, .brand:active { scale: 1; }
   .category:hover .photo img { transform: none; }
 }

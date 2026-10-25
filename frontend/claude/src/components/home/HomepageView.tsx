@@ -21,7 +21,7 @@ export interface HomepageData {
 }
 
 /** Major editorial sections get a one-time scroll reveal; individual product cards never animate in. */
-const REVEAL_SECTIONS = new Set<HomepageSection["type"]>(["promo-banners", "featured", "best-sellers", "newsletter"]);
+const REVEAL_SECTIONS = new Set<HomepageSection["type"]>(["categories", "brands", "new-arrivals", "featured", "trending", "complete-look", "most-popular", "promo-banners", "best-sellers", "newsletter"]);
 
 type HomepageSettings = Pick<StorefrontSettings, "homepage" | "hero" | "promoBanners" | "valueProps" | "footer" | "theme" | "logo">;
 

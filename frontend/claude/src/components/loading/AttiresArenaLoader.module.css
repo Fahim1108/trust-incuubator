@@ -1,6 +1,6 @@
 .loader {
-  --badge: 150px;
-  --ring: 185px;
+  --badge: 62px;
+  --ring: 80px;
   display: grid;
   place-items: center;
   background: #fff;
@@ -15,7 +15,7 @@
   outline: none;
 }
 .inline {
-  min-height: 240px;
+  min-height: 160px;
   width: 100%;
 }
 .art {
@@ -46,7 +46,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  animation: aa-loader-spin 1.6s linear infinite;
+  animation: aa-loader-spin var(--motion-loader, 1600ms) linear infinite;
   transform-origin: 50% 50%;
   will-change: transform;
 }
@@ -63,12 +63,11 @@
     transform: rotate(360deg);
   }
 }
-@media (max-width: 767px) {
-  .loader {
-    --badge: 110px;
-    --ring: 140px;
-  }
-}
+.lg { --badge: 62px; --ring: 80px; }
+.sm { --badge: 18px; --ring: 24px; }
+.md { --badge: 30px; --ring: 40px; }
+.sm.inline, .md.inline { min-height: 0; width: auto; background: transparent; }
+.sm .art, .md .art { background: #fff; border-radius: 50%; }
 @media (prefers-reduced-motion: reduce) {
   .ring {
     animation: none;

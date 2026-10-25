@@ -1,5 +1,6 @@
 "use client";
 
+import { AttiresArenaLoader } from "@/components/loading/AttiresArenaLoader";
 import { ArrowRight } from "lucide-react";
 import { useState, useTransition } from "react";
 import { isValidEmail } from "@/lib/validation";
@@ -14,10 +15,13 @@ export function NewsletterForm({ tone = "light", className, compact = false }: {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (pending) return;
     if (!isValidEmail(email)) return setStatus({ ok: false, text: "Please enter a valid email address." });
     startTransition(async () => {
-      const res = await subscribeNewsletterAction(email);
-      setStatus(res.ok ? { ok: true, text: "You're subscribed." } : { ok: false, text: res.message });
+      try {
+        const res = await subscribeNewsletterAction(email);
+        setStatus(res.ok ? { ok: true, text: "You're subscribed." } : { ok: false, text: res.message });
+      } catch { setStatus({ ok: false, text: "Subscription could not be saved. Please try again." }); }
     });
   };
 
@@ -38,9 +42,11 @@ export function NewsletterForm({ tone = "light", className, compact = false }: {
         <button
           type="submit"
           disabled={pending}
-          className={cn("inline-flex items-center gap-2 px-5 text-xs font-semibold transition-colors disabled:opacity-60", !compact && "uppercase tracking-wider", dark ? "bg-white text-primary hover:bg-white/90" : "bg-primary text-white hover:bg-primary-dark")}
+          aria-busy={pending || undefined}
+          className={cn("aa-press relative inline-flex items-center gap-2 px-5 text-xs font-semibold transition-colors disabled:opacity-60", !compact && "uppercase tracking-wider", dark ? "bg-white text-primary hover:bg-white/90" : "bg-primary text-white hover:bg-primary-dark")}
         >
-          Subscribe {!compact && <ArrowRight className="h-3.5 w-3.5" aria-hidden />}
+          <span className={cn("inline-flex items-center gap-2", pending && "opacity-0")}>Subscribe {!compact && <ArrowRight className="h-3.5 w-3.5" aria-hidden />}</span>
+          {pending && <span className="absolute inset-0 flex items-center justify-center"><AttiresArenaLoader size="sm" label="Saving subscription" /></span>}
         </button>
       </div>
       {status && (

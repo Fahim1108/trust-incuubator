@@ -17,6 +17,7 @@ export function ContactForm() {
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
+        if (pending) return;
         const errs: typeof errors = {};
         if (form.name.trim().length < 2) errs.name = "Enter your name";
         if (!isValidEmail(form.email)) errs.email = "Enter a valid email";
@@ -24,8 +25,12 @@ export function ContactForm() {
         setErrors(errs);
         if (Object.keys(errs).length) return;
         start(async () => {
-          const r = await submitContactFormAction(form);
-          setNotice(r.ok ? "Thanks — we'll reply within one working day." : r.message);
+          try {
+            const r = await submitContactFormAction(form);
+            setNotice(r.ok ? "Thanks — we'll reply within one working day." : r.message);
+          } catch {
+            setNotice("The request could not be completed. Please try again.");
+          }
         });
       }}
     >

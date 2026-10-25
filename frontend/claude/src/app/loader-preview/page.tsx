@@ -29,9 +29,13 @@ export default function LoaderPreview() {
         overlay only while a real brand-image request is pending. No minimum
         loading time is added.
       </p>
-      <AttiresArenaLoader />
+      <div className="my-8 flex items-center justify-center gap-8">
+        <AttiresArenaLoader size="sm" label="Small loader example" />
+        <AttiresArenaLoader size="md" label="Medium loader example" />
+        <AttiresArenaLoader size="lg" label="Large loader example" />
+      </div>
       <button
-        className="rounded border border-primary bg-primary px-5 py-3 text-white"
+        className="aa-press rounded border border-primary bg-primary px-5 py-3 text-white"
         disabled={pending}
         onClick={loadBrandAsset}
       >

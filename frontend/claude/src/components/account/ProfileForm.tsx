@@ -18,6 +18,7 @@ export function ProfileForm({ customer }: { customer: Customer }) {
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
+        if (pending) return;
         const errs: typeof errors = {};
         if (form.fullName.trim().length < 3) errs.fullName = "Enter your full name";
         if (!isValidEmail(form.email)) errs.email = "Enter a valid email";
@@ -25,8 +26,12 @@ export function ProfileForm({ customer }: { customer: Customer }) {
         setErrors(errs);
         if (Object.keys(errs).length) return;
         start(async () => {
-          const r = await updateProfileAction(form);
-          setMessage(r.ok ? "Profile updated." : r.message);
+          try {
+            const r = await updateProfileAction(form);
+            setMessage(r.ok ? "Profile updated." : r.message);
+          } catch {
+            setMessage("The request could not be completed. Please try again.");
+          }
         });
       }}
     >

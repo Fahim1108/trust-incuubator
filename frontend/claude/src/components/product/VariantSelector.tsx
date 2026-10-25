@@ -24,7 +24,7 @@ export function ColorSelector({ colors, value, onChange }: { colors: ColorOption
               aria-label={c.name}
               title={c.name}
               onClick={() => onChange(c.id)}
-              className={cn("flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all", active ? "border-primary" : "border-transparent hover:border-ink/25")}
+              className={cn("aa-press flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all", active ? "border-primary" : "border-transparent hover:border-ink/25")}
             >
               <span className={cn("flex h-8 w-8 items-center justify-center rounded-full", isLightColor(c.hex) && "ring-1 ring-inset ring-ink/15")} style={{ backgroundColor: c.hex }}>
                 {active && <Check className={cn("h-4 w-4", isLightColor(c.hex) ? "text-ink" : "text-white")} aria-hidden />}
@@ -67,7 +67,7 @@ export function SizeSelector({ sizes, value, onChange, isAvailable, onSizeGuide,
               disabled={!available}
               onClick={() => onChange(s)}
               className={cn(
-                "relative h-11 rounded-control border text-sm transition-colors",
+                "aa-press relative h-11 rounded-control border text-sm transition-colors",
                 active ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-ink/50",
                 !available && "cursor-not-allowed text-ink-muted/50 after:absolute after:left-1/2 after:top-1/2 after:h-px after:w-[70%] after:-translate-x-1/2 after:-rotate-[20deg] after:bg-ink/25 hover:border-line",
               )}

@@ -65,10 +65,11 @@ export function CheckoutForm() {
   const next = () => {
     if (step === 0 && !validate()) return;
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   };
 
   const placeOrder = () => {
+    if (pending) return;
     if (!validate()) return setStep(0);
     const payload: CheckoutPayload = {
       customer: { fullName: form.fullName.trim(), phone: normalizePhone(form.phone), email: form.email.trim() || undefined },
@@ -80,6 +81,7 @@ export function CheckoutForm() {
       saveAddress,
     };
     startTransition(async () => {
+      try {
       const res = await placeOrderAction(payload);
       if (res.ok) {
         // Only reachable once a real backend confirms the order.
@@ -87,6 +89,9 @@ export function CheckoutForm() {
         return;
       }
       setResult({ title: res.reason === "not_connected" ? "Order not placed" : "Could not place order", message: res.message, payload });
+      } catch {
+        setResult({ title: "Order not confirmed", message: "The request could not be completed. Check your order status before trying again.", payload });
+      }
     });
   };
 

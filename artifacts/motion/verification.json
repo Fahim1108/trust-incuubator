@@ -1,0 +1,63 @@
+{
+  "widths": [
+    {
+      "width": 360,
+      "result": "passed",
+      "checks": [
+        "no overflow",
+        "search focus without resizing",
+        "drawer timing/scroll/focus/inert cleanup",
+        "product hover or touch",
+        "instant accurate wishlist"
+      ]
+    },
+    {
+      "width": 390,
+      "result": "passed",
+      "checks": [
+        "no overflow",
+        "search focus without resizing",
+        "drawer timing/scroll/focus/inert cleanup",
+        "product hover or touch",
+        "instant accurate wishlist"
+      ]
+    },
+    {
+      "width": 430,
+      "result": "passed",
+      "checks": [
+        "no overflow",
+        "search focus without resizing",
+        "drawer timing/scroll/focus/inert cleanup",
+        "product hover or touch",
+        "instant accurate wishlist"
+      ]
+    },
+    {
+      "width": 768,
+      "result": "passed",
+      "checks": [
+        "no overflow",
+        "search focus without resizing",
+        "drawer timing/scroll/focus/inert cleanup",
+        "product hover or touch",
+        "instant accurate wishlist"
+      ]
+    },
+    {
+      "width": 1440,
+      "result": "passed",
+      "checks": [
+        "no overflow",
+        "search focus without resizing",
+        "drawer timing/scroll/focus/inert cleanup",
+        "product hover or touch",
+        "instant accurate wishlist"
+      ]
+    }
+  ],
+  "pendingAndFailureChecks": "passed",
+  "reducedMotion": "passed",
+  "javascriptDisabled": "passed",
+  "note": "Cloud-local browser checks; no artificial runtime delay or fake transaction success."
+}

@@ -12,12 +12,12 @@ let heroIntroPlayed = false;
 
 /** Staggered entrance (opacity + transform only, so no layout shift). */
 const enter = (intro: boolean, step: number) =>
-  intro ? { className: "animate-fade-up", style: { animationDelay: `${120 + step * 130}ms` } as React.CSSProperties } : { className: "", style: undefined };
+  intro ? { className: "animate-fade-up", style: { animationDelay: `${step * 60}ms` } as React.CSSProperties } : { className: "", style: undefined };
 
 function Slide({ banner, active, priority, uppercase, intro }: { banner: Banner; active: boolean; priority: boolean; uppercase: boolean; intro: boolean }) {
   const light = banner.tone === "light";
   return (
-    <div className={cn("absolute inset-0 transition-opacity duration-700", active ? "opacity-100" : "pointer-events-none opacity-0")} aria-hidden={!active}>
+    <div className={cn("aa-hero-slide absolute inset-0", active ? "opacity-100" : "pointer-events-none opacity-0")} aria-hidden={!active}>
       <SmartImage src={banner.image.src} alt={banner.image.alt} fill priority={priority} sizes="(min-width:1024px) 70vw, 100vw" className="object-cover object-[72%_center]" />
       <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, rgba(20,10,8,${(banner.overlay ?? 30) / 100 + 0.25}) 0%, rgba(20,10,8,${(banner.overlay ?? 30) / 100}) 40%, rgba(20,10,8,0) 75%)` }} />
       <div className={cn("relative flex h-full flex-col justify-center px-6 sm:px-24 lg:px-[12%]", light ? "text-white" : "text-ink")}>
@@ -27,7 +27,7 @@ function Slide({ banner, active, priority, uppercase, intro }: { banner: Banner;
         </h2>
         {banner.subtitle && <p className={cn("mt-4 max-w-sm text-sm opacity-90 sm:text-base lg:text-lg", enter(intro, 1).className)} style={enter(intro, 1).style}>{banner.subtitle}</p>}
         {banner.cta && (
-          <Link href={banner.cta.href} tabIndex={active ? 0 : -1} style={enter(intro, 2).style} className={`group/cta mt-6 inline-flex h-11 w-fit items-center gap-2 rounded-control bg-primary px-6 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-lift transition-colors duration-300 hover:bg-primary-dark sm:h-12 sm:px-7 ${enter(intro, 2).className}`}>
+          <Link href={banner.cta.href} tabIndex={active ? 0 : -1} style={enter(intro, 2).style} className={`aa-press group/cta mt-6 inline-flex h-11 w-fit items-center gap-2 rounded-control bg-primary px-6 text-xs font-semibold uppercase tracking-[0.14em] text-white shadow-lift transition-colors duration-300 hover:bg-primary-dark sm:h-12 sm:px-7 ${enter(intro, 2).className}`}>
             {banner.cta.label} <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover/cta:translate-x-[5px]" aria-hidden />
           </Link>
         )}
@@ -43,7 +43,7 @@ function MobileEditorialSlide({ banner, active, priority, logoSrc, intro }: { ba
   const accent = banner.titleAccent;
   const main = accent && banner.title.endsWith(accent) ? banner.title.slice(0, -accent.length).trim() : banner.title;
   return (
-    <div className={cn("absolute inset-0 overflow-hidden bg-[#EFE9E2] transition-opacity duration-700", active ? "opacity-100" : "pointer-events-none opacity-0")} aria-hidden={!active}>
+    <div className={cn("absolute inset-0 overflow-hidden bg-[#EFE9E2] aa-hero-slide", active ? "opacity-100" : "pointer-events-none opacity-0")} aria-hidden={!active}>
       {/* soft light from the left, like the mockup's sunlit wall */}
       <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_10%_20%,#FBF8F4_0%,#EFE9E2_55%,#E4DCD2_100%)]" />
       {banner.mobileImage && (
@@ -82,7 +82,7 @@ function MobileEditorialSlide({ banner, active, priority, logoSrc, intro }: { ba
           </p>
         )}
         {banner.cta && (
-          <Link href={banner.cta.href} tabIndex={active ? 0 : -1} style={enter(intro, 2).style} className={`${enter(intro, 2).className} group/cta mt-[4%] inline-flex h-[min(7.4vw,36px)] w-fit items-center gap-1 rounded-full bg-primary px-[min(4vw,20px)] text-[min(3.2vw,14px)] sm:h-[clamp(38px,3.4vw,50px)] sm:gap-2 sm:px-7 sm:text-[clamp(14px,1.25vw,18px)] font-medium text-white shadow-lift transition-colors duration-300 hover:bg-primary-dark`}>
+          <Link href={banner.cta.href} tabIndex={active ? 0 : -1} style={enter(intro, 2).style} className={`${enter(intro, 2).className} aa-press group/cta mt-[4%] inline-flex h-[min(7.4vw,36px)] w-fit items-center gap-1 rounded-full bg-primary px-[min(4vw,20px)] text-[min(3.2vw,14px)] sm:h-[clamp(38px,3.4vw,50px)] sm:gap-2 sm:px-7 sm:text-[clamp(14px,1.25vw,18px)] font-medium text-white shadow-lift transition-colors duration-300 hover:bg-primary-dark`}>
             {banner.cta.label} <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 ease-out group-hover/cta:translate-x-[5px]" aria-hidden />
           </Link>
         )}
@@ -125,10 +125,17 @@ export function Hero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png
 
   useEffect(() => {
     if (!hero.autoplayMs || paused || hovered || focused || slides.length < 2) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-    const t = window.setInterval(() => { if (!document.hidden) setIndex((i) => (i + 1) % slides.length); }, hero.autoplayMs);
-    return () => window.clearInterval(t);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number | undefined;
+    const sync = () => {
+      window.clearInterval(timer);
+      if (media.matches || document.hidden) return;
+      timer = window.setInterval(() => setIndex(i => (i + 1) % slides.length), hero.autoplayMs);
+    };
+    sync();
+    media.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => { window.clearInterval(timer); media.removeEventListener("change", sync); document.removeEventListener("visibilitychange", sync); };
   }, [hero.autoplayMs, paused, hovered, focused, slides.length]);
 
   if (slides.length && index >= slides.length) setIndex(0);
@@ -138,7 +145,7 @@ export function Hero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png
   return (
     <section aria-roledescription="carousel" aria-label="Featured collections" className="container pt-1 sm:max-w-none sm:px-0 sm:pt-0">
       <div className={cn("grid gap-3 lg:gap-4", hero.side.length ? "lg:grid-cols-[2.6fr_1fr]" : "")}>
-        <div className="relative aspect-[2/1] overflow-hidden rounded-2xl bg-[#8E7B6B] shadow-soft sm:aspect-auto sm:h-[clamp(300px,25vw,400px)] sm:rounded-none sm:shadow-none" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
+        <div className="relative aspect-[2/1] overflow-hidden rounded-2xl bg-[#8E7B6B] shadow-soft sm:aspect-auto sm:h-[clamp(300px,25vw,400px)] sm:rounded-none sm:shadow-none" onPointerEnter={e => { if (e.pointerType === "mouse") setHovered(true); }} onPointerLeave={() => setHovered(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
           {slides.map((s, i) => (
             <div key={s.id} className="contents">
               {s.mobileImage ? (
@@ -175,14 +182,14 @@ export function Hero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png
           {slides.length > 1 && (
             <>
               {/* White circular arrows at the sides (desktop mockup) */}
-              <button type="button" onClick={() => go(index - 1)} className="absolute left-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-soft transition-colors hover:text-primary sm:flex lg:left-7" aria-label="Previous slide">
+              <button type="button" onClick={() => go(index - 1)} className="aa-press absolute left-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-soft transition-colors hover:text-primary sm:flex lg:left-7" aria-label="Previous slide">
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <button type="button" onClick={() => go(index + 1)} className="absolute right-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-soft transition-colors hover:text-primary sm:flex lg:right-7" aria-label="Next slide">
+              <button type="button" onClick={() => go(index + 1)} className="aa-press absolute right-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ink shadow-soft transition-colors hover:text-primary sm:flex lg:right-7" aria-label="Next slide">
                 <ChevronRight className="h-5 w-5" />
               </button>
               {hero.autoplayMs > 0 && (
-                <button type="button" onClick={() => setPaused((p) => !p)} className="absolute bottom-3 right-4 hidden h-8 w-8 items-center justify-center rounded-full bg-white/80 text-ink/70 shadow-sm hover:text-primary sm:flex lg:right-7" aria-label={paused ? "Play slideshow" : "Pause slideshow"}>
+                <button type="button" onClick={() => setPaused((p) => !p)} className="aa-press absolute bottom-3 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-ink/70 shadow-sm hover:text-primary sm:flex lg:right-7" aria-label={paused ? "Play slideshow" : "Pause slideshow"}>
                   {paused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
                 </button>
               )}

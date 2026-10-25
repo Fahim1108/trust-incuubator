@@ -42,9 +42,9 @@ try {
       await ring.evaluate((element) =>
         parseFloat(getComputedStyle(element).width),
       ),
-      width < 768 ? 140 : 185,
+      80,
     );
-    assert.equal(b.width, width < 768 ? 110 : 150);
+    assert.equal(b.width, 62);
     assert.ok(Math.abs(size.x + size.width / 2 - width / 2) < 1);
     assert.ok(Math.abs(size.y + size.height / 2 - 450) < 1);
     assert.equal(
@@ -145,7 +145,7 @@ try {
   });
   assert.equal(
     await reduced
-      .locator("[data-loader-ring]")
+      .locator("[data-loader-ring]").first()
       .evaluate((e) => getComputedStyle(e).animationName),
     "none",
   );

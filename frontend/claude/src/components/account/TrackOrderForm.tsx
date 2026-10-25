@@ -21,9 +21,13 @@ export function TrackOrderForm() {
         className="grid gap-4 rounded-card border border-line p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end sm:p-6"
         onSubmit={(e) => {
           e.preventDefault();
+          if (pending) return;
           if (!orderNumber.trim()) return setError("Enter your order number");
           setError(undefined);
-          start(async () => setOrder(await getOrderByNumberAction(orderNumber, phone)));
+          start(async () => {
+            try { setOrder(await getOrderByNumberAction(orderNumber, phone)); }
+            catch { setError("Tracking is unavailable. Please try again."); }
+          });
         }}
       >
         <Input label="Order Number" placeholder="e.g. DEMO-10241" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} error={error} />

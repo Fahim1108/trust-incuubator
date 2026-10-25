@@ -21,3 +21,8 @@ Run node scripts/test-loader.mjs for executable Chromium checks. The test runner
 Verified: logo geometry is stationary; ring transform advances and repeats with exact CSS timing; responsive dimensions/centering; pure white and maroon; pending visibility; Tab/background isolation; immediate active-overlay removal and short fade cleanup; successful/failed-request recovery; reduced-motion animation suppression. Root HTTP response streaming also contained the actual Next route loading fallback and it was absent once the homepage finished rendering.
 
 Root and Claude lint, TypeScript and production builds passed; all 58 existing tests and 10 preview checks passed. Existing 20-route browser checks passed at 390/1440px, including cart, wishlist, gallery, search and sorting. No homepage layout, existing skeleton, business action, Supabase code, database or other animation was modified.
+
+
+## Claude frontend motion refinement
+
+The later premium-motion requirement changes only the isolated Claude loader to small/medium/large rings of 24/40/80px. Root-app loader sizes remain unchanged. See MOTION_SYSTEM.md for current frontend variants, actual action states and updated verification commands.

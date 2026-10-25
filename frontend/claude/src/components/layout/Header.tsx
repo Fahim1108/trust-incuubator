@@ -12,6 +12,7 @@ import Link from "next/link";
 import styles from "./Header.module.css";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CartBadge } from "@/components/motion/CartBadge";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { IconButton, Modal } from "@/components/ui";
 import { useCart } from "@/context/CartContext";
@@ -81,7 +82,7 @@ export function Header() {
                         href={item.href}
                         className={cn(
                           // Underline draws left → right on hover / keyboard focus (250ms); stays drawn for the active page.
-                          "relative inline-flex items-center gap-1 rounded-sm py-2 text-[13px] tracking-wide transition-colors duration-200 hover:text-primary focus-visible:text-primary",
+                          "aa-nav-link aa-press relative inline-flex items-center gap-1 rounded-sm py-2 text-[13px] tracking-wide transition-colors duration-200 hover:text-primary focus-visible:text-primary",
                           "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:bg-primary after:transition-transform after:duration-[250ms] after:ease-out hover:after:scale-x-100 focus-visible:after:scale-x-100",
                           isActive(item.href)
                             ? "text-primary after:scale-x-100"
@@ -143,7 +144,7 @@ export function Header() {
               <Link
                 href="/account"
                 aria-label="Account"
-                className="hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
+                className="aa-press hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
               >
                 <User
                   className="h-5 w-5 lg:h-[22px] lg:w-[22px]"
@@ -154,7 +155,7 @@ export function Header() {
               <Link
                 href="/wishlist"
                 aria-label={`Wishlist${wishlist.ids.length ? ` (${wishlist.ids.length})` : ""}`}
-                className="relative hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
+                className="aa-press relative hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
               >
                 <Heart
                   className="h-5 w-5 lg:h-[22px] lg:w-[22px]"
@@ -172,22 +173,20 @@ export function Header() {
                 type="button"
                 onClick={openDrawer}
                 aria-label={`Open cart${hydrated && itemCount ? ` (${itemCount})` : ""}`}
-                className="relative hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
+                className="aa-press relative hidden h-11 w-11 flex-col items-center justify-center rounded-full text-ink transition-colors hover:text-primary sm:inline-flex lg:h-auto lg:w-auto lg:gap-1 lg:rounded-none"
               >
                 <ShoppingCart
                   className="h-5 w-5 lg:h-[22px] lg:w-[22px]"
                   strokeWidth={1.5}
                 />
                 <span className="hidden text-[11px] lg:block">Cart</span>
-                <span className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white lg:-right-2.5 lg:-top-2">
-                  {hydrated ? itemCount : 0}
-                </span>
+                <CartBadge count={itemCount} ready={hydrated} className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-white lg:-right-2.5 lg:-top-2" />
               </button>
               {/* Phones: account bubble (cart lives in the bottom navigation) */}
               <Link
                 href="/account"
                 aria-label="Account"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-sm sm:hidden"
+                className="aa-press flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-sm sm:hidden"
               >
                 <User className="h-5 w-5 fill-current" strokeWidth={1.5} />
               </Link>

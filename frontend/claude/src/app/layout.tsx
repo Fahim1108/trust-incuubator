@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { motionVariables } from "@/config/motion";
 
 import { ThemeStyle } from "@/components/theme/ThemeStyle";
 import { CartProvider } from "@/context/CartContext";
@@ -11,6 +12,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/playfair-display";
 import "@fontsource/allura/latin-400.css";
 import "./globals.css";
+import "./motion.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getStorefrontSettings();
@@ -36,6 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" >
       <head>
         <ThemeStyle theme={settings.theme} />
+        <style>{motionVariables}</style>
       </head>
       <body>
         <aside className="design-preview-notice" aria-label="Design preview notice">CLAUDE DESIGN PREVIEW · Sample products, prices, brands, customers and shipping · No live purchases or payments · Do not enter real passwords or personal details.</aside>

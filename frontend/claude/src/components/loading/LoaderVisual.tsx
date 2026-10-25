@@ -4,6 +4,7 @@ import Image from "next/image";
 import styles from "./AttiresArenaLoader.module.css";
 
 type LoaderProps = {
+  size?: "sm" | "md" | "lg";
   active?: boolean;
   fullScreen?: boolean;
   logoSrc?: string;
@@ -51,6 +52,7 @@ export function AttiresArenaLoader({
   fullScreen = false,
   logoSrc = "/images/BRAND-LOGO.png",
   label = "Loading Attires Arena",
+  size = "lg",
 }: LoaderProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -123,7 +125,8 @@ export function AttiresArenaLoader({
     <div
       ref={ref}
       tabIndex={fullScreen ? -1 : undefined}
-      className={`${styles.loader} ${fullScreen ? styles.fullscreen : styles.inline}`}
+      className={`${styles.loader} ${styles[size]} ${fullScreen ? styles.fullscreen : styles.inline}`}
+      data-loader-size={size}
       data-aa-loader={fullScreen ? "overlay" : "inline"}
     >
       <div className={styles.art} aria-hidden="true">

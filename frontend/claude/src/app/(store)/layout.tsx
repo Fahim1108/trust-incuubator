@@ -1,3 +1,4 @@
+import { RouteMotion } from "@/components/motion/RouteMotion";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
@@ -8,7 +9,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
     <>
       <Header />
       <main id="main" className="min-h-[60vh]">
-        {children}
+        <RouteMotion>{children}</RouteMotion>
       </main>
       <Footer />
       <MobileBottomNav />

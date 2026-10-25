@@ -36,14 +36,19 @@ export function LoginForm() {
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
+        if (pending) return;
         const errs: typeof errors = {};
         if (!isValidEmail(identifier) && !isValidBdPhone(identifier)) errs.identifier = "Enter your email or mobile number";
         if (password.length < 6) errs.password = "Password must be at least 6 characters";
         setErrors(errs);
         if (Object.keys(errs).length) return;
         start(async () => {
-          const r = await signInAction({ identifier, password });
-          setMessage(r.ok ? null : r.message);
+          try {
+            const r = await signInAction({ identifier, password });
+            setMessage(r.ok ? null : r.message);
+          } catch {
+            setMessage("The request could not be completed. Please try again.");
+          }
         });
       }}
     >
@@ -76,6 +81,7 @@ export function RegisterForm() {
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
+        if (pending) return;
         const errs: typeof errors = {};
         if (form.fullName.trim().length < 3) errs.fullName = "Enter your full name";
         if (!isValidEmail(form.email)) errs.email = "Enter a valid email";
@@ -86,8 +92,12 @@ export function RegisterForm() {
         setErrors(errs);
         if (Object.keys(errs).length) return;
         start(async () => {
-          const r = await registerAction({ fullName: form.fullName, email: form.email, phone: form.phone, password: form.password });
-          setMessage(r.ok ? null : r.message);
+          try {
+            const r = await registerAction({ fullName: form.fullName, email: form.email, phone: form.phone, password: form.password });
+            setMessage(r.ok ? null : r.message);
+          } catch {
+            setMessage("The request could not be completed. Please try again.");
+          }
         });
       }}
     >
@@ -136,11 +146,16 @@ export function ForgotPasswordForm() {
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
+        if (pending) return;
         if (!isValidEmail(identifier) && !isValidBdPhone(identifier)) return setError("Enter your email or mobile number");
         setError(undefined);
         start(async () => {
-          const r = await requestPasswordResetAction({ identifier });
-          setMessage(r.ok ? null : r.message);
+          try {
+            const r = await requestPasswordResetAction({ identifier });
+            setMessage(r.ok ? null : r.message);
+          } catch {
+            setMessage("The request could not be completed. Please try again.");
+          }
         });
       }}
     >

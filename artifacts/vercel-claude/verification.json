@@ -1,0 +1,55 @@
+{
+  "projectName": "attires-arena-frontend-preview",
+  "projectId": "prj_QgA6P7BJr74v5GbojhBXyxkXRZAA",
+  "deploymentId": "dpl_FMxmG3oYb7eBuRs2DffnroNuJruq",
+  "url": "https://attires-arena-frontend-preview-8jqhtjtcz-fahim-s-projects1.vercel.app",
+  "state": "READY",
+  "target": "staging",
+  "branch": "feature/claude-frontend-integration",
+  "commitSha": "933ecd052a03419918b4ea5432ad8807fbf393ea",
+  "gitSource": {
+    "type": "github",
+    "repoId": 1233834845,
+    "ref": "feature/claude-frontend-integration",
+    "sha": "933ecd052a03419918b4ea5432ad8807fbf393ea"
+  },
+  "aliases": [
+    "attires-arena-frontend-preview-fahim-s-projects1.vercel.app",
+    "attires-arena-frontend-preview-git-fea-e21f8d-fahim-s-projects1.vercel.app"
+  ],
+  "rootDirectory": "frontend/claude",
+  "nodeVersion": "24.x",
+  "framework": "nextjs",
+  "originalProjectUnchanged": true,
+  "vercelAuthentication": {
+    "deploymentType": "all_except_custom_domains"
+  },
+  "installCommand": "npm ci --include=dev",
+  "buildCommand": "npm run build",
+  "displayEnvironment": "Preview",
+  "browserChecks": {
+    "widths": [
+      390,
+      768,
+      1440
+    ],
+    "result": "passed",
+    "source": "actual hosted deployment",
+    "screenshots": [
+      "home-390.png",
+      "home-1440.png"
+    ]
+  },
+  "automationAccessRevoked": true,
+  "canceledInitialAttempt": {
+    "id": "dpl_fQtP92ALtfSLhbEoFQ3oME7T3LWK",
+    "state": "CANCELED",
+    "target": "production"
+  },
+  "remainingIssues": [
+    "Isolated design preview uses sample catalogue/customer data",
+    "Live Supabase authentication and commerce are not connected in this frontend",
+    "Social profile URLs remain unconfigured"
+  ],
+  "verifiedAt": "2026-10-25T01:37:20.292Z"
+}
