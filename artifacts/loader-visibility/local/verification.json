@@ -1,0 +1,42 @@
+{
+  "origin": "http://localhost:3001",
+  "results": [
+    {
+      "width": 390,
+      "surfaces": [
+        "white",
+        "burgundy"
+      ],
+      "sizes": [
+        24,
+        40,
+        80
+      ],
+      "clockwise": true,
+      "actualLogosLoaded": true,
+      "demoMilliseconds": 3385,
+      "focusAndCleanup": "passed"
+    },
+    {
+      "width": 1440,
+      "surfaces": [
+        "white",
+        "burgundy"
+      ],
+      "sizes": [
+        24,
+        40,
+        80
+      ],
+      "clockwise": true,
+      "actualLogosLoaded": true,
+      "demoMilliseconds": 3395,
+      "focusAndCleanup": "passed"
+    }
+  ],
+  "realSearchSubmission": "passed",
+  "realSignupAction": "passed (not-connected response)",
+  "realCheckoutAction": "passed (not-connected response and transport failure)",
+  "reducedMotion": "passed",
+  "note": "Controlled slow requests are test-only. No real authentication/order backend was enabled."
+}

@@ -15,8 +15,8 @@
   outline: none;
 }
 .inline {
-  min-height: 160px;
-  width: 100%;
+  width: max-content;
+  background: transparent;
 }
 .art {
   position: relative;
@@ -24,6 +24,9 @@
   place-items: center;
   width: var(--ring);
   height: var(--ring);
+  /* The white annulus keeps the official maroon ring legible on burgundy. */
+  background: #fff;
+  border-radius: 50%;
 }
 .badge {
   width: var(--badge);
@@ -66,8 +69,6 @@
 .lg { --badge: 62px; --ring: 80px; }
 .sm { --badge: 18px; --ring: 24px; }
 .md { --badge: 30px; --ring: 40px; }
-.sm.inline, .md.inline { min-height: 0; width: auto; background: transparent; }
-.sm .art, .md .art { background: #fff; border-radius: 50%; }
 @media (prefers-reduced-motion: reduce) {
   .ring {
     animation: none;

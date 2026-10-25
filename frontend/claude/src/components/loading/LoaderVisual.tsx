@@ -55,6 +55,10 @@ export function AttiresArenaLoader({
   size = "lg",
 }: LoaderProps) {
   const ref = useRef<HTMLDivElement>(null);
+  // Use actual device-sized geometry: scaling a 185px SVG down to 24px
+  // also scaled its 4px stroke to an almost invisible half-pixel.
+  const diameter = { sm: 24, md: 40, lg: 80 }[size];
+  const stroke = { sm: 2, md: 3, lg: 4 }[size];
   useEffect(() => {
     const node = ref.current;
     if (!active || !fullScreen || !node) return;
@@ -132,17 +136,18 @@ export function AttiresArenaLoader({
       <div className={styles.art} aria-hidden="true">
         <svg
           className={styles.ring}
-          viewBox="0 0 185 185"
+          viewBox={`0 0 ${diameter} ${diameter}`}
           fill="none"
           data-loader-ring
         >
           <circle
-            cx="92.5"
-            cy="92.5"
-            r="90.5"
+            cx={diameter / 2}
+            cy={diameter / 2}
+            r={(diameter - stroke) / 2}
             stroke="#6B0202"
-            strokeWidth="4"
-            strokeDasharray="480 89"
+            strokeWidth={stroke}
+            pathLength="100"
+            strokeDasharray="84 16"
           />
         </svg>
         <div className={styles.badge} data-loader-badge>

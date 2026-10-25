@@ -1,8 +1,10 @@
+import { RouteLoading } from "@/components/loading/RouteLoading";
 import { ProductGridSkeleton, Skeleton } from "@/components/ui";
 
 export default function Loading() {
   return (
     <div className="container py-8">
+      <RouteLoading />
       <Skeleton className="h-3 w-32" />
       <Skeleton className="mt-5 h-10 w-64" />
       <div className="mt-10 grid gap-10 lg:grid-cols-[240px_1fr]">

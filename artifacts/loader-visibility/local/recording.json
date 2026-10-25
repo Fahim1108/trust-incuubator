@@ -1,0 +1,8 @@
+{
+  "origin": "http://localhost:3001",
+  "route": "/motion-preview",
+  "durationSeconds": 3,
+  "source": "actual browser recording",
+  "reducedMotion": false,
+  "artificialDelay": "three-second demo route only"
+}
