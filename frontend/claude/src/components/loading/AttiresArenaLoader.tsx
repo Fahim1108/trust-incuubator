@@ -1,5 +1,5 @@
 "use client";
-import { AttiresArenaLoader as SharedLoader } from "../../../../../src/components/ui/AttiresArenaLoader";
+import { AttiresArenaLoader as SharedLoader } from "./LoaderVisual";
 export function AttiresArenaLoader({
   active = true,
   fullScreen = false,
