@@ -164,7 +164,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
                 <Link href="/cart" className="inline-flex items-center justify-center gap-2 text-sm text-ink-muted hover:text-primary">
                   <ArrowLeft className="h-4 w-4" aria-hidden /> Back to cart
                 </Link>
-                <Button type="submit" size="lg" rightIcon={<ArrowRight className="h-4 w-4" />}>
+                <Button variant="burgundy" type="submit" size="lg" rightIcon={<ArrowRight className="h-4 w-4" />}>
                   Continue to Payment
                 </Button>
               </div>
@@ -180,7 +180,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
                 <Button variant="ghost" onClick={() => setStep(0)} leftIcon={<ArrowLeft className="h-4 w-4" />}>
                   Back
                 </Button>
-                <Button size="lg" onClick={next} rightIcon={<ArrowRight className="h-4 w-4" />}>
+                <Button variant="burgundy" size="lg" onClick={next} rightIcon={<ArrowRight className="h-4 w-4" />}>
                   Review Order
                 </Button>
               </div>
@@ -237,7 +237,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
                 <Button variant="ghost" onClick={() => setStep(1)} leftIcon={<ArrowLeft className="h-4 w-4" />}>
                   Back
                 </Button>
-                <Button size="lg" onClick={placeOrder} loading={pending} className="bg-[#400000] hover:bg-[#560000]" leftIcon={<Lock className="h-4 w-4" />}>
+                <Button variant="burgundy" size="lg" onClick={placeOrder} loading={pending} leftIcon={<Lock className="h-4 w-4" />}>
                   Place Order ({payment === "cod" ? "COD" : "Online"}) · {formatPrice(summary.total)}
                 </Button>
               </div>

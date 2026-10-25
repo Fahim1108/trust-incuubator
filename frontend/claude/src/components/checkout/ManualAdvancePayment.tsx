@@ -118,7 +118,7 @@ export function ManualAdvancePayment({ configuration, totalMinor, division, dist
           <Input id={`${id}-senderNumber`} label={`Your ${names[provider]} Number`} required type="tel" inputMode="tel" autoComplete="tel" value={senderNumber} onChange={e => { setSenderNumber(e.target.value); setErrors(current => ({ ...current, senderNumber: undefined })); }} error={errors.senderNumber} />
           <Textarea id={`${id}-note`} label="Note (optional)" maxLength={1000} rows={3} value={note} onChange={e => { setNote(e.target.value); setErrors(current => ({ ...current, note: undefined })); }} error={errors.note} />
           {(message || errors.form) && <p role="alert" className="text-sm leading-relaxed text-primary">{message || errors.form}</p>}
-          <Button type="submit" fullWidth size="lg" loading={pending} disabled={!breakdown} className="bg-[#400000] hover:bg-[#560000]">Submit Payment</Button>
+          <Button type="submit" variant="burgundy" fullWidth size="lg" loading={pending} disabled={!breakdown}>Submit Payment</Button>
         </fieldset>
       </form>}
     </section>

@@ -43,6 +43,13 @@ try {
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('70');
     await expect(payment.getByText('Amount copied.', { exact: true })).toBeVisible();
     const submit = payment.getByRole('button', { name: 'Submit Payment', exact: true });
+    await page.mouse.move(0, 0);
+    await expect(submit).toHaveCSS('background-color', 'rgb(64, 0, 0)');
+    if (width === 1440) {
+      await submit.hover();
+      await expect(submit).toHaveCSS('background-color', 'rgb(86, 0, 0)');
+      await page.mouse.move(0, 0);
+    }
     await submit.click();
     const trx = payment.getByRole('textbox', { name: /^Transaction ID/ });
     await expect(trx).toHaveAttribute('aria-invalid', 'true');

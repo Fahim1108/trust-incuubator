@@ -8,7 +8,7 @@ function ArrowSlot({ children }: { children: ReactNode }) {
   return <span className="aa-arrow">{children}</span>;
 }
 
-export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "link";
+export type ButtonVariant = "primary" | "burgundy" | "secondary" | "outline" | "ghost" | "link";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const base =
@@ -16,6 +16,7 @@ const base =
 
 const variants: Record<ButtonVariant, string> = {
   primary: "bg-primary text-white hover:bg-primary-dark shadow-sm",
+  burgundy: "bg-[#400000] text-white hover:bg-[#560000] shadow-sm",
   secondary: "bg-selected text-primary hover:bg-primary/10 border border-primary/20",
   outline: "border border-ink/80 text-ink hover:bg-ink hover:text-white",
   ghost: "text-ink hover:bg-ink/5",
