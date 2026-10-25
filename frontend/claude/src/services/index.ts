@@ -23,6 +23,7 @@ export const getSizeGuide = (id: string) => dataSource.getSizeGuide(id);
 export const getStorefrontSettings = () => dataSource.getStorefrontSettings();
 export const getHomepageConfiguration = () => dataSource.getHomepageConfiguration();
 export const getInitialCart = () => dataSource.getInitialCart();
+export const getManualPaymentConfiguration = () => dataSource.getManualPaymentConfiguration();
 export const getCurrentCustomer = () => dataSource.getCurrentCustomer();
 export const getOrders = () => dataSource.getOrders();
 export const getOrderByNumber = (orderNumber: string, phone?: string) => dataSource.getOrderByNumber(orderNumber, phone);

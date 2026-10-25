@@ -4,7 +4,7 @@ import type { PaymentMethod } from "@/types";
 
 export function PaymentMethodSelector({ value, onChange, onlineEnabled }: { value: PaymentMethod; onChange: (m: PaymentMethod) => void; onlineEnabled: boolean }) {
   const options = [
-    { id: "cod" as const, title: "Cash on Delivery", description: "Pay in cash when you receive your order.", Icon: Banknote, disabled: false },
+    { id: "cod" as const, title: "Cash on Delivery", description: "Location-based advance, then the remaining balance on delivery. Advance must be verified before confirmation.", Icon: Banknote, disabled: false },
     { id: "online" as const, title: "Online Payment", description: onlineEnabled ? "bKash, Nagad, cards" : "bKash, Nagad & cards — coming soon", Icon: CreditCard, disabled: !onlineEnabled },
   ];
   return (

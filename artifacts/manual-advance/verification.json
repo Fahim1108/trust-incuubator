@@ -1,0 +1,76 @@
+{
+  "origin": "http://localhost:3001",
+  "results": [
+    {
+      "width": 360,
+      "result": "passed",
+      "amounts": [
+        70,
+        130
+      ],
+      "copyAmountAndFailure": "passed",
+      "copyNumber": "disabled: no recipient configured",
+      "validation": "passed",
+      "actualPendingAndFailure": "passed",
+      "falseConfirmation": "prevented",
+      "whatsapp": "passed"
+    },
+    {
+      "width": 390,
+      "result": "passed",
+      "amounts": [
+        70,
+        130
+      ],
+      "copyAmountAndFailure": "passed",
+      "copyNumber": "disabled: no recipient configured",
+      "validation": "passed",
+      "actualPendingAndFailure": "passed",
+      "falseConfirmation": "prevented",
+      "whatsapp": "passed"
+    },
+    {
+      "width": 430,
+      "result": "passed",
+      "amounts": [
+        70,
+        130
+      ],
+      "copyAmountAndFailure": "passed",
+      "copyNumber": "disabled: no recipient configured",
+      "validation": "passed",
+      "actualPendingAndFailure": "passed",
+      "falseConfirmation": "prevented",
+      "whatsapp": "passed"
+    },
+    {
+      "width": 768,
+      "result": "passed",
+      "amounts": [
+        70,
+        130
+      ],
+      "copyAmountAndFailure": "passed",
+      "copyNumber": "disabled: no recipient configured",
+      "validation": "passed",
+      "actualPendingAndFailure": "passed",
+      "falseConfirmation": "prevented",
+      "whatsapp": "passed"
+    },
+    {
+      "width": 1440,
+      "result": "passed",
+      "amounts": [
+        70,
+        130
+      ],
+      "copyAmountAndFailure": "passed",
+      "copyNumber": "disabled: no recipient configured",
+      "validation": "passed",
+      "actualPendingAndFailure": "passed",
+      "falseConfirmation": "prevented",
+      "whatsapp": "passed"
+    }
+  ],
+  "backend": "Not connected. Actual server-action unavailability responses and transport failures tested; no payment or order was created."
+}

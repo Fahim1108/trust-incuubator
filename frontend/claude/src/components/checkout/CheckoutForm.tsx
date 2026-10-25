@@ -16,12 +16,16 @@ import { placeOrderAction } from "@/services/actions";
 import type { CheckoutPayload, PaymentMethod } from "@/types";
 import { CheckoutSteps } from "./CheckoutSteps";
 import { PaymentMethodSelector } from "./PaymentMethodSelector";
+import { ManualAdvancePayment } from "./ManualAdvancePayment";
+import { WhatsAppSupport } from "./WhatsAppSupport";
+import { advanceBreakdown, formatPaymentAmount } from "@/lib/manual-payment";
+import type { ManualPaymentConfiguration } from "@/types/manual-payment";
 
 type Field = "fullName" | "phone" | "email" | "division" | "district" | "area" | "addressLine";
 
 const STEPS = ["Delivery", "Payment", "Review"];
 
-export function CheckoutForm() {
+export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConfiguration: ManualPaymentConfiguration }) {
   const router = useRouter();
   const { items, hydrated, getSummary } = useCart();
   const [step, setStep] = useState(0);
@@ -34,6 +38,7 @@ export function CheckoutForm() {
   const [pending, startTransition] = useTransition();
 
   const summary = getSummary(form.district || undefined);
+  const advance = payment === "cod" ? advanceBreakdown(summary.total * 100, form.division, form.district, manualPaymentConfiguration.policy) : null;
   const districts = useMemo(() => districtsOf(form.division), [form.division]);
   const areas = useMemo(() => areasOf(form.district), [form.district]);
 
@@ -83,9 +88,13 @@ export function CheckoutForm() {
     startTransition(async () => {
       try {
       const res = await placeOrderAction(payload);
-      if (res.ok) {
-        // Only reachable once a real backend confirms the order.
+      if (res.ok && payment !== "cod") {
+        // COD confirmation additionally requires verified advance evidence.
         router.push(`/account/orders?placed=${encodeURIComponent(res.data.orderNumber)}`);
+        return;
+      }
+      if (res.ok) {
+        setResult({ title: "Order not confirmed", message: "Your advance must be verified before a COD order can be confirmed. Contact support using your pending-order reference.", payload });
         return;
       }
       setResult({ title: res.reason === "not_connected" ? "Order not placed" : "Could not place order", message: res.message, payload });
@@ -109,10 +118,10 @@ export function CheckoutForm() {
   const deliveryLabel = form.district ? (isInsideDhaka(form.district) ? "Inside Dhaka" : "Outside Dhaka") : "Select a district to calculate delivery";
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:gap-12 [&>*]:min-w-0">
+    <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:gap-12 [&>*]:min-w-0" data-checkout-content>
       <div className="min-w-0">
         <DemoNotice force className="mb-5">
-          <strong>Checkout UI demonstration.</strong> Orders and payments are not processed until the backend is connected. Placing an order here will not create an order or charge anyone.
+          Ordering and payment collection are currently unavailable. Totals are estimates; do not send money or enter real payment details in this Preview.
         </DemoNotice>
         <CheckoutSteps steps={STEPS} current={step} onStepClick={setStep} />
 
@@ -165,6 +174,7 @@ export function CheckoutForm() {
           {step === 1 && (
             <div className="space-y-6">
               <PaymentMethodSelector value={payment} onChange={setPayment} onlineEnabled={commerce.onlinePaymentEnabled} />
+              {payment === "cod" && <ManualAdvancePayment configuration={manualPaymentConfiguration} totalMinor={summary.total * 100} division={form.division} district={form.district} />}
               <Textarea label="Order note (optional)" placeholder="Anything we should know? e.g. preferred delivery time" value={note} onChange={(e) => setNote(e.target.value)} className="min-h-[80px]" />
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                 <Button variant="ghost" onClick={() => setStep(0)} leftIcon={<ArrowLeft className="h-4 w-4" />}>
@@ -181,7 +191,7 @@ export function CheckoutForm() {
             <div className="space-y-6">
               <h2 className="font-serif text-2xl text-ink">Review your order</h2>
               <dl className="grid gap-4 text-sm sm:grid-cols-2">
-                <div className="rounded-control bg-[#F9F8F7] p-4">
+                <div className="rounded-control border border-line bg-white p-4">
                   <dt className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-ink-muted">
                     Deliver to
                     <button type="button" onClick={() => setStep(0)} className="normal-case tracking-normal text-primary underline underline-offset-4">
@@ -196,7 +206,7 @@ export function CheckoutForm() {
                     {form.addressLine}, {form.area}, {form.district}, {form.division}
                   </dd>
                 </div>
-                <div className="rounded-control bg-[#F9F8F7] p-4">
+                <div className="rounded-control border border-line bg-white p-4">
                   <dt className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-ink-muted">
                     Payment
                     <button type="button" onClick={() => setStep(1)} className="normal-case tracking-normal text-primary underline underline-offset-4">
@@ -210,7 +220,7 @@ export function CheckoutForm() {
               <ul className="divide-y divide-line border-y border-line">
                 {items.map((i) => (
                   <li key={i.id} className="flex items-center gap-3 py-3">
-                    <span className="relative h-16 w-[52px] shrink-0 overflow-hidden rounded bg-[#F4F2F0]">
+                    <span className="relative h-16 w-[52px] shrink-0 overflow-hidden rounded bg-white">
                       <SmartImage src={i.image.src} alt="" fill sizes="52px" className="object-cover" />
                     </span>
                     <span className="min-w-0 flex-1">
@@ -227,7 +237,7 @@ export function CheckoutForm() {
                 <Button variant="ghost" onClick={() => setStep(1)} leftIcon={<ArrowLeft className="h-4 w-4" />}>
                   Back
                 </Button>
-                <Button size="lg" onClick={placeOrder} loading={pending} leftIcon={<Lock className="h-4 w-4" />}>
+                <Button size="lg" onClick={placeOrder} loading={pending} className="bg-[#400000] hover:bg-[#560000]" leftIcon={<Lock className="h-4 w-4" />}>
                   Place Order ({payment === "cod" ? "COD" : "Online"}) · {formatPrice(summary.total)}
                 </Button>
               </div>
@@ -242,7 +252,7 @@ export function CheckoutForm() {
           <ul className="space-y-3">
             {items.map((i) => (
               <li key={i.id} className="flex items-center gap-3">
-                <span className="relative h-14 w-11 shrink-0 overflow-hidden rounded bg-[#F4F2F0]">
+                <span className="relative h-14 w-11 shrink-0 overflow-hidden rounded bg-white">
                   <SmartImage src={i.image.src} alt="" fill sizes="44px" className="object-cover" />
                   <span className="absolute -right-0 -top-0 flex h-4 min-w-4 items-center justify-center rounded-bl bg-ink px-1 text-[9px] text-white">{i.quantity}</span>
                 </span>
@@ -258,6 +268,11 @@ export function CheckoutForm() {
           </ul>
           <CouponField />
           <OrderSummary summary={summary} title={null} deliveryNote={deliveryLabel} />
+          {payment === "cod" && <div className="space-y-2 border-t border-line pt-3 text-sm" aria-label="COD advance summary" aria-live="polite">
+            <div className="flex justify-between gap-3"><span>Required advance</span><strong data-summary-advance>{advance ? formatPaymentAmount(advance.advanceMinor) : "Select location"}</strong></div>
+            <div className="flex justify-between gap-3"><span>Remaining on delivery</span><strong data-summary-remaining>{advance ? formatPaymentAmount(advance.remainingMinor) : "—"}</strong></div>
+            <p className="text-xs leading-relaxed text-ink-muted">Advance counts toward the total, including delivery. Payment is not yet verified.</p>
+          </div>}
         </div>
       </aside>
 
@@ -277,11 +292,11 @@ export function CheckoutForm() {
               <PackageCheck className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />
               <p>{result.message}</p>
             </div>
-            <p className="text-ink-muted">Your cart has been kept. When the backend is connected, this button will create a real order with the payload below:</p>
-            <pre className="max-h-56 overflow-auto rounded-control bg-ink p-3 text-[11px] leading-relaxed text-white/90">{JSON.stringify(result.payload, null, 2)}</pre>
+            <p className="text-ink-muted">Your cart has been kept. No confirmed order or payment receipt has been issued.</p>
           </div>
         )}
       </Modal>
+      <WhatsAppSupport />
     </div>
   );
 }

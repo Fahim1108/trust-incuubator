@@ -1,4 +1,5 @@
 import type { MerchandisingCandidate } from "@/lib/merchandising";
+import type { ManualPaymentConfiguration, PaymentSubmissionInput, PaymentSubmissionResult } from "@/types/manual-payment";
 import type {
   ActionResult,
   Address,
@@ -42,6 +43,8 @@ export interface ProductSuggestion {
  * interface, then switch the export in `src/services/adapters/index.ts`.
  */
 export interface StorefrontDataSource {
+  getManualPaymentConfiguration(): Promise<ManualPaymentConfiguration>;
+  submitManualPayment(input: PaymentSubmissionInput): Promise<PaymentSubmissionResult>;
   // ---- Catalogue (read) ----
   getHomepageProducts(): Promise<MerchandisingCandidate[]>;
   getProducts(query?: ProductQueryInput): Promise<Paginated<Product> & { facets: CatalogFacets }>;

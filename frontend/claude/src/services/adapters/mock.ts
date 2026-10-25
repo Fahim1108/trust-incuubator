@@ -15,6 +15,12 @@ const notConnected = (what: string): ActionResult<never> => ({
 const byId = new Map(mockProducts.map((p) => [p.id, p]));
 
 export const mockDataSource: StorefrontDataSource = {
+  async getManualPaymentConfiguration() {
+    return { available: false, destinations: [], policy: { insideDhakaMinor: 7000, outsideDhakaMinor: 13000, credit: "against-order-total" } };
+  },
+  async submitManualPayment() {
+    return { ok: false, reason: "not_connected", message: "Payment submission is unavailable. No payment details were saved and no order was confirmed. Do not send money." };
+  },
   async getHomepageProducts() {
     // Isolated preview fixtures only: simulated publication dates, NOT verified live timestamps.
     return mockProducts.map(product => ({ product, status: "published" as const, publishedAt: product.createdAt }));
