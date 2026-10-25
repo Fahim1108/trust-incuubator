@@ -45,8 +45,12 @@ try {
       }
       await panel.getByRole('tab', { name: 'Personal Nagad', exact: true }).press('ArrowLeft');
       await expect(panel.getByRole('tab', { name: 'Personal bKash', exact: true })).toBeFocused();
-      const image = panel.locator('img').first();
-      await expect.poll(() => image.evaluate(e => e.complete && e.naturalWidth > 0)).toBe(true);
+      for (const method of ['bKash', 'Nagad']) {
+        const image = panel.getByRole('tab', { name: 'Personal ' + method, exact: true }).locator('img');
+        await expect.poll(() => image.evaluate(e => e.complete && e.naturalWidth > 0)).toBe(true);
+        await expect(image).toHaveAttribute('src', new RegExp(method.toLowerCase() + '\\.png'));
+      }
+      await expect(panel.getByRole('link', { name: /Vecteezy/i })).toHaveCount(0);
       await panel.getByRole('button', { name: 'Copy Amount', exact: true }).click();
       await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(String(mode === 'cod' ? 70 : total));
       const submit = panel.getByRole('button', { name: 'Submit Payment', exact: true });
@@ -80,7 +84,7 @@ try {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     assert.deepEqual(errors, []);
     await context.close();
-    results.push({ width, modes: ['cod', 'online'], numberCopy: 'passed', amounts: 'passed: 70/130/full total', liveSubmission: 'disabled, zero POSTs', logo: 'bKash loaded', overflow: false });
+    results.push({ width, modes: ['cod', 'online'], numberCopy: 'passed', amounts: 'passed: 70/130/full total', liveSubmission: 'disabled, zero POSTs', logo: 'supplied bKash and Nagad PNGs loaded; no attribution UI', overflow: false });
     console.log(`PASS ${width}px: shared COD/full UI, authorised recipient copy, amounts, logo, keyboard, disabled live submission and no false confirmation`);
   }
   await writeFile(`${directory}/verification.json`, JSON.stringify({ origin, results, backend: 'No payment/order submission enabled.' }, null, 2));

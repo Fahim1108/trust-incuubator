@@ -9,9 +9,8 @@
 
 ## Provider assets
 
-- `public/payments/bkash.jpg` is the unchanged JPG from the supplied bKash ZIP, displayed through Next Image. The supplied EPS is not executed or bundled into the browser. The original ZIP remains in the uploaded workspace attachments.
-- The ZIP's licence document is preserved at `docs/assets/payments/Vecteezy-License-Information.pdf`. The UI includes a small Vecteezy.com attribution.
-- `src/config/payment-brands.ts` centralises provider names, logo paths and attribution.
-- Nagad images were visible inline in chat but no downloadable image file/path was supplied to the workspace. Nagad therefore uses its name, with `logo: null`, instead of invented artwork or a broken image. Import the original PNG/SVG when provided as an actual file/ZIP, then set its path in the provider configuration.
+- `public/payments/bkash.png` and `public/payments/nagad.png` are the unchanged PNG files from the owner-supplied `Attires_Arena_Payment_Logos (1).zip`. Both are rendered with preserved aspect ratio through Next Image.
+- `src/config/payment-brands.ts` centralises provider names and the new PNG paths. No attribution text or third-party credit is displayed for these replacement assets, as requested.
+- The previously supplied Vecteezy JPG and its licence remain archived in the repository; that JPG is no longer rendered. Its licence is not evidence of rights for the replacement PNGs.
 
 Verification: `npm run test:claude` covers separate numbers/authorisations, no availability activation, direct-call rejection and advance/full-payment arithmetic. `node scripts/test-manual-advance.mjs` checks both modes at 360/390/430/768/1440px, exact clipboard content, reference label, amount copying, clipboard denial, logo loading, keyboard tabs, no overflow and zero payment/order POSTs. Prior enabled-attempt tests were updated to assert the newly requested disabled state; no fake endpoint is used.

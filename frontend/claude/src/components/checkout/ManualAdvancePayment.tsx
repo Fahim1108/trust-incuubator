@@ -93,7 +93,7 @@ export function ManualAdvancePayment({ configuration, totalMinor, division, dist
               event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("button")[next]?.focus();
             }}
             className={`aa-press flex min-h-14 items-center justify-center gap-2 rounded-lg border bg-white px-4 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${provider === method ? "border-primary text-primary" : "border-[#EAEAEA] text-[#74706C]"}`}>
-            {paymentBrands[method].logo && <Image src={paymentBrands[method].logo} alt="" width={28} height={28} className="h-7 w-7 object-contain" />}
+            <Image src={paymentBrands[method].logo} alt="" width={64} height={64} className="h-16 w-16 shrink-0 object-contain" />
             <span className="text-left leading-tight"><span className="block text-[10px] font-normal text-[#74706C]">Personal</span><span>{names[method]}</span></span>
           </button>
         ))}
@@ -114,7 +114,6 @@ export function ManualAdvancePayment({ configuration, totalMinor, division, dist
           <li>Open {names[provider]}.</li><li>{destination.transferInstructions}</li>
           <li>Send the exact displayed payment amount.</li><li>Copy the Transaction ID.</li><li>Return here and submit your payment information.</li>
         </ol> : <p className="flex items-start gap-2 text-sm leading-relaxed text-primary"><Info className="mt-0.5 shrink-0" size={17} aria-hidden />Payment collection is unavailable. Do not send money. Approved receiving-account instructions will appear here when configured.</p>}
-        <p className="text-xs text-[#74706C]">bKash artwork: <a href={paymentBrands.bkash.attribution.href} target="_blank" rel="noopener noreferrer" className="underline">{paymentBrands.bkash.attribution.label}</a></p>
       </div>
       {receipt ? <div role="status" className="space-y-2 rounded-lg border border-[#EAEAEA] p-5">
         <h4 className="font-serif text-2xl">Payment Details Submitted</h4>
