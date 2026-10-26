@@ -6,7 +6,7 @@ import { CartProvider } from "@/context/CartContext";
 import { StorefrontProvider } from "@/context/StorefrontContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { WishlistProvider } from "@/context/WishlistContext";
-import { getInitialCart, getStorefrontSettings } from "@/services";
+import { getInitialCart, getStorefrontSettings, getProducts } from "@/services";
 import "@fontsource-variable/cormorant-garamond";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/playfair-display";
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(s.siteUrl),
     robots: { index: false, follow: false },
-    title: { default: `${s.siteName} — Premium Menswear in Bangladesh`, template: `%s | ${s.siteName}` },
+    title: { default: `${s.siteName} — Thrift Shirts in Bangladesh`, template: `%s | ${s.siteName}` },
     description: s.description,
     icons: { icon: "/brand/icon.png", apple: "/brand/apple-icon.png" },
     openGraph: { siteName: s.siteName, type: "website", images: [{ url: s.logo.badge }] },
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [settings, initialCart] = await Promise.all([getStorefrontSettings(), getInitialCart()]);
+  const [settings, initialCart, catalogue] = await Promise.all([getStorefrontSettings(), getInitialCart(), getProducts({pageSize:500})]);
   return (
     <html lang="en" >
       <head>
@@ -41,11 +41,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <style>{motionVariables}</style>
       </head>
       <body>
-        <aside className="design-preview-notice" aria-label="Design preview notice">Shopping is not yet available. Catalogue and delivery details are samples. Do not enter real passwords or payment details.</aside>
+        <aside className="design-preview-notice" aria-label="Design preview notice">Our collection is being prepared. Ordering is not yet available.</aside>
         <StorefrontProvider settings={settings}>
           <ToastProvider>
-            <WishlistProvider>
-              <CartProvider initialItems={initialCart}>
+            <WishlistProvider approvedProductIds={catalogue.items.map(p=>p.id)}>
+              <CartProvider initialItems={initialCart} approvedVariantIds={catalogue.items.flatMap(p=>p.variants.filter(v=>v.stock>0).map(v=>v.id))}>
                 <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
                   Skip to content
                 </a>

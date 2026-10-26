@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { commerce, demo } from "@/config";
+import { commerce } from "@/config";
 import { isInsideDhaka } from "@/data/bangladesh";
 import { readStorage, STORAGE_KEYS, writeStorage } from "@/lib/storage";
 import type { CartItem, Coupon, OrderSummary } from "@/types";
@@ -31,7 +31,8 @@ const CartContext = createContext<CartContextValue | null>(null);
  * Codex: when a server cart exists, sync `items` with it here (the API of this
  * context can stay the same, so components need no changes).
  */
-export function CartProvider({ children, initialItems = [] }: { children: ReactNode; initialItems?: CartItem[] }) {
+export function CartProvider({ children, initialItems = [], approvedVariantIds = initialItems.map(i=>i.variantId) }: { children: ReactNode; initialItems?: CartItem[]; approvedVariantIds?: string[] }) {
+  const [approvedIds] = useState(()=>new Set(approvedVariantIds));
   const [initialSeed] = useState(initialItems);
   const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState<Coupon | undefined>();
@@ -42,15 +43,15 @@ export function CartProvider({ children, initialItems = [] }: { children: ReactN
     const frame = requestAnimationFrame(() => {
     const stored = readStorage<CartItem[] | null>(STORAGE_KEYS.cart, null);
     const seeded = readStorage<boolean>(STORAGE_KEYS.cartSeeded, false);
-    if (stored) setItems(stored);
-    else if (demo.seedCart && !seeded) {
+    if (stored) setItems(stored.filter(item=>approvedIds.has(item.variantId)));
+    else if (initialSeed.length && !seeded) {
       setItems(initialSeed);
       writeStorage(STORAGE_KEYS.cartSeeded, true);
     }
     setHydrated(true);
     });
     return () => cancelAnimationFrame(frame);
-  }, [initialSeed]);
+  }, [initialSeed, approvedIds]);
 
   useEffect(() => {
     if (hydrated) writeStorage(STORAGE_KEYS.cart, items);

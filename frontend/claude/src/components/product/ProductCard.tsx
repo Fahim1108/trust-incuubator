@@ -82,7 +82,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
           </Link>
         </h3>
         <Price price={product.price} compareAt={product.compareAtPrice} accent={cfg.showAddToCart} />
-        {cfg.showRating && <Rating value={product.rating.average} count={product.rating.count} />}
+        {cfg.showRating && product.rating.count > 0 && <Rating value={product.rating.average} count={product.rating.count} />}
         {cfg.showAddToCart && (
           <button
             type="button"

@@ -39,6 +39,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
     getProducts({pageSize:500, inStock:true}).then(r=>r.items),
     product.sizeGuideId ? getSizeGuide(product.sizeGuideId) : Promise.resolve(null),
   ]);
+  const reviewRating={average:reviews.length?reviews.reduce((sum,r)=>sum+r.rating,0)/reviews.length:0,count:reviews.length};
   const brand = brands.find((b) => b.id === product.brandId);
   const category = categories.find((c) => c.id === product.categoryId);
 
@@ -53,7 +54,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
           ]}
         />
         <div className="mt-5">
-          <ProductDetailClient product={product} brandName={brand?.name} sizeGuide={sizeGuide} initialColorId={typeof sp.color === "string" ? sp.color : undefined} />
+          <ProductDetailClient product={{...product,rating:reviewRating}} brandName={brand?.name} sizeGuide={sizeGuide} initialColorId={typeof sp.color === "string" ? sp.color : undefined} />
         </div>
 
         <div className="mt-14 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14">

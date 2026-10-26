@@ -1,0 +1,36 @@
+{
+  "origin": "http://localhost:3001",
+  "photos": 18,
+  "results": [
+    {
+      "width": 360,
+      "status": "passed",
+      "publicProducts": 0,
+      "draftsNotExposed": true
+    },
+    {
+      "width": 390,
+      "status": "passed",
+      "publicProducts": 0,
+      "draftsNotExposed": true
+    },
+    {
+      "width": 430,
+      "status": "passed",
+      "publicProducts": 0,
+      "draftsNotExposed": true
+    },
+    {
+      "width": 768,
+      "status": "passed",
+      "publicProducts": 0,
+      "draftsNotExposed": true
+    },
+    {
+      "width": 1440,
+      "status": "passed",
+      "publicProducts": 0,
+      "draftsNotExposed": true
+    }
+  ]
+}

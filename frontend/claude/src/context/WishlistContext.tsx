@@ -14,17 +14,18 @@ interface WishlistContextValue {
 const WishlistContext = createContext<WishlistContextValue | null>(null);
 
 /** Wishlist stored in this browser only. Codex: sync with a `wishlists` table for signed-in users. */
-export function WishlistProvider({ children }: { children: ReactNode }) {
+export function WishlistProvider({ children, approvedProductIds }: { children: ReactNode; approvedProductIds?: string[] }) {
+  const [approvedIds] = useState(()=>approvedProductIds?new Set(approvedProductIds):null);
   const [ids, setIds] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-    setIds(readStorage<string[]>(STORAGE_KEYS.wishlist, []));
+    setIds(readStorage<string[]>(STORAGE_KEYS.wishlist, []).filter(id=>!approvedIds||approvedIds.has(id)));
     setHydrated(true);
     });
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [approvedIds]);
 
   useEffect(() => {
     if (hydrated) writeStorage(STORAGE_KEYS.wishlist, ids);

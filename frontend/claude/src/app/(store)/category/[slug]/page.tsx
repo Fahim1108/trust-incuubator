@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CatalogView } from "@/components/catalog/CatalogView";
@@ -20,6 +21,7 @@ export default async function CategoryPage({ params, searchParams }: { params: P
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
   if (!category) notFound();
+  if(category.available===false) return <section className="container animate-dropdown-in py-16 text-center"><h1 className="font-serif text-4xl text-primary">Coming Soon</h1><p className="mt-4 text-ink-muted">We&apos;re expanding our collection. Stay tuned.</p><Link href="/category/shirts" className="mt-6 inline-block rounded bg-primary px-5 py-3 text-white">Explore Shirts</Link></section>;
   const query = { ...parseProductQuery(await searchParams), categorySlugs: [slug] };
   const [result, brands] = await Promise.all([getProducts(query), getBrands()]);
   return (

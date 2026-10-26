@@ -75,6 +75,7 @@ export interface Product {
 }
 
 export interface Category {
+  available?: boolean;
   id: ID;
   slug: string;
   name: string;

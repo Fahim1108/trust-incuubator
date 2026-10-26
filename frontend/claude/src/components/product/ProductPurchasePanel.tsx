@@ -64,7 +64,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, sizeGuide, c
         {brandName && <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink-muted">{brandName}</p>}
         <Title className={cn("font-serif leading-tight text-ink", compact ? "text-2xl" : "text-3xl sm:text-[40px]")}>{product.name}</Title>
         <a href="#reviews" className={cn("inline-block", compact && "pointer-events-none")}>
-          <Rating value={product.rating.average} count={product.rating.count} />
+          {product.rating.count>0?<Rating value={product.rating.average} count={product.rating.count} />:<span className="text-sm text-ink-muted">No reviews yet.</span>}
         </a>
         <Price price={product.price} compareAt={product.compareAtPrice} size="lg" showBadge />
         {!compact && <p className="text-sm leading-relaxed text-ink-muted">{product.shortDescription}</p>}

@@ -1,0 +1,41 @@
+select test.assert_true((select count(*)=18 and sum(stock_quantity)=18 and bool_and(actual_size is null and not size_verified) and min(price_minor)=51000 and max(price_minor)=60000 from public.thrift_intake),'18 physical in-stock drafts preserve supplied prices, quantity and unknown size');
+select test.assert_true(not exists(select 1 from public.product_variants v join public.thrift_intake i on i.product_id=v.product_id),'no artificial thrift size variants created');
+select test.denied($q$update public.products set status='published' where slug='aa-shirt-001'$q$,'23514','cannot publish unverified size/details');
+select test.denied($q$update public.thrift_intake set actual_size='N/A' where source_id='AA-SHIRT-001'$q$,'23514','N/A cannot become an actual size');
+set local role anon;
+select test.denied('select * from public.thrift_intake','42501','anonymous cannot read draft intake');
+select test.assert_true((select count(*)=0 from public.product_reviews),'pending reviews never public');
+select test.denied($q$select public.submit_product_review('10000000-0000-0000-0000-000000000001',5,'Anonymous review attempt','')$q$,'42501','signed out cannot submit reviews');
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
+select test.assert_true((select count(*)=0 from public.thrift_intake),'customer cannot see draft owner intake');
+select public.submit_product_review('10000000-0000-0000-0000-000000000001',5,'Actual isolated test review','');
+select test.denied($q$select public.submit_product_review('10000000-0000-0000-0000-000000000001',4,'Duplicate test review','')$q$,'23505','duplicate review denied');
+select test.denied($q$select public.submit_product_review('10000000-0000-0000-0000-000000000002',5,'Draft test review','')$q$,'22023','cannot review unpublished products');
+select test.denied($q$update public.product_reviews set status='approved'$q$,'42501','customers cannot self approve');
+select test.denied($q$select public.moderate_product_review(id,true) from public.product_reviews$q$,'42501','customers cannot moderate');
+reset role;
+set local role anon;
+select test.assert_true((select count(*)=0 from public.product_reviews),'new real submission remains pending');
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
+select test.assert_true((select count(*)=18 from public.thrift_intake),'permitted staff can edit inventory intake');
+select public.moderate_product_review(id,true) from public.product_reviews;
+select test.assert_true((select count(*)=1 from public.review_moderation_log),'moderation creates an audit record');
+reset role;
+set local role anon;
+select test.assert_true((select count(*)=1 from public.product_reviews),'approved review readable publicly');
+select test.denied('select customer_id from public.product_reviews','42501','public review cannot disclose private account identifiers');
+reset role;
+insert into public.products(id,name,slug,status) values
+ ('10000000-0000-0000-0000-000000000004','Rate fixture 1','rate-fixture-one','published'),
+ ('10000000-0000-0000-0000-000000000005','Rate fixture 2','rate-fixture-two','published'),
+ ('10000000-0000-0000-0000-000000000006','Rate fixture 3','rate-fixture-three','published');
+set local role authenticated;
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}',true);
+select public.submit_product_review('10000000-0000-0000-0000-000000000004',4,'Additional isolated review one','');
+select public.submit_product_review('10000000-0000-0000-0000-000000000005',4,'Additional isolated review two','');
+select test.denied($q$select public.submit_product_review('10000000-0000-0000-0000-000000000006',4,'Rate limit isolated attempt','')$q$,'54000','review submission rate limit enforced');
+reset role;

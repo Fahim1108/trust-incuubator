@@ -1,7 +1,2 @@
-import { mockDataSource } from "./mock";
-
-/**
- * The active data source. Codex: replace with the Supabase adapter, e.g.
- *   export { supabaseDataSource as dataSource } from "./supabase";
- */
-export const dataSource = mockDataSource;
+// Production paths never fall back to invented catalogue fixtures.
+export {ownerCatalogue as dataSource} from './owner-catalogue';

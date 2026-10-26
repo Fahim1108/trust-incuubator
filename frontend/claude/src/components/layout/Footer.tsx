@@ -31,7 +31,7 @@ function configuredUrl(value: string) {
   }
 }
 export function Footer() {
-  const { footer, demo } = useStorefront();
+  const { footer } = useStorefront();
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.content}`}>
@@ -100,11 +100,6 @@ export function Footer() {
             </p>
             <p className={styles.tagline}>Style Elevated. Always.</p>
           </div>
-          {demo.showNotices && (
-            <p className={styles.disclaimer}>
-              Catalogue imagery, prices and reviews are samples. Brand listings do not imply affiliation or authorised resale.
-            </p>
-          )}
           <p className="mt-5 text-center text-sm text-[#D6C8C8]"><a href={contact.whatsappUrl} target="_blank" rel="noopener noreferrer" className="rounded hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">WhatsApp: <strong>{contact.whatsappNumber}</strong></a></p>
           <p className={styles.credit}>Created by <strong>Firoj Ahamed Fahim</strong></p>
         </div>

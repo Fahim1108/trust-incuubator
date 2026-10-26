@@ -16,6 +16,6 @@ export const commerce: CommerceSettings = {
 };
 
 export const demo: DemoSettings = {
-  showNotices: true,
-  seedCart: true,
+  showNotices: false,
+  seedCart: false,
 };
