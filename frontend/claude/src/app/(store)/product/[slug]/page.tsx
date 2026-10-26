@@ -12,10 +12,8 @@ import { getBrands, getCategories, getProductBySlug, getProducts, getReviews, ge
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
-export async function generateStaticParams() {
-  const { items } = await getProducts({ pageSize: 500 });
-  return items.map((p) => ({ slug: p.slug }));
-}
+// Public inventory is read live; an empty draft catalogue must not freeze dynamic fallback routes.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const product = await getProductBySlug((await params).slug);

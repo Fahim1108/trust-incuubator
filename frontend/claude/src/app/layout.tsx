@@ -14,6 +14,9 @@ import "@fontsource/allura/latin-400.css";
 import "./globals.css";
 import "./motion.css";
 
+// Approved catalogue/cart IDs must be read at request time, not frozen into an empty build snapshot.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getStorefrontSettings();
   return {

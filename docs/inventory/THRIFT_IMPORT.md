@@ -23,7 +23,7 @@ Keep both flags false until the physical size and essential item details (includ
 
 When approved, a trusted backend/operator must create **one** matching actual `product_variants` record (size/color exactly matching the verified intake fields, active=true), initialize its inventory from the confirmed physical count using trusted database operations, and then publish. Do not create chart options as actual variants. Never reset sold inventory to one on reimport. The anonymous `published_thrift_catalogue()` projection only exposes published, verified intake with a matching active physical SKU; it does not expose staff intake notes or draft inventory.
 
-The Claude adapter can read this projection with `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (or the equivalent NEXT_PUBLIC names); only anonymous/publishable keys are accepted. Privileged service/management keys are never used by application catalogue code. An unavailable connection returns empty results, never sample-product fallback. Configure those server variables on the separate Preview before relying on future published listings. Homepage New Arrivals/curation stay empty until real owner-approved publication/arrival metadata is connected; import timestamps are not fabricated publish dates.
+The Claude adapter can read this projection with `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (or the equivalent NEXT_PUBLIC names); only anonymous/publishable keys are accepted. Privileged service/management keys are never used by application catalogue code. An unavailable connection returns empty results, never sample-product fallback. These server-only variables were configured on the separate Vercel Preview for the intended development project; production environment variables were not changed. Homepage New Arrivals/curation stay empty until real owner-approved publication/arrival metadata is connected; import timestamps are not fabricated publish dates.
 
 Live order/payment creation, reservation/oversell protection at checkout and the complete staff editing dashboard remain separate unfinished backend work. Do not enable real purchasing merely because fields have been filled. Existing COD/manual payment boundaries remain disabled. Backend stock adjustments retain their existing trusted concurrency protection.
 
@@ -47,6 +47,10 @@ The new database review workflow has authenticated-identity submission RPC, rati
 Local PostgreSQL tests executed submission, duplicate rejection, anonymous denial, unpublished-product denial, customer self-approval denial, staff approval/audit and public approved-only reads. Claims were simulated; these are not end-to-end hosted Supabase customer login/review tests. Actual hosted anonymous PostgREST checks confirmed zero drafts/reviews exposed and denial of private intake access. No test reviews/users were created remotely.
 
 Customer review UI shows the approved records or “No reviews yet. Be the first to review this product.” Write Review opens sign-in in place, preserving the product URL. **Customer session integration, authenticated review form/submission wiring and the admin moderation UI remain unconnected in the Claude app.** No submitted/successful review is claimed. All products remain unpublished, so no customer detail page is exposed yet.
+
+## Runtime verification
+
+The first hosted run identified a static-to-dynamic fallback error when real Supabase was configured. Catalogue render paths now use request-time rendering, and the Preview proxy resolves public product existence before streaming to produce a genuine HTTP 404 for drafts/unknown products. Tests were repeated with real development anonymous access; no privileged credential is passed to the application. The production-disable gate remains enforced.
 
 ## Storefront
 

@@ -9,9 +9,7 @@ import { getBrandBySlug, getBrands, getProducts } from "@/services";
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
-export async function generateStaticParams() {
-  return (await getBrands()).map((b) => ({ slug: b.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const brand = await getBrandBySlug((await params).slug);

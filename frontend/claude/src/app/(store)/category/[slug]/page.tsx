@@ -3,14 +3,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CatalogView } from "@/components/catalog/CatalogView";
 import { parseProductQuery } from "@/lib/catalog-query";
-import { getBrands, getCategories, getCategoryBySlug, getProducts } from "@/services";
+import { getBrands, getCategoryBySlug, getProducts } from "@/services";
 
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-export async function generateStaticParams() {
-  return (await getCategories()).map((c) => ({ slug: c.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const category = await getCategoryBySlug((await params).slug);
