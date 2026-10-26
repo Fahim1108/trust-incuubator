@@ -1,5 +1,6 @@
 "use client";
 
+import { BannerCarousel } from "./BannerCarousel";
 import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -107,7 +108,7 @@ function SideTile({ banner }: { banner: Banner }) {
   );
 }
 
-export function Hero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png" }: { hero: HeroSettings; uppercase?: boolean; logoSrc?: string }) {
+function EditorialHero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png" }: { hero: HeroSettings; uppercase?: boolean; logoSrc?: string }) {
   const slides = hero.slides;
   const [index, setIndex] = useState(0);
   // Same value on server and first client render (module flag is still false), so no hydration mismatch.
@@ -210,4 +211,8 @@ export function Hero({ hero, uppercase = true, logoSrc = "/brand/logo-maroon.png
       </div>
     </section>
   );
+}
+
+export function Hero(props: {hero:HeroSettings;uppercase?:boolean;logoSrc?:string}) {
+  return props.hero.imageOnly ? <BannerCarousel hero={props.hero}/> : <EditorialHero {...props}/>;
 }

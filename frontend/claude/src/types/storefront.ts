@@ -110,6 +110,8 @@ export interface HomepageSection extends MerchandisingRules {
 }
 
 export interface HeroSettings {
+  /** Original campaign artwork, shown whole without text overlays. */
+  imageOnly?: boolean;
   /** Side tiles beside the main slider on desktop (mockup: "New Arrivals", "Essential Footwear"). */
   side: Banner[];
   /** Auto-rotate slides in ms; 0 disables. */
