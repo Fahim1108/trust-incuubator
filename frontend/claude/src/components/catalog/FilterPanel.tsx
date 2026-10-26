@@ -1,9 +1,7 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { Accordion, Checkbox } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { isLightColor } from "@/lib/color";
 import type { CatalogFacets } from "@/types";
 import { useCatalog } from "./CatalogContext";
 
@@ -85,27 +83,7 @@ export function FilterPanel({ facets }: { facets: CatalogFacets }) {
         </div>
       ),
     },
-    facets.colors.length > 0 && {
-      id: "color",
-      title: "Color",
-      content: (
-        <div className="grid grid-cols-5 gap-2">
-          {facets.colors.map((c) => {
-            const active = query.colorIds?.includes(c.id) ?? false;
-            return (
-              <button key={c.id} type="button" aria-pressed={active} title={c.name} aria-label={c.name} onClick={() => update({ colorIds: toggle(query.colorIds, c.id) })} className="flex flex-col items-center gap-1">
-                <span className={cn("flex h-8 w-8 items-center justify-center rounded-full border-2", active ? "border-primary" : "border-transparent")}>
-                  <span className={cn("flex h-6 w-6 items-center justify-center rounded-full", isLightColor(c.hex) && "ring-1 ring-inset ring-ink/15")} style={{ backgroundColor: c.hex }}>
-                    {active && <Check className={cn("h-3 w-3", isLightColor(c.hex) ? "text-ink" : "text-white")} />}
-                  </span>
-                </span>
-                <span className="text-[10px] text-ink-muted">{c.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      ),
-    },
+    {id:'availability',title:'Availability',content:<Checkbox label="In stock" checked={query.inStock??false} onChange={()=>update({inStock:query.inStock?undefined:true})}/>},
   ].filter(Boolean) as { id: string; title: string; content: React.ReactNode }[];
 
   return <Accordion items={items} defaultOpen={items.map((i) => i.id)} className="border-t-0" />;

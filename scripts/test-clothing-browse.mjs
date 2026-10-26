@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {chromium,expect} from '@playwright/test';
+const origin=process.env.CLAUDE_PREVIEW_URL||'http://localhost:3001',directory='artifacts/clothing-browse';
+await mkdir(directory,{recursive:true});const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});const results=[];
+try{for(const width of [360,390,430,768,1440]){
+ const context=await browser.newContext({viewport:{width,height:1000}});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(origin,{waitUntil:'networkidle'});
+ await expect(page.getByRole('region',{name:'Shop by Brands',exact:true})).toHaveCount(0);const browse=page.getByRole('region',{name:'Shop by Size',exact:true});await expect(browse).toBeVisible();await expect(browse.getByRole('link',{name:'2XL',exact:true})).toHaveAttribute('href',/sizes=2XL/);await expect(browse.getByRole('link',{name:'3XL',exact:true})).toHaveCount(0);
+ await expect(page.locator('[data-product-size-badge]').first()).toBeVisible();await expect(page.locator('[data-loader-ring]')).toHaveCount(0);await expect(page.locator('[data-whatsapp-support]')).toHaveCount(1);
+ await page.locator('footer').scrollIntoViewIfNeeded();await expect.poll(()=>page.locator('footer img').evaluateAll(es=>es.every(e=>e.complete&&e.naturalWidth>0))).toBe(true);await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.waitForTimeout(350);
+ await page.screenshot({path:`${directory}/home-${width}.png`,fullPage:true,animations:'disabled'});
+ await page.getByRole('region',{name:'Shop by Categories'}).getByRole('link',{name:'Winter',exact:true}).click();await page.waitForURL('**/collections/winter');await expect(page.getByRole('heading',{name:'Winter Collection',exact:true})).toBeVisible();
+ const winter=page.locator('article.aa-product-card');await expect(winter).toHaveCount(1);await expect(winter.getByRole('heading')).toContainText('Utility Overshirt');
+ await page.goto(origin+'/shop?sizes=2XL&available=1&colors=maroon',{waitUntil:'networkidle'});
+ if(width<1024)await page.getByRole('button',{name:/^Filter/}).click();
+ await expect(page.getByRole('button',{name:'Color',exact:true})).toHaveCount(0);await expect(page.getByRole('button',{name:'Price',exact:true})).toHaveCount(0);await expect(page.getByRole('checkbox',{name:'In stock',exact:true})).toBeChecked();
+ const size=page.getByRole('button',{name:'M (40)',exact:true});await size.click();await page.waitForURL(url=>url.searchParams.get('sizes')?.includes('M')&&!url.searchParams.has('colors'));
+ await page.goto(origin+'/product/premium-cotton-shirt',{waitUntil:'networkidle'});await expect(page.getByRole('region',{name:'You May Also Like',exact:true})).toHaveCount(0);
+ await page.getByRole('radio',{name:'Size M',exact:true}).click();await expect(page.getByRole('region',{name:'You May Also Like',exact:true})).toBeVisible();
+ await expect(page.getByRole('region',{name:'You May Also Like'}).locator('a[href="/product/premium-cotton-shirt"]')).toHaveCount(0);
+ await page.getByRole('button',{name:'Size Guide',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByRole('cell',{name:'Not specified',exact:true})).toBeVisible();await expect(page.getByRole('rowheader',{name:'3XL',exact:true})).toBeVisible();await expect(page.getByRole('rowheader',{name:'Over Size',exact:true})).toBeVisible();await expect(page.getByRole('dialog').getByRole('button',{name:'Close',exact:true})).toBeFocused();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+ await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.waitForTimeout(350);await page.screenshot({path:`${directory}/product-${width}.png`,fullPage:true,animations:'disabled'});
+ await page.getByRole('button',{name:'Add to Cart',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('dialog').getByRole('button',{name:'Close',exact:true}).click();
+ await page.goto(origin+'/checkout',{waitUntil:'networkidle'});await page.locator('#checkout-fullName').fill('Guest UI Test');await page.locator('#checkout-phone').fill('01700000000');
+ await page.getByRole('textbox',{name:'Coupon code',exact:true}).fill('WELCOME10');await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByText('Please sign in to redeem your coupon.',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Continue as guest',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.locator('#checkout-fullName')).toHaveValue('Guest UI Test');await expect(page.locator('#checkout-phone')).toHaveValue('01700000000');assert.equal(new URL(page.url()).pathname,'/checkout');
+ await page.locator('#checkout-division').selectOption('Dhaka');await page.locator('#checkout-district').selectOption('Dhaka');await page.locator('#checkout-area').selectOption('Banani');await page.locator('#checkout-addressLine').fill('Test-only delivery address');await page.getByRole('button',{name:'Continue to Payment',exact:true}).click();await expect(page.locator('[data-required-advance]')).toHaveText('৳70');await expect(page.getByRole('button',{name:'Submit Payment',exact:true})).toBeDisabled();
+ await page.goto(origin+'/shop',{waitUntil:'networkidle'});let release;const hold=new Promise(r=>{release=r;});
+ await page.route('**/shop**',async route=>{if(route.request().method()==='POST')await hold;await route.continue();});
+ const search=page.locator('input[type=search]:visible').first();await search.fill('cotton');await expect(page.getByRole('status',{name:'Searching products',exact:true})).toBeVisible();await expect(page.locator('[data-loader-ring]')).toHaveCount(0);
+ await page.emulateMedia({reducedMotion:'reduce'});const skeleton=page.locator('.aa-skeleton').first();await expect(skeleton).toBeVisible();assert.equal(await skeleton.evaluate(e=>getComputedStyle(e,'::before').animationName),'none');release();await expect(page.getByRole('status',{name:'Searching products',exact:true})).toHaveCount(0);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);await context.close();results.push({width,status:'passed',backend:'fixture catalogue; coupon/order/payment unavailable'});console.log(`PASS clothing browse ${width}px`);
+}}finally{await browser.close();await writeFile(directory+'/verification.json',JSON.stringify({origin,results},null,2));}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { CouponField } from "@/components/cart/CouponField";
 import { OrderSummary } from "@/components/cart/OrderSummary";
-import { Button, ButtonLink, Checkbox, DemoNotice, EmptyState, Input, Modal, Select, Skeleton, SmartImage, Textarea } from "@/components/ui";
+import { Button, ButtonLink, Checkbox, DemoNotice, EmptyState, Input, Modal, Select, CheckoutSkeleton, SmartImage, Textarea } from "@/components/ui";
 import { commerce } from "@/config";
 import { useCart } from "@/context/CartContext";
 import { areasOf, districtsOf, divisionNames, isInsideDhaka } from "@/data/bangladesh";
@@ -16,7 +16,6 @@ import type { CheckoutPayload, PaymentMethod } from "@/types";
 import { CheckoutSteps } from "./CheckoutSteps";
 import { PaymentMethodSelector } from "./PaymentMethodSelector";
 import { ManualAdvancePayment } from "./ManualAdvancePayment";
-import { WhatsAppSupport } from "./WhatsAppSupport";
 import { advanceBreakdown, formatPaymentAmount } from "@/lib/manual-payment";
 import type { ManualPaymentConfiguration } from "@/types/manual-payment";
 
@@ -97,13 +96,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
     });
   };
 
-  if (!hydrated)
-    return (
-      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
-        <Skeleton className="h-[520px] w-full" />
-        <Skeleton className="h-80 w-full" />
-      </div>
-    );
+  if (!hydrated) return <CheckoutSkeleton/>;
 
   if (!items.length)
     return <EmptyState icon={<ShoppingBag className="h-7 w-7" />} title="Your cart is empty" description="Add products to your cart before checking out." action={<ButtonLink href="/shop">Browse Products</ButtonLink>} />;
@@ -289,7 +282,6 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
           </div>
         )}
       </Modal>
-      <WhatsAppSupport />
     </div>
   );
 }

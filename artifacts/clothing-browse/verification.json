@@ -1,0 +1,30 @@
+{
+  "origin": "http://localhost:3001",
+  "results": [
+    {
+      "width": 360,
+      "status": "passed",
+      "backend": "fixture catalogue; coupon/order/payment unavailable"
+    },
+    {
+      "width": 390,
+      "status": "passed",
+      "backend": "fixture catalogue; coupon/order/payment unavailable"
+    },
+    {
+      "width": 430,
+      "status": "passed",
+      "backend": "fixture catalogue; coupon/order/payment unavailable"
+    },
+    {
+      "width": 768,
+      "status": "passed",
+      "backend": "fixture catalogue; coupon/order/payment unavailable"
+    },
+    {
+      "width": 1440,
+      "status": "passed",
+      "backend": "fixture catalogue; coupon/order/payment unavailable"
+    }
+  ]
+}

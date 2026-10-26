@@ -1,4 +1,5 @@
 "use client";
+import { canonicalSize } from "@/lib/catalogue-dimensions";
 
 import { Check } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -45,7 +46,7 @@ export function SizeSelector({ sizes, labels, value, onChange, isAvailable, onSi
     <fieldset>
       <div className="mb-2.5 flex items-center justify-between">
         <legend className="text-sm text-ink">
-          Size: <span className="font-medium">{value ? labels?.[value] ?? value : "Select a size"}</span>
+          Size: <span className="font-medium">{value ? labels?.[value] ?? labels?.[canonicalSize(value) ?? value] ?? canonicalSize(value) ?? value : "Select a size"}</span>
         </legend>
         {onSizeGuide && (
           <button type="button" onClick={onSizeGuide} className="text-xs text-primary underline underline-offset-4 hover:text-primary-dark">
@@ -72,7 +73,7 @@ export function SizeSelector({ sizes, labels, value, onChange, isAvailable, onSi
                 !available && "cursor-not-allowed text-ink-muted/50 after:absolute after:left-1/2 after:top-1/2 after:h-px after:w-[70%] after:-translate-x-1/2 after:-rotate-[20deg] after:bg-ink/25 hover:border-line",
               )}
             >
-              {labels?.[s] ?? s}
+              {labels?.[s] ?? labels?.[canonicalSize(s) ?? s] ?? canonicalSize(s) ?? s}
             </button>
           );
         })}

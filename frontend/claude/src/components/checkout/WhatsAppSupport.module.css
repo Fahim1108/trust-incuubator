@@ -1,0 +1,1 @@
+.button::before{content:"";position:absolute;inset:-3px;border:2px solid #25d366;border-radius:50%;animation:whatsapp-ripple 2.6s ease-out infinite;pointer-events:none;z-index:-1}@keyframes whatsapp-ripple{0%{transform:scale(1);opacity:.45}90%,100%{transform:scale(1.65);opacity:0}}@media(prefers-reduced-motion:reduce){.button::before{animation:none;opacity:0}}

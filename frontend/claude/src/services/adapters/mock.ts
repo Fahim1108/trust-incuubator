@@ -1,3 +1,4 @@
+import {availableShirtTypes, sameSizeRecommendations} from "@/lib/catalogue-dimensions";
 import { defaultStorefrontSettings } from "@/config";
 import { previewPaymentConfiguration } from "@/config/payment-receiving";
 import { queryProducts } from "@/lib/catalog-query";
@@ -24,21 +25,19 @@ export const mockDataSource: StorefrontDataSource = {
   },
   async getHomepageProducts() {
     // Isolated preview fixtures only: simulated publication dates, NOT verified live timestamps.
-    return mockProducts.map(product => ({ product, status: "published" as const, publishedAt: product.createdAt }));
+    return mockProducts.map(product => ({ product, status: product.status ?? "draft", publishedAt: product.createdAt }));
   },
   async getProducts(query = {}) {
     return queryProducts(mockProducts, mockCategories, mockBrands, query);
   },
   async getProductBySlug(slug) {
-    return mockProducts.find((p) => p.slug === slug) ?? null;
+    return mockProducts.find((p) => p.slug === slug && p.status === "published") ?? null;
   },
   async getProductsByIds(ids) {
     return ids.map((id) => byId.get(id)).filter((p): p is NonNullable<typeof p> => Boolean(p));
   },
   async getRelatedProducts(product, limit = 4) {
-    const same = mockProducts.filter((p) => p.id !== product.id && p.categoryId === product.categoryId);
-    const others = mockProducts.filter((p) => p.id !== product.id && p.categoryId !== product.categoryId && p.isBestSeller);
-    return [...same, ...others].slice(0, limit);
+    return sameSizeRecommendations(product,mockProducts,undefined,limit);
   },
   async getCollection(kind, limit = 8) {
     const filtered =
@@ -86,7 +85,7 @@ export const mockDataSource: StorefrontDataSource = {
   },
 
   async getStorefrontSettings() {
-    return defaultStorefrontSettings;
+    return {...defaultStorefrontSettings,header:{...defaultStorefrontSettings.header,navigation:defaultStorefrontSettings.header.navigation.map(item=>item.label==='Men'?{...item,children:[...(item.children??[]),...availableShirtTypes(mockProducts).map(([,value,label])=>({label,href:`/category/shirts?shirt=${value}&available=1`}))]}:item)}};
   },
   async getHomepageConfiguration() {
     const s = defaultStorefrontSettings;

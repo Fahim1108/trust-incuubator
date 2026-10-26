@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Lock, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { ButtonLink, EmptyState, Skeleton } from "@/components/ui";
+import { ButtonLink, EmptyState, CartSkeleton } from "@/components/ui";
 import { commerce } from "@/config";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/format";
@@ -14,17 +14,7 @@ export function CartView() {
   const { items, hydrated, getSummary, itemCount, clear } = useCart();
   const summary = getSummary();
 
-  if (!hydrated)
-    return (
-      <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-        <div className="space-y-4">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-32 w-full" />
-          ))}
-        </div>
-        <Skeleton className="h-72 w-full" />
-      </div>
-    );
+  if (!hydrated) return <CartSkeleton/>;
 
   if (!items.length)
     return (

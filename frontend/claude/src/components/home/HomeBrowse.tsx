@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Snowflake } from "lucide-react";
 import Link from "next/link";
 import { BrandWordmark } from "@/components/brand/BrandCard";
 import { SmartImage } from "@/components/ui";
@@ -24,6 +24,7 @@ export function HomeCategories({ categories }: { categories: Category[] }) {
           </li>
         );
       })}
+      <li><Link href="/collections/winter" className={styles.category}><span className={styles.photo}><Snowflake className="absolute inset-0 m-auto h-10 w-10 text-primary" aria-hidden/></span><span className={styles.caption}>Winter<span className={styles.arrow}><ChevronRight size={13} aria-hidden/></span></span></Link></li>
     </ul>
   );
 }

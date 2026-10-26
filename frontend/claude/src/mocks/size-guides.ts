@@ -1,20 +1,8 @@
+import { officialShirtSizeGuide } from "@/config/shirt-size-guide";
 import type { SizeGuide } from "@/types";
 
 export const mockSizeGuides: Record<string, SizeGuide> = {
-  tops: {
-    id: "tops",
-    title: "Shirts — Size Guide",
-    unit: "inches",
-    columns: ["Size", "Chest", "Length", "Shoulder", "Sleeve"],
-    rows: [
-      ["S", "38", "28", "17", "24"],
-      ["M", "40", "29", "17.5", "24.5"],
-      ["L", "42", "30", "18", "25"],
-      ["XL", "44", "31", "18.5", "25.5"],
-      ["XXL", "46", "32", "19", "26"],
-    ],
-    notes: ["Measurements are of the garment laid flat.", "Between sizes? Choose the larger size for a relaxed fit."],
-  },
+  tops: officialShirtSizeGuide,
   bottoms: {
     id: "bottoms",
     title: "Pants — Size Guide",

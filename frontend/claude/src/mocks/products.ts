@@ -1,3 +1,4 @@
+import { SHIRT_CLASSIFICATIONS } from "@/lib/catalogue-dimensions";
 import type { Product, ProductBadge, ProductImage, ProductVariant } from "@/types";
 import { sizeLabelsFromGuide } from "@/lib/size-labels";
 import { mockSizeGuides } from "./size-guides";
@@ -107,6 +108,10 @@ function build(seed: ProductSeed): Product {
     price: seed.price,
     compareAtPrice: seed.compareAtPrice,
     colors: seed.colors.map((c) => COLORS[c]),
+    status: 'published',
+    apparelSizing: seed.category === 'shirts' || seed.category === 'pants',
+    collectionSlugs: seed.tags?.includes('winter') ? ['winter'] : [],
+    shirtAttributes: seed.category === 'shirts' ? Object.fromEntries(SHIRT_CLASSIFICATIONS.map(([dimension]) => [dimension, SHIRT_CLASSIFICATIONS.filter(([d,value]) => d === dimension && seed.tags?.includes(value)).map(([,value]) => value)])) : undefined,
     sizes,
     sizeLabels: sizeLabelsFromGuide(mockSizeGuides[SIZE_GUIDE_BY_CATEGORY[seed.category] ?? ""]),
     variants,

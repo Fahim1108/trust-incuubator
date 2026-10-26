@@ -1,3 +1,4 @@
+import { canonicalSize, publishedAvailable, SHIRT_CLASSIFICATIONS } from "./catalogue-dimensions";
 import type { Brand, CatalogFacets, Category, Paginated, Product, ProductQuery, SortOption } from "@/types";
 
 export const DEFAULT_PAGE_SIZE = 12;
@@ -31,7 +32,10 @@ export function parseProductQuery(sp: Record<string, string | string[] | undefin
     categorySlugs: list(sp.category),
     brandSlugs: list(sp.brand),
     sizes: list(sp.sizes),
-    colorIds: list(sp.colors),
+    colorIds: undefined,
+    shirtType: typeof sp.shirt === 'string' ? sp.shirt : undefined,
+    collection: typeof sp.collection === 'string' ? sp.collection : undefined,
+    inStock: sp.available === '1',
     minPrice: num(sp.min),
     maxPrice: num(sp.max),
     sort: SORT_OPTIONS.some((o) => o.value === sort) ? sort : undefined,
@@ -47,7 +51,9 @@ export function toSearchParams(q: ProductQuery & { offers?: boolean }): URLSearc
   if (q.categorySlugs?.length) p.set("category", q.categorySlugs.join(","));
   if (q.brandSlugs?.length) p.set("brand", q.brandSlugs.join(","));
   if (q.sizes?.length) p.set("sizes", q.sizes.join(","));
-  if (q.colorIds?.length) p.set("colors", q.colorIds.join(","));
+  if (q.shirtType) p.set('shirt', q.shirtType);
+  if (q.collection) p.set('collection', q.collection);
+  if (q.inStock) p.set('available', '1');
   if (q.minPrice !== undefined) p.set("min", String(q.minPrice));
   if (q.maxPrice !== undefined) p.set("max", String(q.maxPrice));
   if (q.sort && q.sort !== "featured") p.set("sort", q.sort);
@@ -82,6 +88,7 @@ export function queryProducts(
   // Base set: everything except price/size/color filters, used for facet counts.
   const base = products.filter(
     (p) =>
+      p.status === "published" &&
       (!query.search || matchesSearch(p, query.search, categories, brands)) &&
       (!query.offers || (p.compareAtPrice ?? 0) > p.price),
   );
@@ -90,9 +97,10 @@ export function queryProducts(
     (p) =>
       (!catIds?.length || catIds.includes(p.categoryId)) &&
       (!brandIds?.length || brandIds.includes(p.brandId)) &&
-      ((!query.sizes?.length && !query.colorIds?.length) || p.variants.some(v =>
-        (!query.sizes?.length || query.sizes.includes(v.size)) &&
-        (!query.colorIds?.length || query.colorIds.includes(v.colorId)))) &&
+      (!query.sizes?.length || p.variants.some(v => v.stock > 0 && query.sizes!.some(size => canonicalSize(size) ? p.apparelSizing && canonicalSize(v.size) === canonicalSize(size) : v.size === size))) &&
+      (!query.inStock || publishedAvailable(p)) &&
+      (!query.collection || (publishedAvailable(p) && p.collectionSlugs?.includes(query.collection))) &&
+      (!query.shirtType || (publishedAvailable(p) && SHIRT_CLASSIFICATIONS.some(([d,value]) => value === query.shirtType && p.shirtAttributes?.[d]?.includes(value)))) &&
       (query.minPrice === undefined || p.price >= query.minPrice) &&
       (query.maxPrice === undefined || p.price <= query.maxPrice),
   );
@@ -123,7 +131,7 @@ export function queryProducts(
   const colorMap = new Map<string, Product["colors"][number]>();
   facetProducts.forEach((p) => p.colors.forEach((c) => colorMap.set(c.id, c)));
   const sizeOrder = ["S", "M", "L", "XL", "XXL"];
-  const sizes = Array.from(new Set(facetProducts.flatMap((p) => p.sizes))).sort((a, b) => {
+  const sizes = Array.from(new Set(facetProducts.filter(p=>p.apparelSizing || (catIds?.length && p.sizes.some(s=>s!=="One Size"))).flatMap((p) => p.variants.filter(v=>v.stock>0).map(v=>canonicalSize(v.size)??v.size)))).sort((a, b) => {
     const ia = sizeOrder.indexOf(a), ib = sizeOrder.indexOf(b);
     if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
     return Number(a) - Number(b) || a.localeCompare(b);
@@ -145,7 +153,7 @@ export function queryProducts(
         .filter((b) => b.count > 0),
       sizes,
       sizeLabels: Object.fromEntries(sizes.flatMap(size => {
-        const labels = new Set(base.filter(p => (!catIds?.length || catIds.includes(p.categoryId)) && p.sizes.includes(size)).map(p => p.sizeLabels?.[size] ?? size));
+        const labels = new Set(base.filter(p => (!catIds?.length || catIds.includes(p.categoryId)) && p.sizes.some(s=>(canonicalSize(s)??s)===size)).map(p => p.sizeLabels?.[size] ?? (size === "2XL" ? p.sizeLabels?.XXL : undefined) ?? size));
         return labels.size === 1 ? [[size, [...labels][0] ?? size]] : [];
       })),
       colors: Array.from(colorMap.values()),
@@ -155,6 +163,6 @@ export function queryProducts(
 }
 
 /** Number of user-applied filters (for the mobile filter badge). */
-export function countActiveFilters(q: { categorySlugs?: string[]; brandSlugs?: string[]; sizes?: string[]; colorIds?: string[]; minPrice?: number; maxPrice?: number; offers?: boolean }) {
-  return (q.categorySlugs?.length ?? 0) + (q.brandSlugs?.length ?? 0) + (q.sizes?.length ?? 0) + (q.colorIds?.length ?? 0) + (q.minPrice !== undefined || q.maxPrice !== undefined ? 1 : 0) + (q.offers ? 1 : 0);
+export function countActiveFilters(q: { categorySlugs?: string[]; brandSlugs?: string[]; sizes?: string[]; colorIds?: string[]; minPrice?: number; maxPrice?: number; offers?: boolean; inStock?:boolean; shirtType?:string }) {
+  return (q.categorySlugs?.length ?? 0) + (q.brandSlugs?.length ?? 0) + (q.sizes?.length ?? 0) + (q.inStock ? 1 : 0) + (q.shirtType ? 1 : 0) + (q.minPrice !== undefined || q.maxPrice !== undefined ? 1 : 0) + (q.offers ? 1 : 0);
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AttiresArenaLoader } from "@/components/loading/AttiresArenaLoader";
+import { PendingIndicator } from "@/components/ui/LoadingSkeleton";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -51,7 +51,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       <span className={cn("inline-flex items-center justify-center gap-2", loading && "opacity-0")}>
         {leftIcon}{children}{rightIcon && <ArrowSlot>{rightIcon}</ArrowSlot>}
       </span>
-      {loading && <span className="absolute inset-0 flex items-center justify-center"><AttiresArenaLoader size="sm" label="Working" /></span>}
+      {loading && <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center"><PendingIndicator label="Working" /></span>}
     </button>
   );
 });

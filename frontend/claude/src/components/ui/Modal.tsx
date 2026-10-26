@@ -120,7 +120,7 @@ export function Modal({ open, onClose, title, hideTitle, description, children, 
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const { mounted, shown } = usePresence(open);
-  useOverlayBehaviour(onClose, panelRef, mounted);
+  useOverlayBehaviour(onClose, panelRef, mounted && open);
   if (!mounted || typeof document === "undefined") return null;
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4" aria-hidden={!open || undefined} inert={!open}>
@@ -161,7 +161,7 @@ export function Drawer({ open, onClose, title, hideTitle, children, footer, side
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const { mounted, shown } = usePresence(open);
-  useOverlayBehaviour(onClose, panelRef, mounted);
+  useOverlayBehaviour(onClose, panelRef, mounted && open);
   if (!mounted || typeof document === "undefined") return null;
   return createPortal(
     <div className="fixed inset-0 z-[60]" aria-hidden={!open || undefined} inert={!open}>

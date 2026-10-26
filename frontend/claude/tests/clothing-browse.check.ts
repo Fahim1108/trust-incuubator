@@ -1,0 +1,31 @@
+import {describe,it,expect} from 'vitest';
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {canonicalSize,availableApparelSizes,sameSizeRecommendations,availableShirtTypes} from '@/lib/catalogue-dimensions';
+import {queryProducts,parseProductQuery,toSearchParams} from '@/lib/catalog-query';
+import {mockProducts,mockCategories,mockBrands} from '@/mocks';
+import {officialShirtSizeGuide} from '@/config/shirt-size-guide';
+import {ProductSizeBadge} from '@/components/product/ProductSizeBadge';
+import {ProductDetailSkeleton,CartSkeleton,CheckoutSkeleton,SizeBrowseSkeleton,SearchResultsSkeleton} from '@/components/ui/LoadingSkeleton';
+import {redeemRewardAction} from '@/services/reward-actions';
+const product=mockProducts.find(p=>p.apparelSizing)!;
+const fixed={...product,id:'fixed-physical-item',sizes:['M'],variants:[{...product.variants[0]!,size:'M',stock:1}]};
+describe('clothing data contracts and safe commerce boundaries',()=>{
+ it('keeps 3XL separate from Over Size while accepting XXL aliases',()=>{expect(canonicalSize('XXL')).toBe('2XL');expect(canonicalSize('3XL')).toBe('3XL');expect(canonicalSize('Over Size')).toBe('Over Size');expect(canonicalSize('40')).toBeUndefined();});
+ it('preserves a single actual size and physical stock without creating variants',()=>{expect(availableApparelSizes(fixed)).toEqual(['M']);expect(fixed.variants).toHaveLength(1);expect(fixed.variants[0]!.stock).toBe(1);expect(availableApparelSizes({...fixed,variants:[{...fixed.variants[0]!,stock:0}]})).toEqual([]);});
+ it('never uses names to infer winter membership or shirt classification',()=>{
+  const named={...fixed,name:'Winter Flannel Oxford Shirt',tags:[],collectionSlugs:[],shirtAttributes:{}};
+  expect(queryProducts([named],mockCategories,mockBrands,{collection:'winter'}).total).toBe(0);expect(availableShirtTypes([named])).toEqual([]);
+  expect(queryProducts([{...named,collectionSlugs:['winter']}],mockCategories,mockBrands,{collection:'winter'}).total).toBe(1);
+ });
+ it('supports multiple attribute dimensions without duplicate products',()=>{const p={...fixed,shirtAttributes:{pattern:['checked'],occasion:['casual'],fabric:['flannel'],sleeve:['long-sleeve']}};expect(availableShirtTypes([p])).toHaveLength(4);expect(queryProducts([p],mockCategories,mockBrands,{shirtType:'flannel'}).items).toHaveLength(1);});
+ it('requires published in-stock membership for winter and shirt routes',()=>{for(const p of [{...fixed,status:'draft' as const,collectionSlugs:['winter']},{...fixed,variants:[{...fixed.variants[0]!,stock:0}],collectionSlugs:['winter']}])expect(queryProducts([p],mockCategories,mockBrands,{collection:'winter'}).items).toEqual([]);});
+ it('retains URL sizes and removes legacy color filters',()=>{const q=parseProductQuery({sizes:'2XL',colors:'maroon',available:'1'});expect(q.colorIds).toBeUndefined();expect(toSearchParams(q).get('sizes')).toBe('2XL');expect(toSearchParams(q).has('colors')).toBe(false);});
+ it('does not match watches or footwear to clothing size filters',()=>{const accessory={...fixed,id:'watch',apparelSizing:false};expect(queryProducts([accessory],mockCategories,mockBrands,{sizes:['M']}).total).toBe(0);});
+ it('preserves footwear-specific numeric filters on footwear categories',()=>{const r=queryProducts(mockProducts,mockCategories,mockBrands,{categorySlugs:['sneakers'],sizes:['41']});expect(r.total).toBeGreaterThan(0);expect(r.facets.sizes).toContain('41');});
+ it('shows an actual fixed size or honest multi-size summary',()=>{expect(renderToStaticMarkup(createElement(ProductSizeBadge,{product:fixed}))).toContain('>M</span>');expect(renderToStaticMarkup(createElement(ProductSizeBadge,{product}))).toContain('sizes</span>');expect(renderToStaticMarkup(createElement(ProductSizeBadge,{product:{...fixed,apparelSizing:false}}))).toBe('');});
+ it('deduplicates same-size recommendations and excludes sold-out/current/draft items',()=>{const other={...fixed,id:'other'};const results=sameSizeRecommendations(fixed,[fixed,other,other,{...other,id:'sold',variants:[{...other.variants[0]!,stock:0}]},{...other,id:'draft',status:'draft'}]);expect(results.map(p=>p.id)).toEqual(['other']);expect(sameSizeRecommendations(product,[other])).toEqual([]);});
+ it('preserves exact official ranges and unspecified Over Size length',()=>{expect(officialShirtSizeGuide.rows).toEqual([['S','38','27–28'],['M','40','28–29'],['L','42','28–29'],['XL','44','28–29'],['2XL','46','29–30'],['3XL','48','29–30'],['Over Size','50+','Not specified']]);});
+ it('skeletons contain placeholders and no circular logo or SVG',()=>{for(const component of [ProductDetailSkeleton,CartSkeleton,CheckoutSkeleton,SizeBrowseSkeleton,SearchResultsSkeleton]){const html=renderToStaticMarkup(createElement(component));expect(html).toContain('role="status"');expect(html).not.toContain('<svg');expect(html).not.toContain('data-loader-ring');}});
+ it('cannot use repeated or concurrent guest coupon attempts to obtain discounts',async()=>{expect(await redeemRewardAction('')).toMatchObject({ok:false,reason:'validation'});for(const r of await Promise.all(Array.from({length:12},()=>redeemRewardAction('WELCOME10')))){expect(r).toMatchObject({ok:false,reason:'authentication_required'});expect(r).not.toHaveProperty('discount');}});
+});

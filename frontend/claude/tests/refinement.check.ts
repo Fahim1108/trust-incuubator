@@ -17,10 +17,10 @@ describe('non-payment storefront refinements',()=>{
   expect(r.total).toBeGreaterThan(0); expect(r.facets.sizeLabels?.M).toBe('M (40)');expect(r.facets.sizes).not.toContain('41');
   expect(r.items.every(p=>p.variants.some(v=>v.size==='M'))).toBe(true);
  });
- it('requires size and color on the same variant',()=>{
+ it('ignores legacy color filters while retaining real size variants',()=>{
   const product=mockProducts.find(p=>p.sizes.length>1&&p.colors.length>1)!;
   const fixture={...product,variants:[{...product.variants[0]!,size:'M',colorId:'red'},{...product.variants[0]!,size:'L',colorId:'blue'}]};
-  expect(queryProducts([fixture],mockCategories,mockBrands,{sizes:['M'],colorIds:['blue']}).total).toBe(0);
+  expect(queryProducts([fixture],mockCategories,mockBrands,{sizes:['M'],colorIds:['blue']}).total).toBe(1);
  });
  it('never exposes fixture customer sessions or orders as real',async()=>{
   expect(await dataSource.getCurrentCustomer()).toBeNull();expect(await dataSource.getOrders()).toEqual([]);expect(await dataSource.getOrderByNumber('DEMO-10241')).toBeNull();

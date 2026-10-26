@@ -1,25 +1,14 @@
-import { cn } from "@/lib/cn";
-
-export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("relative overflow-hidden rounded bg-ink/[0.06] before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.4s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent", className)} aria-hidden />;
-}
-
-export function ProductCardSkeleton() {
-  return (
-    <div className="space-y-3">
-      <Skeleton className="aspect-[4/5] w-full rounded-card" />
-      <Skeleton className="h-3.5 w-3/4" />
-      <Skeleton className="h-3.5 w-1/3" />
-    </div>
-  );
-}
-
-export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
-  return (
-    <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4" role="status" aria-label="Loading products">
-      {Array.from({ length: count }, (_, i) => (
-        <ProductCardSkeleton key={i} />
-      ))}
-    </div>
-  );
-}
+import {cn} from '@/lib/cn';
+import type {ReactNode} from 'react';
+export function Skeleton({className}:{className?:string}){return <div className={cn('aa-skeleton relative overflow-hidden rounded bg-ink/[0.06] before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.4s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent',className)} aria-hidden/>;}
+function Region({label,children}:{label:string;children:ReactNode}){return <div role="status" aria-label={label} aria-busy="true"><span className="sr-only">{label}</span><div aria-hidden>{children}</div></div>;}
+export function PendingIndicator({label='Working'}:{label?:string}){return <span role="status" aria-label={label} className="inline-flex min-w-6 items-center"><Skeleton className="h-2 w-6"/><span className="sr-only">{label}</span></span>;}
+export function ProductCardSkeleton(){return <div className="space-y-3"><div className="relative"><Skeleton className="aspect-[4/5] w-full rounded-card"/><Skeleton className="absolute left-2 top-2 h-7 w-10 rounded-full"/></div><Skeleton className="h-4 w-3/4"/><Skeleton className="h-4 w-1/3"/></div>;}
+export function ProductGridSkeleton({count=8}:{count?:number}){return <Region label="Loading products"><div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4">{Array.from({length:count},(_,i)=><ProductCardSkeleton key={i}/>)}</div></Region>;}
+export function ProductDetailSkeleton(){return <Region label="Loading product details"><div className="grid gap-8 lg:grid-cols-2"><div><Skeleton className="aspect-[4/5]"/><div className="mt-3 flex gap-2">{[0,1,2].map(i=><Skeleton key={i} className="h-16 w-14"/>)}</div></div><div className="space-y-5"><Skeleton className="h-10 w-3/4"/><Skeleton className="h-6 w-24"/><Skeleton className="h-4 w-20"/><div className="flex gap-2">{[0,1,2,3].map(i=><Skeleton key={i} className="h-11 w-14"/>)}</div><Skeleton className="h-4 w-20"/><Skeleton className="h-11 w-28"/><Skeleton className="h-12 w-full"/><Skeleton className="h-12 w-full"/></div></div></Region>;}
+export function CategorySkeleton(){return <Region label="Loading categories"><div className="grid grid-cols-3 gap-3 sm:grid-cols-6">{[0,1,2,3,4,5].map(i=><div key={i}><Skeleton className="aspect-square"/><Skeleton className="mx-auto mt-2 h-4 w-14"/></div>)}</div></Region>;}
+export function SizeBrowseSkeleton(){return <Region label="Loading sizes"><div className="grid grid-cols-4 gap-2 sm:grid-cols-7">{[0,1,2,3,4,5,6].map(i=><Skeleton key={i} className="h-14"/>)}</div></Region>;}
+export function SearchResultsSkeleton(){return <Region label="Searching products"><div className="space-y-2 p-3">{[0,1,2].map(i=><div key={i} className="flex gap-3"><Skeleton className="h-12 w-10"/><div className="flex-1 space-y-2"><Skeleton className="h-4 w-3/4"/><Skeleton className="h-3 w-16"/></div></div>)}</div></Region>;}
+export function RecommendationSkeleton(){return <ProductGridSkeleton count={4}/>;}
+export function CartSkeleton(){return <Region label="Loading cart"><div className="space-y-4">{[0,1,2].map(i=><div key={i} className="flex gap-3 border-b border-line pb-4"><Skeleton className="h-24 w-20"/><div className="flex-1 space-y-3"><Skeleton className="h-4 w-3/4"/><Skeleton className="h-4 w-20"/><Skeleton className="h-9 w-24"/></div></div>)}</div></Region>;}
+export function CheckoutSkeleton(){return <Region label="Loading checkout"><div className="grid gap-8 lg:grid-cols-[1fr_360px]"><div className="space-y-5">{[0,1,2,3,4].map(i=><div key={i}><Skeleton className="mb-2 h-3 w-20"/><Skeleton className="h-12"/></div>)}</div><div className="space-y-4 rounded-lg border border-line p-5"><Skeleton className="h-7 w-36"/><CartSkeleton/><Skeleton className="h-12"/></div></div></Region>;}

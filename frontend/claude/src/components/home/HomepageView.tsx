@@ -1,11 +1,10 @@
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { ShopBySize } from "./ShopBySize";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { resolveLook, selectHomepageCollections, type MerchandisingCandidate } from "@/lib/merchandising";
 import styles from "./MerchandisingSection.module.css";
 import { Reveal, SectionHeading, SmartImage } from "@/components/ui";
 import type { Brand, Category, HomepageSection, Product, StorefrontSettings } from "@/types";
-import { HomeCategories, HomeBrands } from "./HomeBrowse";
+import { HomeCategories } from "./HomeBrowse";
 import { Hero } from "./Hero";
 import { NewsletterSection } from "./NewsletterSection";
 import { PromoBanners } from "./PromoBanners";
@@ -31,7 +30,7 @@ type HomepageSettings = Pick<StorefrontSettings, "homepage" | "hero" | "promoBan
  */
 export function HomepageView({ settings, data }: { settings: HomepageSettings; data: HomepageData }) {
   const selected = selectHomepageCollections(settings.homepage, data.candidates ?? []);
-  const sections = settings.homepage.filter(s => s.enabled && (!selected.has(s.id) || selected.get(s.id)!.length > 0) && (s.type !== "complete-look" || s.looks?.some(look => resolveLook(look, data.candidates ?? []).length)));
+  const sections = settings.homepage.filter(s => s.enabled && s.type !== "brands" && (!selected.has(s.id) || selected.get(s.id)!.length > 0) && (s.type !== "complete-look" || s.looks?.some(look => resolveLook(look, data.candidates ?? []).length)));
   return (
     <div className="space-y-5 pb-4 has-[>[data-section=value-props]:last-child]:-mb-10 has-[>[data-section=value-props]:last-child]:pb-0 sm:space-y-6 [&>*:nth-child(n+5)]:mt-10 sm:[&>*:nth-child(n+5)]:mt-8">
       {sections
@@ -65,20 +64,8 @@ function SectionRenderer({ section, settings, data, products }: { section: Homep
           <HomeCategories categories={data.categories} />
         </section>
       );
-    case "brands":
-      return (
-        <section className="container" aria-label="Shop by Brands">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="font-display text-[22px] font-semibold text-ink sm:text-[26px]">Shop by Brands</h2>
-            {section.cta && (
-              <Link href={section.cta.href} className="group flex items-center gap-1 text-[11px] font-medium text-primary sm:text-[13px]">
-                {section.cta.label} <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-              </Link>
-            )}
-          </div>
-          <HomeBrands brands={data.brands} />
-        </section>
-      );
+    case "sizes":
+      return <ShopBySize products={(data.candidates ?? []).filter(c=>c.status==='published').map(c=>c.product)}/>;
     case "new-arrivals":
     case "featured":
     case "trending":

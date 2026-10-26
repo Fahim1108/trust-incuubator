@@ -81,6 +81,7 @@ export interface Banner {
 export type HomepageSectionType =
   | "hero"
   | "value-props"
+  | "sizes"
   | "categories"
   | "brands"
   | "new-arrivals"

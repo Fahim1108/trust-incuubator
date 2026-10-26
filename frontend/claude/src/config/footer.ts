@@ -8,7 +8,7 @@ export const footer: FooterSettings = {
       links: [
         { label: "Men", href: "/shop" },
         { label: "New Arrivals", href: "/shop?sort=newest" },
-        { label: "Brands", href: "/brands" },
+        { label: "Winter", href: "/collections/winter" },
         { label: "Deals", href: "/shop?offers=1" },
       ],
     },

@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useTransition, type ReactNode } from "react";
 import { toSearchParams } from "@/lib/catalog-query";
-import { AttiresArenaLoader } from "@/components/loading/AttiresArenaLoader";
+import { ProductGridSkeleton } from "@/components/ui/LoadingSkeleton";
 import type { ProductQueryInput } from "@/services";
 
 interface CatalogContextValue {
@@ -48,8 +48,8 @@ export function CatalogResults({ children }: { children: ReactNode }) {
   const { pending } = useCatalog();
   return (
     <div aria-busy={pending} className="aa-content-pending">
-      {pending && <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-white p-1"><AttiresArenaLoader size="md" label="Updating products" /></span>}
-      <div data-results-content className={pending ? "pointer-events-none" : undefined}>{children}</div>
+      {pending && <ProductGridSkeleton/>}
+      <div data-results-content className={pending ? "hidden" : undefined}>{children}</div>
     </div>
   );
 }

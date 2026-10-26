@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useStorefront } from "@/context/StorefrontContext";
 import type { SocialLink } from "@/types";
+import { contact } from "@/config/contact";
 import { Logo } from "./Logo";
 import styles from "./Footer.module.css";
 const socialIcons: Record<SocialLink["network"], typeof Facebook> = {
@@ -104,7 +105,7 @@ export function Footer() {
               Catalogue imagery, prices and reviews are samples. Brand listings do not imply affiliation or authorised resale.
             </p>
           )}
-          <p className="mt-5 text-center text-sm text-[#D6C8C8]"><a href="https://wa.me/8801632915921" target="_blank" rel="noopener noreferrer" className="rounded hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">WhatsApp: <strong>01632915921</strong></a></p>
+          <p className="mt-5 text-center text-sm text-[#D6C8C8]"><a href={contact.whatsappUrl} target="_blank" rel="noopener noreferrer" className="rounded hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">WhatsApp: <strong>{contact.whatsappNumber}</strong></a></p>
           <p className={styles.credit}>Created by <strong>Firoj Ahamed Fahim</strong></p>
         </div>
       </div>

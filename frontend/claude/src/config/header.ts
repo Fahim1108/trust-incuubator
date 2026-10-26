@@ -5,7 +5,7 @@ export const header: HeaderSettings = {
     enabled: true,
     left: "Free Shipping on Orders Over BDT 2,000",
     items: ["Authentic Brands", "Premium Quality", "Easy Returns"],
-    promo: "Get 10% Off on Your First Order",
+    promo: "Style Elevated. Always.",
     rightLinks: [],
   },
   searchPlaceholder: "Search for fashion, brands, styles...",
@@ -25,18 +25,6 @@ export const header: HeaderSettings = {
       ],
     },
     { label: "New Arrivals", href: "/shop?sort=newest" },
-    {
-      label: "Brands",
-      href: "/brands",
-      children: [
-        { label: "Gucci", href: "/brand/gucci" },
-        { label: "Zara", href: "/brand/zara" },
-        { label: "Lacoste", href: "/brand/lacoste" },
-        { label: "Nike", href: "/brand/nike" },
-        { label: "Adidas", href: "/brand/adidas" },
-        { label: "All Brands", href: "/brands" },
-      ],
-    },
     { label: "Deals", href: "/shop?offers=1" },
     {
       label: "About",

@@ -1,3 +1,4 @@
+import { WhatsAppSupport } from "@/components/checkout/WhatsAppSupport";
 import { RouteMotion } from "@/components/motion/RouteMotion";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -13,6 +14,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
       </main>
       <Footer />
       <MobileBottomNav />
+      <WhatsAppSupport />
     </>
   );
 }

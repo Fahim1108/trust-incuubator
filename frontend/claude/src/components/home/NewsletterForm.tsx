@@ -1,6 +1,6 @@
 "use client";
 
-import { AttiresArenaLoader } from "@/components/loading/AttiresArenaLoader";
+import { PendingIndicator } from "@/components/ui/LoadingSkeleton";
 import { ArrowRight } from "lucide-react";
 import { useState, useTransition } from "react";
 import { isValidEmail } from "@/lib/validation";
@@ -46,7 +46,7 @@ export function NewsletterForm({ tone = "light", className, compact = false }: {
           className={cn("aa-press relative inline-flex items-center gap-2 px-5 text-xs font-semibold transition-colors disabled:opacity-60", !compact && "uppercase tracking-wider", dark ? "bg-white text-primary hover:bg-white/90" : "bg-primary text-white hover:bg-primary-dark")}
         >
           <span className={cn("inline-flex items-center gap-2", pending && "opacity-0")}>Subscribe {!compact && <ArrowRight className="h-3.5 w-3.5" aria-hidden />}</span>
-          {pending && <span className="absolute inset-0 flex items-center justify-center"><AttiresArenaLoader size="sm" label="Saving subscription" /></span>}
+          {pending && <span className="absolute inset-0 flex items-center justify-center"><PendingIndicator label="Saving subscription" /></span>}
         </button>
       </div>
       {status && (

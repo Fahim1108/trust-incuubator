@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { SmartImage } from "@/components/ui";
-import { AttiresArenaLoader } from "@/components/loading/AttiresArenaLoader";
+import { PendingIndicator, SearchResultsSkeleton } from "@/components/ui/LoadingSkeleton";
 import { useStorefront } from "@/context/StorefrontContext";
 import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
@@ -97,7 +97,7 @@ export function SearchBar({ className, autoFocus, onNavigate, initialValue = "",
         />
         {term && <button type="button" onClick={() => { sequence.current++; setTerm(""); setActive(-1); }} className={cn("aa-press absolute top-1/2 -translate-y-1/2 rounded-full p-1.5 text-ink-muted hover:text-ink", boxed ? "right-[54px]" : "right-2")} aria-label="Clear search"><X className="h-4 w-4" /></button>}
         {boxed && <button type="submit" disabled={navigating} aria-busy={navigating || undefined} className="aa-press flex w-[48px] shrink-0 items-center justify-center bg-primary text-white hover:bg-primary-dark disabled:cursor-not-allowed" aria-label="Search">
-          {navigating ? <AttiresArenaLoader size="sm" label="Loading search results" /> : <Search className="h-5 w-5" strokeWidth={2} />}
+          {navigating ? <PendingIndicator label="Loading search results" /> : <Search className="h-5 w-5" strokeWidth={2} />}
         </button>}
       </form>
       {showPanel && <div className="absolute inset-x-0 top-full z-50 mt-2 origin-top animate-dropdown-in overflow-hidden rounded-card border border-line bg-surface shadow-lift">
@@ -109,7 +109,7 @@ export function SearchBar({ className, autoFocus, onNavigate, initialValue = "",
               <span className="text-sm font-medium text-ink">{formatPrice(r.price)}</span>
             </Link>
           </li>)}
-          {pending && <li role="presentation" className="flex min-h-[52px] items-center gap-3 px-4 py-2"><AttiresArenaLoader size="sm" label="Searching products" /><span className="text-xs text-ink-muted" aria-hidden>Searching…</span></li>}
+          {pending && <li role="presentation"><SearchResultsSkeleton/></li>}
           {current && !pending && suggestions.error && <li role="presentation" className="px-4 py-3 text-sm text-warning"><span role="status">{suggestions.error}</span></li>}
           {current && !pending && !suggestions.error && results.length === 0 && <li role="presentation" className="px-4 py-3 text-sm text-ink-muted">No products match “{query}”.</li>}
         </ul>

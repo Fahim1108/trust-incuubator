@@ -33,6 +33,11 @@ export interface ProductVariant {
 export type ProductBadge = "new" | "bestseller" | "sale" | "limited";
 
 export interface Product {
+  status?: 'draft' | 'published' | 'archived';
+  apparelSizing?: boolean;
+  shirtAttributes?: Partial<Record<import('@/lib/catalogue-dimensions').ShirtDimension, string[]>>;
+  collectionSlugs?: string[];
+  actualMeasurements?: {chestInches?: number; lengthInches?: number};
   id: ID;
   slug: string;
   name: string;
@@ -114,6 +119,9 @@ export interface SizeGuide {
 export type SortOption = "featured" | "newest" | "price-asc" | "price-desc" | "rating";
 
 export interface ProductQuery {
+  shirtType?: string;
+  collection?: string;
+  inStock?: boolean;
   search?: string;
   categorySlugs?: string[];
   brandSlugs?: string[];

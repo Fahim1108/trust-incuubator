@@ -3,7 +3,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { commerce, demo } from "@/config";
 import { isInsideDhaka } from "@/data/bangladesh";
-import { formatPrice } from "@/lib/format";
 import { readStorage, STORAGE_KEYS, writeStorage } from "@/lib/storage";
 import type { CartItem, Coupon, OrderSummary } from "@/types";
 
@@ -58,6 +57,7 @@ export function CartProvider({ children, initialItems = [] }: { children: ReactN
   }, [items, hydrated]);
 
   const addItem = useCallback<CartContextValue["addItem"]>((item, quantity = 1) => {
+    if (!Number.isSafeInteger(quantity) || quantity < 1 || item.maxQuantity < 1) return;
     setItems((current) => {
       const existing = current.find((i) => i.id === item.id);
       if (existing) {
@@ -76,17 +76,7 @@ export function CartProvider({ children, initialItems = [] }: { children: ReactN
 
   const subtotal = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
 
-  const applyCoupon = useCallback(
-    (code: string) => {
-      const found = commerce.demoCoupons.find((c) => c.code.toLowerCase() === code.trim().toLowerCase());
-      if (!found) return { ok: false, message: "This code isn't valid. Try a demo code: WELCOME10 or FREESHIP." };
-      if (found.minSubtotal && subtotal < found.minSubtotal)
-        return { ok: false, message: `Add items worth ${formatPrice(found.minSubtotal - subtotal)} more to use this code.` };
-      setCoupon(found);
-      return { ok: true, message: `${found.code} applied — ${found.description}` };
-    },
-    [subtotal],
-  );
+  const applyCoupon = useCallback(() => ({ok:false,message:'Please sign in to redeem your coupon. Server validation is required.'}), []);
 
   const getSummary = useCallback(
     (district?: string): OrderSummary => {

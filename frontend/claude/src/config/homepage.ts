@@ -54,7 +54,7 @@ export const promoBanners: Banner[] = [
     id: "promo-tonal",
     title: "Tonal Essentials",
     subtitle: "Minimal collection for maximum style.",
-    cta: { label: "Discover", href: "/shop?colors=beige,stone,olive" },
+    cta: { label: "Discover", href: "/category/shirts" },
     image: { src: "/images/banners/promo-tonal.svg", alt: "Stack of folded neutral shirts" },
     align: "left",
     tone: "dark",
@@ -84,7 +84,7 @@ export const valueProps: ValueProp[] = [
 export const homepageSections: HomepageSection[] = [
   { id: "hero", type: "hero", adminLabel: "Hero banner", enabled: true },
   { id: "categories", type: "categories", adminLabel: "Shop by Categories", enabled: true, title: "Shop by Categories", cta: { label: "View All", href: "/categories" } },
-  { id: "brands", type: "brands", adminLabel: "Shop by Brands", enabled: true, title: "Shop by Brands", cta: { label: "See All Brands", href: "/brands" } },
+  {id:"sizes",type:"sizes",adminLabel:"Shop by Size",enabled:true,title:"Shop by Size"},
   { id: "new-arrivals", type: "new-arrivals", adminLabel: "New Arrivals", enabled: true, title: "New Arrivals", subtitle: "Just landed. Ready to wear.", cta: { label: "View All", href: "/collections/new-arrivals" }, limit: 8, softCategoryCap: 2, preferInStock: true },
   { id: "featured", type: "featured", adminLabel: "Featured Picks", enabled: true, title: "Featured Picks", subtitle: "Handpicked for your everyday style.", cta: { label: "View All", href: "/collections/featured" }, limit: 8, softCategoryCap: 2, preferInStock: true,
     // Explicit preview curation order; replace through a trusted CMS adapter on integration.

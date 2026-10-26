@@ -22,10 +22,11 @@ interface Props {
   sizeGuide?: SizeGuide | null;
   compact?: boolean;
   onAdded?: () => void;
+  onSizeChange?: (size:string)=>void;
   headingLevel?: "h1" | "h2";
 }
 
-export function ProductPurchasePanel({ product, brandName, colorId, onColorChange, sizeGuide, compact, onAdded, headingLevel = "h1" }: Props) {
+export function ProductPurchasePanel({ product, brandName, colorId, onColorChange, sizeGuide, compact, onAdded, onSizeChange, headingLevel = "h1" }: Props) {
   const router = useRouter();
   const { addItem, openDrawer } = useCart();
   const oneSize = product.sizes.length === 1;
@@ -74,6 +75,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, onColorChang
         {!compact && <p className="text-sm leading-relaxed text-ink-muted">{product.shortDescription}</p>}
       </div>
 
+      {product.actualMeasurements && <p className="text-sm text-ink">Actual garment measurements (inches): {product.actualMeasurements.chestInches !== undefined && `Chest ${product.actualMeasurements.chestInches}`} {product.actualMeasurements.lengthInches !== undefined && `Length ${product.actualMeasurements.lengthInches}`}</p>}
       <ColorSelector colors={product.colors} value={colorId} onChange={changeColor} />
 
       <SizeSelector
@@ -82,6 +84,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, onColorChang
         value={size}
         onChange={(s) => {
           setSize(s);
+          onSizeChange?.(s);
           setSizeError(undefined);
           setQty(1);
         }}

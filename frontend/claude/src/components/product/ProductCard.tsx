@@ -12,6 +12,7 @@ import { useCart } from "@/context/CartContext";
 import type { Product } from "@/types";
 import { ColorSwatches } from "./ColorSwatches";
 import { useRouter } from "next/navigation";
+import { ProductSizeBadge } from "./ProductSizeBadge";
 import { WishlistButton } from "./WishlistButton";
 
 export interface ProductCardProps {
@@ -60,6 +61,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
           </span>
         </Link>
         <div className="pointer-events-none absolute left-2.5 top-2.5 flex flex-col items-start gap-1">
+          <ProductSizeBadge product={product} />
           {soldOut ? (
             <Badge tone="dark">Sold out</Badge>
           ) : (

@@ -2,12 +2,12 @@ import { Clock, MapPin, PackageCheck, Truck } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
-import { ProductRail } from "@/components/product/ProductRail";
+import { ProductSizeProvider, SameSizeRecommendations } from "@/components/product/ProductSizeContext";
 import { ReviewList } from "@/components/product/ReviewList";
-import { Accordion, Breadcrumbs, SectionHeading } from "@/components/ui";
+import { Accordion, Breadcrumbs } from "@/components/ui";
 import { commerce } from "@/config";
 import { formatPrice } from "@/lib/format";
-import { getBrands, getCategories, getProductBySlug, getProducts, getRelatedProducts, getReviews, getSizeGuide } from "@/services";
+import { getBrands, getCategories, getProductBySlug, getProducts, getReviews, getSizeGuide } from "@/services";
 
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -36,14 +36,14 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
     getBrands(),
     getCategories(),
     getReviews(product.id),
-    getRelatedProducts(product, 6),
+    getProducts({pageSize:500, inStock:true}).then(r=>r.items),
     product.sizeGuideId ? getSizeGuide(product.sizeGuideId) : Promise.resolve(null),
   ]);
   const brand = brands.find((b) => b.id === product.brandId);
   const category = categories.find((c) => c.id === product.categoryId);
 
   return (
-    <div className="pb-10">
+    <ProductSizeProvider product={product}><div className="pb-10">
       <div className="container pt-5 sm:pt-8">
         <Breadcrumbs
           items={[
@@ -141,13 +141,8 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
           <ReviewList reviews={reviews} average={product.rating.average} count={product.rating.count} />
         </div>
 
-        {related.length > 0 && (
-          <section className="mt-16" aria-label="You may also like">
-            <SectionHeading title="You May Also Like" cta={category ? { label: `More ${category.name}`, href: `/category/${category.slug}` } : undefined} />
-            <ProductRail products={related} brands={brands} />
-          </section>
-        )}
+        <SameSizeRecommendations product={product} candidates={related} brands={brands}/>
       </div>
-    </div>
+    </div></ProductSizeProvider>
   );
 }

@@ -40,11 +40,12 @@ try{
   await page.getByLabel('Password',{exact:true}).fill('not-a-real-password');
   await page.getByRole('button',{name:'Show password',exact:true}).click();await expect(page.getByLabel('Password',{exact:true})).toHaveAttribute('type','text');
   // Hold the genuine action request for inspection; preserve its actual failure response.
-  await page.route('**/account/login',async route=>{if(route.request().method()==='POST'){await new Promise(r=>setTimeout(r,600));}await route.continue();});
+  let releaseAuth;const authHold=new Promise(resolve=>{releaseAuth=resolve;});
+  await page.route('**/account/login',async route=>{if(route.request().method()==='POST')await authHold;await route.continue();});
   await page.getByRole('button',{name:'Sign In',exact:true}).click();
   await expect(page.getByRole('button',{name:'Sign In',exact:true})).toBeDisabled();
   const art=page.locator('[data-aa-loader] [data-loader-ring]');
-  if(width<768)await expect(art).toBeVisible();else await expect(art).toBeHidden();
+  await expect(art).toHaveCount(0);await expect(page.getByRole('button',{name:'Sign In',exact:true}).locator('.aa-skeleton')).toBeVisible();releaseAuth();
   await expect(page.getByText(/Sign in is not connected yet/)).toBeVisible();
   await page.goto(origin+'/track-order',{waitUntil:'networkidle'});await expect(page.getByRole('button',{name:'Track',exact:true})).toBeDisabled();
   await page.goto(origin+'/motion-preview',{waitUntil:'networkidle'});
