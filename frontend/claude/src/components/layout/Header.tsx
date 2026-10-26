@@ -18,6 +18,7 @@ import { IconButton, Modal } from "@/components/ui";
 import { useCart } from "@/context/CartContext";
 import { useStorefront } from "@/context/StorefrontContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { usesCompactHeader } from "@/lib/header-routes";
 import { cn } from "@/lib/cn";
 import { AnnouncementBar } from "./AnnouncementBar";
 import { CustomerMenu } from "./CustomerMenu";
@@ -28,6 +29,7 @@ import { SearchBar } from "./SearchBar";
 export function Header() {
   const { header } = useStorefront();
   const pathname = usePathname();
+  const compact = usesCompactHeader(pathname);
   const { itemCount, openDrawer, hydrated } = useCart();
   const wishlist = useWishlist();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -61,7 +63,7 @@ export function Header() {
       >
         <div className="container">
           <div
-            className={`grid h-[80px] grid-cols-[1fr_auto_1fr] items-center gap-2 lg:h-[96px] lg:gap-6 ${styles.row}`}
+            className={`grid h-[80px] grid-cols-[1fr_auto_1fr] items-center gap-2 lg:h-[96px] lg:gap-6 ${styles.row} ${compact ? styles.compactRow : ""}`}
           >
             {/* Left: mobile menu / desktop search */}
             <div className="flex items-center">
@@ -131,17 +133,17 @@ export function Header() {
             <div
               className={`flex items-center justify-end gap-0.5 sm:gap-1 lg:gap-7 ${styles.controls}`}
             >
-              <SearchBar
+              {!compact && <SearchBar
                 variant="boxed"
                 className={`hidden lg:block ${styles.search}`}
-              />
-              <IconButton
+              />}
+              {!compact && <IconButton
                 label="Search"
                 className="hidden sm:inline-flex lg:hidden"
                 onClick={() => setSearchOpen(true)}
               >
                 <Search className="h-5 w-5" strokeWidth={1.6} />
-              </IconButton>
+              </IconButton>}
               <CustomerMenu />
               <Link
                 href="/wishlist"
@@ -184,15 +186,15 @@ export function Header() {
             </div>
           </div>
           {/* Mobile search row */}
-          <div className="pb-3 lg:hidden">
+          {!compact && <div className="pb-3 lg:hidden">
             <SearchBar variant="boxed" />
-          </div>
+          </div>}
         </div>
       </header>
 
       <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       <CartDrawer />
-      <Modal
+      {!compact && <Modal
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
         title="Search"
@@ -202,7 +204,7 @@ export function Header() {
         <p className="mt-3 text-xs text-ink-muted">
           Try “linen”, “sneakers” or “maroon”.
         </p>
-      </Modal>
+      </Modal>}
     </>
   );
 }

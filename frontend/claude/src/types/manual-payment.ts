@@ -33,6 +33,25 @@ export interface PaymentSubmissionReceipt {
 }
 export type PaymentSubmissionResult = ActionResult<PaymentSubmissionReceipt>;
 
+/** Immutable purchased-line snapshot returned only by an authorized order service. */
+export interface ConfirmedOrderItemSnapshot {
+  name: string;
+  quantity: number;
+  unitPriceMinor: number;
+  lineTotalMinor: number;
+  size?: string;
+  color?: string;
+}
+
+export interface ConfirmedOrderDeliverySnapshot {
+  recipientName: string;
+  addressLines: string[];
+  district?: string;
+  division?: string;
+  zoneLabel?: string;
+  estimatedDelivery?: string;
+}
+
 /** All amounts here are integer BDT minor units (100 paisa = ৳1). */
 export interface VerifiedAdvanceOrder {
   orderId: string;
@@ -44,4 +63,10 @@ export interface VerifiedAdvanceOrder {
   totalMinor: number;
   advanceMinor: number;
   remainingMinor: number;
+  /** Optional trusted snapshots: absent data is never replaced with fixtures. */
+  items?: ConfirmedOrderItemSnapshot[];
+  delivery?: ConfirmedOrderDeliverySnapshot;
+  subtotalMinor?: number;
+  deliveryMinor?: number;
+  discountMinor?: number;
 }

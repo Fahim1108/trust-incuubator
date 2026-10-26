@@ -14,6 +14,7 @@ import { ValueProps } from "./ValueProps";
 export interface HomepageData {
   candidates?: MerchandisingCandidate[];
   reviewProducts?: Product[];
+  sizingProducts?: Product[];
   categories: Category[];
   brands: Brand[];
   newArrivals: Product[];
@@ -32,6 +33,11 @@ type HomepageSettings = Pick<StorefrontSettings, "homepage" | "hero" | "promoBan
  */
 export function HomepageView({ settings, data }: { settings: HomepageSettings; data: HomepageData }) {
   const selected = selectHomepageCollections(settings.homepage, data.candidates ?? []);
+  // Explicit review curation uses real imported photos; never fabricate publication dates.
+  for (const section of settings.homepage) {
+    const products = section.type === 'new-arrivals' ? data.newArrivals : section.type === 'featured' ? data.featured : undefined;
+    if (products?.length) selected.set(section.id, products.slice(0, section.limit ?? 8));
+  }
   const sections = settings.homepage.filter(s => s.enabled && s.type !== "brands" && (!selected.has(s.id) || selected.get(s.id)!.length > 0) && (s.type !== "complete-look" || s.looks?.some(look => resolveLook(look, data.candidates ?? []).length)));
   return (
     <div className="space-y-5 pb-4 has-[>[data-section=value-props]:last-child]:-mb-10 has-[>[data-section=value-props]:last-child]:pb-0 sm:space-y-6 [&>*:nth-child(n+5)]:mt-10 sm:[&>*:nth-child(n+5)]:mt-8">
@@ -64,12 +70,11 @@ function SectionRenderer({ section, settings, data, products }: { section: Homep
         <section className="container" aria-label="Shop by Categories">
           <h2 className="mb-3 font-display text-[22px] font-semibold text-ink sm:text-[26px]">Shop by Categories</h2>
           <HomeCategories categories={data.categories} />
-          <ShirtStyles />
-          {Boolean(data.reviewProducts?.length) && <div className="mt-8"><SectionHeading title="The Thrift Shirt Collection" cta={{label:'View All Shirts',href:'/category/shirts'}} /><ProductGrid products={data.reviewProducts ?? []} brands={[]} columns={4}/></div>}
+          <ShirtStyles products={(data.candidates ?? []).map(c=>c.product)} />
         </section>
       );
     case "sizes":
-      return <ShopBySize products={(data.candidates ?? []).filter(c=>c.status==='published').map(c=>c.product)}/>;
+      return <ShopBySize products={data.sizingProducts ?? (data.candidates ?? []).filter(c=>c.status==='published').map(c=>c.product)}/>;
     case "new-arrivals":
     case "featured":
     case "trending":

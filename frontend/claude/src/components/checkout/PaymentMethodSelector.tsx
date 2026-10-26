@@ -27,6 +27,7 @@ export function PaymentMethodSelector({ value, onChange, onlineEnabled, previewE
               <span className="flex-1">
                 <span className="block text-sm font-medium text-ink">{title}</span>
                 <span className={cn("block text-xs", disabled ? "text-primary" : "text-ink-muted")}>{description}</span>
+                {id === "cod" && <span lang="bn" className="mt-1 block text-sm font-medium leading-relaxed text-primary">অর্ডার কনফার্ম করতে ডেলিভারি চার্জ পে করুন।</span>}
               </span>
             </label>
           );

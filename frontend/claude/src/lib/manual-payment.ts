@@ -59,6 +59,34 @@ export function canDisplayConfirmedOrder(order: unknown): order is VerifiedAdvan
   if (!order || typeof order !== "object" || Array.isArray(order)) return false;
   const value = order as Record<string, unknown>;
   const isMinor = (amount: unknown): amount is number => typeof amount === "number" && Number.isSafeInteger(amount) && amount >= 0;
+  const isRecord = (record: unknown): record is Record<string, unknown> => !!record && typeof record === "object" && !Array.isArray(record);
+  const isText = (text: unknown): text is string => typeof text === "string" && !!text.trim();
+  const optionalText = (text: unknown) => text === undefined || isText(text);
+  if (value.items !== undefined && (!Array.isArray(value.items) || value.items.length === 0 || !value.items.every(item => {
+    if (!isRecord(item)) return false;
+    const row = item;
+    return isText(row.name) && typeof row.quantity === "number" && Number.isSafeInteger(row.quantity) && row.quantity > 0 &&
+      isMinor(row.unitPriceMinor) && isMinor(row.lineTotalMinor) && Number.isSafeInteger(row.unitPriceMinor * row.quantity) &&
+      row.lineTotalMinor === row.unitPriceMinor * row.quantity && optionalText(row.size) && optionalText(row.color);
+  }))) return false;
+  if (Array.isArray(value.items) && isMinor(value.subtotalMinor)) {
+    let itemSubtotal = 0;
+    for (const item of value.items) {
+      if (!isRecord(item) || !isMinor(item.lineTotalMinor)) return false;
+      itemSubtotal += item.lineTotalMinor;
+      if (!Number.isSafeInteger(itemSubtotal)) return false;
+    }
+    if (itemSubtotal !== value.subtotalMinor) return false;
+  }
+  if (value.delivery !== undefined) {
+    if (!isRecord(value.delivery)) return false;
+    const delivery = value.delivery;
+    if (!isText(delivery.recipientName) || !Array.isArray(delivery.addressLines) || !delivery.addressLines.length || !delivery.addressLines.every(isText) ||
+      !optionalText(delivery.district) || !optionalText(delivery.division) || !optionalText(delivery.zoneLabel) || !optionalText(delivery.estimatedDelivery)) return false;
+  }
+  if ([value.subtotalMinor, value.deliveryMinor, value.discountMinor].some(amount => amount !== undefined && !isMinor(amount))) return false;
+  if (isMinor(value.subtotalMinor) && isMinor(value.deliveryMinor) && isMinor(value.discountMinor) &&
+    (!Number.isSafeInteger(value.subtotalMinor + value.deliveryMinor) || value.totalMinor !== value.subtotalMinor + value.deliveryMinor - value.discountMinor)) return false;
   return typeof value.orderId === "string" && !!value.orderId.trim() && typeof value.orderReference === "string" && !!value.orderReference.trim() && typeof value.createdAt === "string" && !Number.isNaN(Date.parse(value.createdAt)) &&
     value.orderStatus === "confirmed" && value.advanceStatus === "advance_verified" && (value.provider === "bkash" || value.provider === "nagad") &&
     isMinor(value.totalMinor) && isMinor(value.advanceMinor) && isMinor(value.remainingMinor) && value.advanceMinor > 0 && value.advanceMinor + value.remainingMinor === value.totalMinor;

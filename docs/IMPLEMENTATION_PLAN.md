@@ -76,3 +76,7 @@ The user authorized homepage implementation before completing the outstanding pu
 - [x] Integrate the uploaded original logo file with its embedded wordmark/font and the full official cover.
 - [ ] Integrate real product-image/featured/brand records; these remain required for a fully populated homepage.
 - [ ] Await homepage visual review before starting the remaining storefront pages.
+
+## 27 October 2026 refinement checkpoint
+
+The supplied storefront UI refinements are implemented; see `FINAL_REFINEMENT_REPORT.md`. Preview shopping of the 18 actual photos remains available with explicitly provisional sizes, while verified size/classification facets fail closed. This does not complete the commerce phases above. Next backend increment must establish real order/payment state machines and atomic inventory reservation before enabling checkout, short public references, authenticated customer tracking or first-order rewards. The private order-reference foundation is dormant and requires binding to actual order records; all reward issuance/redemption remains disabled. Owner must confirm actual garment sizes/details before live publication. Production remains unauthorized.

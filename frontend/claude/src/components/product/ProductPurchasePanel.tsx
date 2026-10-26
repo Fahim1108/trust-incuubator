@@ -2,6 +2,7 @@
 
 import { Banknote, CheckCircle2, CircleAlert, RotateCcw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
 import Link from "next/link";
+import { officialShirtSizeGuide } from "@/config/shirt-size-guide";
 import { APPAREL_SIZES, canonicalSize } from "@/lib/catalogue-dimensions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -56,6 +57,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, sizeGuide, c
     }
   };
 
+  const guide = sizeGuide ?? (product.categoryId === "cat-shirts" ? officialShirtSizeGuide : undefined);
   const Title = headingLevel;
 
   return (
@@ -85,7 +87,6 @@ export function ProductPurchasePanel({ product, brandName, colorId, sizeGuide, c
           setQty(1);
         }}
         isAvailable={(s) => isSizeAvailable(product, colorId, s)}
-        onSizeGuide={sizeGuide && !compact ? () => setGuideOpen(true) : undefined}
         error={sizeError}
       />
 
@@ -96,6 +97,8 @@ export function ProductPurchasePanel({ product, brandName, colorId, sizeGuide, c
         </div>
         <StockStatus inStock={colorHasStock} stock={variant ? stock : undefined} />
       </div>
+
+      {guide && <button type="button" onClick={()=>setGuideOpen(true)} aria-haspopup="dialog" className="!mt-2 inline-flex min-h-11 items-center text-sm font-medium text-primary underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Size Guide</button>}
 
       <div className="space-y-2.5">
         <div className="flex gap-2.5">
@@ -130,7 +133,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, sizeGuide, c
         </ul>
       )}
 
-      {sizeGuide && <SizeGuideModal guide={sizeGuide} open={guideOpen} onClose={() => setGuideOpen(false)} />}
+      {guide && <SizeGuideModal guide={guide} open={guideOpen} onClose={() => setGuideOpen(false)} />}
     </div>
   );
 }

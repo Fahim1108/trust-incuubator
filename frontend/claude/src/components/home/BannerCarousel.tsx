@@ -32,20 +32,20 @@ export function BannerCarousel({hero}:{hero:HeroSettings}) {
     onPointerEnter={e=>{if(e.pointerType==='mouse')setHovered(true);}} onPointerLeave={()=>setHovered(false)}
     onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false);}}
     onKeyDown={e=>{if(e.key==='ArrowLeft'){e.preventDefault();go(-1);}if(e.key==='ArrowRight'){e.preventDefault();go(1);}}}>
-    <div className="relative aspect-video w-full overflow-hidden bg-white [touch-action:pan-y]"
+    <div data-banner-frame className="relative mx-auto h-[clamp(220px,56.25vw,300px)] w-full overflow-hidden bg-white [touch-action:pan-y] sm:h-[clamp(380px,29vw,460px)]"
       onTouchStart={e=>{const t=e.touches[0];if(t)touch.current={x:t.clientX,y:t.clientY};}}
       onTouchEnd={e=>{const t=e.changedTouches[0],start=touch.current;touch.current=null;if(!t||!start)return;const dx=t.clientX-start.x,dy=t.clientY-start.y;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy))go(dx<0?1:-1);}}
       onTouchCancel={()=>{touch.current=null;}}>
       {hero.slides.map((slide,i)=><div key={slide.id} role="group" aria-roledescription="slide" aria-label={`${i+1} of ${count}: ${slide.title}`} aria-hidden={i!==active} inert={i!==active}
         className={`absolute inset-0 transition-opacity duration-500 motion-reduce:transition-none ${i===active?'opacity-100':'pointer-events-none opacity-0'}`}>
-        <SmartImage src={slide.image.src} alt={slide.image.alt} fill sizes="100vw" priority={i===0} loading={i===0?undefined:'lazy'} className="object-contain" />
+        <SmartImage src={slide.image.src} alt={slide.image.alt} fill sizes="(min-width: 768px) 818px, 100vw" priority={i===0} loading={i===0?undefined:'lazy'} className="object-contain" />
       </div>)}
     </div>
     {count>1&&<div className="flex flex-wrap items-center justify-center gap-2 px-3 py-2 sm:gap-4">
       <button type="button" className={control} aria-label="Previous banner" onClick={()=>go(-1)}><ChevronLeft size={18} aria-hidden/></button>
       <div className="flex" role="group" aria-label="Choose banner">{hero.slides.map((slide,i)=><button type="button" key={slide.id} className="flex h-11 w-8 items-center justify-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" aria-label={`Show banner ${i+1}: ${slide.title}`} aria-current={i===active?'true':undefined} onClick={()=>setIndex(i)}><span className={`h-2 w-2 rounded-full ${i===active?'bg-primary':'border border-primary bg-white'}`}/></button>)}</div>
       <button type="button" className={control} aria-label="Next banner" onClick={()=>go(1)}><ChevronRight size={18} aria-hidden/></button>
-      <button type="button" className={control} aria-label={paused?'Play banners':'Pause banners'} aria-pressed={paused} onClick={()=>setPaused(v=>!v)}>{paused?<Play size={16} aria-hidden/>:<Pause size={16} aria-hidden/>}</button>
+      {hero.autoplayMs > 0 && <button type="button" className={control} aria-label={paused?'Play banners':'Pause banners'} aria-pressed={paused} onClick={()=>setPaused(v=>!v)}>{paused?<Play size={16} aria-hidden/>:<Pause size={16} aria-hidden/>}</button>}
     </div>}
   </section>;
 }

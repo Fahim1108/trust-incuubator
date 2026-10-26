@@ -12,20 +12,21 @@ try{for(const width of [390,768,1440]){
  await expect(active()).toHaveAttribute('aria-label',/^1 of 3/);
  await expect.poll(()=>carousel.locator('img').evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0))).toBe(true);
  assert.ok(await carousel.locator('img').evaluateAll(imgs=>imgs.every(i=>getComputedStyle(i).objectFit==='contain')));
- const frame=await carousel.locator('[aria-roledescription="slide"]').first().boundingBox();assert.ok(Math.abs(frame.width/frame.height-16/9)<0.01);
+ const frame=await carousel.locator('[data-banner-frame]').boundingBox();assert.ok(frame.height>=(width<768?220:380)&&frame.height<=(width<768?300:460));
+ assert.ok(await carousel.locator('img').evaluateAll(imgs=>imgs.every(i=>Math.abs(i.naturalWidth/i.naturalHeight-16/9)<0.01)));
  await page.mouse.move(0,0);
- await expect(active()).toHaveAttribute('aria-label',/^2 of 3/,{timeout:4500});
+ await page.waitForTimeout(3300);await expect(active()).toHaveAttribute('aria-label',/^1 of 3/);
+ await expect(carousel.getByRole('button',{name:/Play banners|Pause banners/})).toHaveCount(0);
  await carousel.getByRole('button',{name:'Show banner 3: Boutique Showcase'}).click();
  await carousel.getByRole('button',{name:'Next banner'}).click();await expect(active()).toHaveAttribute('aria-label',/^1 of 3/);
  await carousel.getByRole('button',{name:'Previous banner'}).click();await expect(active()).toHaveAttribute('aria-label',/^3 of 3/);
  await carousel.getByRole('button',{name:'Previous banner'}).press('ArrowRight');await expect(active()).toHaveAttribute('aria-label',/^1 of 3/);
- const surface=carousel.locator('.aspect-video');
+ const surface=carousel.locator('[data-banner-frame]');
  await surface.dispatchEvent('touchstart',{touches:[{identifier:1,clientX:250,clientY:100}]});await surface.dispatchEvent('touchend',{changedTouches:[{identifier:1,clientX:100,clientY:105}]});
  await expect(active()).toHaveAttribute('aria-label',/^2 of 3/);
- await carousel.getByRole('button',{name:'Pause banners'}).click();
  await carousel.screenshot({path:`${dir}/carousel-${width}.png`,animations:'disabled'});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.emulateMedia({reducedMotion:'reduce'});await carousel.getByRole('button',{name:'Play banners'}).click();await page.getByRole('link',{name:'Skip to content'}).focus();await page.mouse.move(0,0);
+ await page.emulateMedia({reducedMotion:'reduce'});await page.getByRole('link',{name:'Skip to content'}).focus();await page.mouse.move(0,0);
  const before=await active().getAttribute('aria-label');await page.waitForTimeout(3200);assert.equal(await active().getAttribute('aria-label'),before);
- results.push({width,ratio:'16:9',contain:true,autoplay:true,arrows:true,loop:true,swipe:true,keyboard:true,reducedMotion:true,overflow:false});await page.close();console.log(`PASS carousel ${width}px`);
+ results.push({width,imageRatio:'16:9',compactHeight:frame.height,contain:true,manualOnly:true,arrows:true,loop:true,swipe:true,keyboard:true,reducedMotion:true,overflow:false});await page.close();console.log(`PASS carousel ${width}px`);
 }}finally{await browser.close();await writeFile(`${dir}/verification.json`,JSON.stringify({origin,results},null,2));}

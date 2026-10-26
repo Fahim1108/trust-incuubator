@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Copy, Info } from "lucide-react";
+import { PaymentInstructions } from "./PaymentInstructions";
+import { Copy } from "lucide-react";
 import { useId, useRef, useState, useTransition } from "react";
 import { Button, Input, Textarea } from "@/components/ui";
 import { manualPaymentBreakdown, formatPaymentAmount, validatePaymentDetails } from "@/lib/manual-payment";
@@ -109,11 +110,7 @@ export function ManualAdvancePayment({ configuration, totalMinor, division, dist
           <Button size="sm" variant="outline" disabled={!breakdown} onClick={() => breakdown && void copy((breakdown.amountDueMinor / 100).toFixed(breakdown.amountDueMinor % 100 ? 2 : 0), "Amount")} leftIcon={<Copy size={14} />}>Copy Amount</Button>
         </div>
         <p role="status" className="min-h-4 text-xs text-primary">{copyMessage}</p>
-        <h4 className="font-semibold">How to pay</h4>
-        {configuration.available && destination?.transferInstructions ? <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-[#74706C]">
-          <li>Open {names[provider]}.</li><li>{destination.transferInstructions}</li>
-          <li>Send the exact displayed payment amount.</li><li>Copy the Transaction ID.</li><li>Return here and submit your payment information.</li>
-        </ol> : <p className="flex items-start gap-2 text-sm leading-relaxed text-primary"><Info className="mt-0.5 shrink-0" size={17} aria-hidden />Payment collection is unavailable. Do not send money. Approved receiving-account instructions will appear here when configured.</p>}
+        <PaymentInstructions destination={destination} available={configuration.available} />
       </div>
       {receipt ? <div role="status" className="space-y-2 rounded-lg border border-[#EAEAEA] p-5">
         <h4 className="font-serif text-2xl">Payment Details Submitted</h4>
