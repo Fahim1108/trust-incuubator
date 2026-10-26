@@ -38,7 +38,7 @@ export function ColorSelector({ colors, value, onChange }: { colors: ColorOption
   );
 }
 
-export function SizeSelector({ sizes, labels, value, onChange, isAvailable, onSizeGuide, error }: { sizes: string[]; labels?: Record<string, string>; value?: string; onChange: (s: string) => void; isAvailable: (s: string) => boolean; onSizeGuide?: () => void; error?: string }) {
+export function SizeSelector({ sizes, labels, locked = false, value, onChange, isAvailable, onSizeGuide, error }: { sizes: string[]; locked?: boolean; labels?: Record<string, string>; value?: string; onChange: (s: string) => void; isAvailable: (s: string) => boolean; onSizeGuide?: () => void; error?: string }) {
   if (sizes.length === 1 && sizes[0] === "One Size") {
     return <p className="text-sm text-ink">Size: <span className="font-medium">One Size</span></p>;
   }
@@ -64,13 +64,14 @@ export function SizeSelector({ sizes, labels, value, onChange, isAvailable, onSi
               type="button"
               role="radio"
               aria-checked={active}
-              aria-label={available ? `Size ${s}` : `Size ${s}, sold out`}
-              disabled={!available}
-              onClick={() => onChange(s)}
+              aria-label={available ? `Size ${s}` : `Size ${s}, ${locked ? "not available for this item" : "sold out"}`}
+              disabled={locked || !available}
+              onClick={() => { if (!locked) onChange(s); }}
               className={cn(
                 "aa-press relative h-11 min-w-14 px-3 rounded-control border text-sm transition-colors",
                 active ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-ink/50",
-                !available && "cursor-not-allowed text-ink-muted/50 after:absolute after:left-1/2 after:top-1/2 after:h-px after:w-[70%] after:-translate-x-1/2 after:-rotate-[20deg] after:bg-ink/25 hover:border-line",
+                !available && locked && "opacity-40",
+                !available && !locked && "cursor-not-allowed text-ink-muted/50 after:absolute after:left-1/2 after:top-1/2 after:h-px after:w-[70%] after:-translate-x-1/2 after:-rotate-[20deg] after:bg-ink/25 hover:border-line",
               )}
             >
               {labels?.[s] ?? labels?.[canonicalSize(s) ?? s] ?? canonicalSize(s) ?? s}

@@ -115,6 +115,8 @@ function build(seed: ProductSeed): Product {
     sizes,
     sizeLabels: sizeLabelsFromGuide(mockSizeGuides[SIZE_GUIDE_BY_CATEGORY[seed.category] ?? ""]),
     variants,
+    // Explicit design-fixture SKU choice only; not a claim about physical production stock.
+    fixedVariantId: variants.find(v=>v.colorId===first && v.size===(seed.category==='shirts'?({p001:'M',p002:'L',p003:'S',p004:'XL',p005:'XXL',p006:'M',p007:'L',p008:'M'}[seed.id]??sizes[0]):sizes[0]))?.id,
     imagesByColor,
     defaultImages: imagesByColor[first] ?? [],
     details: seed.details,

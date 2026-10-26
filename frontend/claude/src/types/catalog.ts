@@ -33,6 +33,9 @@ export interface ProductVariant {
 export type ProductBadge = "new" | "bestseller" | "sale" | "limited";
 
 export interface Product {
+  fixedVariantId?: string;
+  /** Display-only unavailable size options, never purchasable variants. */
+  sizeOptions?: string[];
   status?: 'draft' | 'published' | 'archived';
   apparelSizing?: boolean;
   shirtAttributes?: Partial<Record<import('@/lib/catalogue-dimensions').ShirtDimension, string[]>>;

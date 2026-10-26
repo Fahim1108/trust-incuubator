@@ -1,3 +1,4 @@
+import {fixedCustomerItem} from "@/lib/fixed-item";
 import {availableShirtTypes, sameSizeRecommendations} from "@/lib/catalogue-dimensions";
 import { defaultStorefrontSettings } from "@/config";
 import { previewPaymentConfiguration } from "@/config/payment-receiving";
@@ -14,7 +15,8 @@ const notConnected = (what: string): ActionResult<never> => ({
   message: `${what} is not connected yet. No data was sent or saved.`,
 });
 
-const byId = new Map(mockProducts.map((p) => [p.id, p]));
+const customerProducts=mockProducts.flatMap(p=>{const fixed=fixedCustomerItem(p);return fixed?[fixed]:[];});
+const byId = new Map(customerProducts.map((p) => [p.id, p]));
 
 export const mockDataSource: StorefrontDataSource = {
   async getManualPaymentConfiguration() {
@@ -25,33 +27,33 @@ export const mockDataSource: StorefrontDataSource = {
   },
   async getHomepageProducts() {
     // Isolated preview fixtures only: simulated publication dates, NOT verified live timestamps.
-    return mockProducts.map(product => ({ product, status: product.status ?? "draft", publishedAt: product.createdAt }));
+    return customerProducts.map(product => ({ product, status: product.status ?? "draft", publishedAt: product.createdAt }));
   },
   async getProducts(query = {}) {
-    return queryProducts(mockProducts, mockCategories, mockBrands, query);
+    return queryProducts(customerProducts, mockCategories, mockBrands, query);
   },
   async getProductBySlug(slug) {
-    return mockProducts.find((p) => p.slug === slug && p.status === "published") ?? null;
+    return customerProducts.find((p) => p.slug === slug && p.status === "published") ?? null;
   },
   async getProductsByIds(ids) {
     return ids.map((id) => byId.get(id)).filter((p): p is NonNullable<typeof p> => Boolean(p));
   },
   async getRelatedProducts(product, limit = 4) {
-    return sameSizeRecommendations(product,mockProducts,undefined,limit);
+    return sameSizeRecommendations(product,customerProducts,undefined,limit);
   },
   async getCollection(kind, limit = 8) {
     const filtered =
       kind === "new-arrivals"
-        ? [...mockProducts].filter((p) => p.isNewArrival).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        ? [...customerProducts].filter((p) => p.isNewArrival).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
         : kind === "featured"
-          ? mockProducts.filter((p) => p.isFeatured)
-          : [...mockProducts].filter((p) => p.isBestSeller).sort((a, b) => b.rating.count - a.rating.count);
+          ? customerProducts.filter((p) => p.isFeatured)
+          : [...customerProducts].filter((p) => p.isBestSeller).sort((a, b) => b.rating.count - a.rating.count);
     return filtered.slice(0, limit);
   },
   async searchSuggestions(term, limit = 6) {
     const t = term.trim().toLowerCase();
     if (!t) return [];
-    return mockProducts
+    return customerProducts
       .filter((p) => {
         const cat = mockCategories.find((c) => c.id === p.categoryId)?.name ?? "";
         return `${p.name} ${cat} ${p.tags.join(" ")}`.toLowerCase().includes(t);
@@ -85,7 +87,7 @@ export const mockDataSource: StorefrontDataSource = {
   },
 
   async getStorefrontSettings() {
-    return {...defaultStorefrontSettings,header:{...defaultStorefrontSettings.header,navigation:defaultStorefrontSettings.header.navigation.map(item=>item.label==='Men'?{...item,children:[...(item.children??[]),...availableShirtTypes(mockProducts).map(([,value,label])=>({label,href:`/category/shirts?shirt=${value}&available=1`}))]}:item)}};
+    return {...defaultStorefrontSettings,header:{...defaultStorefrontSettings.header,navigation:defaultStorefrontSettings.header.navigation.map(item=>item.label==='Men'?{...item,children:[...(item.children??[]),...availableShirtTypes(customerProducts).map(([,value,label])=>({label,href:`/category/shirts?shirt=${value}&available=1`}))]}:item)}};
   },
   async getHomepageConfiguration() {
     const s = defaultStorefrontSettings;

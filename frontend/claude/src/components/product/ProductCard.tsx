@@ -10,7 +10,6 @@ import { discountPercent } from "@/lib/format";
 import { findVariant, firstAvailableSize, imagesForColor, toCartLine, totalStock } from "@/lib/product";
 import { useCart } from "@/context/CartContext";
 import type { Product } from "@/types";
-import { ColorSwatches } from "./ColorSwatches";
 import { useRouter } from "next/navigation";
 import { ProductSizeBadge } from "./ProductSizeBadge";
 import { WishlistButton } from "./WishlistButton";
@@ -25,7 +24,7 @@ export interface ProductCardProps {
 
 export function ProductCard({ product, brandName, priority, sizes = "(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw", className }: ProductCardProps) {
   const { productCard: cfg } = useStorefront();
-  const [colorId, setColorId] = useState(product.colors[0]?.id);
+  const [colorId] = useState(product.colors[0]?.id);
   const router = useRouter();
   const { addItem, openDrawer } = useCart();
 
@@ -84,7 +83,6 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
         </h3>
         <Price price={product.price} compareAt={product.compareAtPrice} accent={cfg.showAddToCart} />
         {cfg.showRating && <Rating value={product.rating.average} count={product.rating.count} />}
-        {cfg.showColorSwatches && product.colors.length > 1 && <ColorSwatches colors={product.colors} activeId={colorId} onHover={setColorId} />}
         {cfg.showAddToCart && (
           <button
             type="button"

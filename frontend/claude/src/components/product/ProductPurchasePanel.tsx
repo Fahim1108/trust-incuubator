@@ -2,16 +2,17 @@
 
 import { Banknote, CheckCircle2, CircleAlert, RotateCcw, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
 import Link from "next/link";
+import { APPAREL_SIZES, canonicalSize } from "@/lib/catalogue-dimensions";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button, Price, Rating } from "@/components/ui";
 import { useCart } from "@/context/CartContext";
 import { cn } from "@/lib/cn";
-import { findVariant, firstAvailableSize, isSizeAvailable, toCartLine } from "@/lib/product";
+import { findVariant, isSizeAvailable, toCartLine } from "@/lib/product";
 import type { Product, SizeGuide } from "@/types";
 import { QuantitySelector } from "./QuantitySelector";
 import { SizeGuideModal } from "./SizeGuideModal";
-import { ColorSelector, SizeSelector } from "./VariantSelector";
+import { SizeSelector } from "./VariantSelector";
 import { WishlistButton } from "./WishlistButton";
 
 interface Props {
@@ -26,7 +27,7 @@ interface Props {
   headingLevel?: "h1" | "h2";
 }
 
-export function ProductPurchasePanel({ product, brandName, colorId, onColorChange, sizeGuide, compact, onAdded, onSizeChange, headingLevel = "h1" }: Props) {
+export function ProductPurchasePanel({ product, brandName, colorId, sizeGuide, compact, onAdded, onSizeChange, headingLevel = "h1" }: Props) {
   const router = useRouter();
   const { addItem, openDrawer } = useCart();
   const oneSize = product.sizes.length === 1;
@@ -37,13 +38,7 @@ export function ProductPurchasePanel({ product, brandName, colorId, onColorChang
 
   const variant = size ? findVariant(product, colorId, size) : undefined;
   const stock = variant?.stock ?? 0;
-  const colorHasStock = useMemo(() => Boolean(firstAvailableSize(product, colorId)), [product, colorId]);
-
-  const changeColor = (id: string) => {
-    onColorChange(id);
-    if (size && !isSizeAvailable(product, id, size)) setSize(oneSize ? product.sizes[0] : undefined);
-    setQty(1);
-  };
+  const colorHasStock = stock > 0;
 
   const add = (buyNow: boolean) => {
     if (!size || !variant) {
@@ -76,10 +71,11 @@ export function ProductPurchasePanel({ product, brandName, colorId, onColorChang
       </div>
 
       {product.actualMeasurements && <p className="text-sm text-ink">Actual garment measurements (inches): {product.actualMeasurements.chestInches !== undefined && `Chest ${product.actualMeasurements.chestInches}`} {product.actualMeasurements.lengthInches !== undefined && `Length ${product.actualMeasurements.lengthInches}`}</p>}
-      <ColorSelector colors={product.colors} value={colorId} onChange={changeColor} />
+      <p className="text-sm text-ink">Color: <span className="font-medium">{product.colors.find(c=>c.id===colorId)?.name}</span></p>
 
       <SizeSelector
-        sizes={product.sizes}
+        sizes={product.apparelSizing && canonicalSize(product.sizes[0] ?? "") ? APPAREL_SIZES.map(label=>(product.sizeOptions ?? product.sizes).find(s=>canonicalSize(s)===label) ?? label) : product.sizeOptions ?? product.sizes}
+        locked
         labels={product.sizeLabels}
         value={size}
         onChange={(s) => {
