@@ -46,7 +46,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
   const main = images[0];
   const hover = images[1];
   const off = discountPercent(product.price, product.compareAtPrice);
-  const soldOut = totalStock(product) === 0;
+  const soldOut = !product.reviewOnly && totalStock(product) === 0;
   const href = `/product/${product.slug}${colorId && colorId !== product.colors[0]?.id ? `?color=${colorId}` : ""}`;
 
   return (
@@ -55,7 +55,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
         <Link href={href} aria-label={product.name} className="aa-press absolute inset-0">
           {/* Hover (pointer devices only): gentle 1.05 zoom + cross-fade to the secondary image. */}
           <span className="aa-product-photo absolute inset-0">
-            {main && <SmartImage src={main.src} alt={main.alt} fill priority={priority} sizes={sizes} className={cn("aa-product-secondary object-cover", hover && "[@media(hover:hover)]:group-hover:opacity-0")} />}
+            {main && <SmartImage src={main.src} alt={main.alt} fill priority={priority} sizes={sizes} className={cn("aa-product-secondary", product.reviewOnly ? "object-contain bg-white" : "object-cover", hover && "[@media(hover:hover)]:group-hover:opacity-0")} />}
             {hover && <SmartImage src={hover.src} alt="" fill sizes={sizes} className="aa-product-secondary object-cover opacity-0 [@media(hover:hover)]:group-hover:opacity-100" />}
           </span>
         </Link>
@@ -82,6 +82,7 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
           </Link>
         </h3>
         <Price price={product.price} compareAt={product.compareAtPrice} accent={cfg.showAddToCart} />
+        {product.reviewOnly && <p className="text-xs text-ink-muted">In stock · 1 piece</p>}
         {cfg.showRating && product.rating.count > 0 && <Rating value={product.rating.average} count={product.rating.count} />}
         {cfg.showAddToCart && (
           <button

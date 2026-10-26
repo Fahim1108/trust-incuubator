@@ -55,3 +55,11 @@ The first hosted run identified a static-to-dynamic fallback error when real Sup
 ## Storefront
 
 Public products/search/suggestions/related results are real published records only. Currently zero qualify, as requested. Old demo cart lines are removed; future legitimate saved lines are checked against published available variant IDs. Pants/Sneakers/Belts/Wallets/Watches have configurable Coming Soon pages; Winter is hidden. The real shirt photograph is used for the Shirts tile. Branding/logo/footer/skeletons and guest/cart boundaries are retained. Necessary unavailable-service disclosures remain; sample-review and Claude development labels are removed.
+
+## Interactive Preview projection (2026-10-26)
+
+The owner subsequently requested normal shopping-flow testing before physical sizing. `services/adapters/review-thrift.ts` now exposes the 18 supplied shirts only inside the explicitly enabled non-production Preview. It supplies one temporary M cart SKU per shirt (`preview-AA-SHIRT-xxx`), never database variants. Original price/photo/physical quantity remain sourced from the intake manifest. Pattern and occasion navigation is editorial styling, not fabric/measurement verification. Formal/Casual may overlap; no claims of verified designer branding are introduced.
+
+Add to Cart, Buy Now, cart persistence and checkout review are usable. The fixed size is provisional and remains visibly described as such on product detail pages. Real order placement/payment verification is still unavailable. Do not import these temporary sizes or IDs into Supabase. Actual intake size and verification flags remain unchanged; owner must still verify actual details and use the publication procedure above before a live release.
+
+Current checks: `npm run lint --prefix frontend/claude`, `npm run typecheck --prefix frontend/claude`, `npm test --prefix frontend/claude`, `npm run build --prefix frontend/claude`, and `node scripts/test-thrift-browse.mjs` against an explicitly enabled Preview server (default localhost:3004). The earlier `test-real-intake.mjs` asserts the superseded hidden-draft Preview behavior.

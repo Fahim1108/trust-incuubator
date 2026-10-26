@@ -1,3 +1,4 @@
+import { ShirtStyles } from "./ShirtStyles";
 import { ShopBySize } from "./ShopBySize";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { resolveLook, selectHomepageCollections, type MerchandisingCandidate } from "@/lib/merchandising";
@@ -12,6 +13,7 @@ import { ValueProps } from "./ValueProps";
 
 export interface HomepageData {
   candidates?: MerchandisingCandidate[];
+  reviewProducts?: Product[];
   categories: Category[];
   brands: Brand[];
   newArrivals: Product[];
@@ -62,6 +64,8 @@ function SectionRenderer({ section, settings, data, products }: { section: Homep
         <section className="container" aria-label="Shop by Categories">
           <h2 className="mb-3 font-display text-[22px] font-semibold text-ink sm:text-[26px]">Shop by Categories</h2>
           <HomeCategories categories={data.categories} />
+          <ShirtStyles />
+          {Boolean(data.reviewProducts?.length) && <div className="mt-8"><SectionHeading title="The Thrift Shirt Collection" cta={{label:'View All Shirts',href:'/category/shirts'}} /><ProductGrid products={data.reviewProducts ?? []} brands={[]} columns={4}/></div>}
         </section>
       );
     case "sizes":

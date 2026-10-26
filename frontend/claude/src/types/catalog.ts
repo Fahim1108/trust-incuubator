@@ -33,6 +33,10 @@ export interface ProductVariant {
 export type ProductBadge = "new" | "bestseller" | "sale" | "limited";
 
 export interface Product {
+  /** Non-purchasable design review projection; never persisted as verified inventory. */
+  reviewOnly?: boolean;
+  displaySizeEstimate?: string;
+  physicalStock?: number;
   fixedVariantId?: string;
   /** Display-only unavailable size options, never purchasable variants. */
   sizeOptions?: string[];

@@ -88,7 +88,7 @@ export function queryProducts(
   // Base set: everything except price/size/color filters, used for facet counts.
   const base = products.filter(
     (p) =>
-      p.status === "published" &&
+      (p.status === "published" || p.reviewOnly === true) &&
       (!query.search || matchesSearch(p, query.search, categories, brands)) &&
       (!query.offers || (p.compareAtPrice ?? 0) > p.price),
   );
@@ -98,9 +98,9 @@ export function queryProducts(
       (!catIds?.length || catIds.includes(p.categoryId)) &&
       (!brandIds?.length || brandIds.includes(p.brandId)) &&
       (!query.sizes?.length || p.variants.some(v => v.stock > 0 && query.sizes!.some(size => canonicalSize(size) ? p.apparelSizing && canonicalSize(v.size) === canonicalSize(size) : v.size === size))) &&
-      (!query.inStock || publishedAvailable(p)) &&
+      (!query.inStock || publishedAvailable(p) || (p.reviewOnly && (p.physicalStock ?? 0) > 0)) &&
       (!query.collection || (publishedAvailable(p) && p.collectionSlugs?.includes(query.collection))) &&
-      (!query.shirtType || (publishedAvailable(p) && SHIRT_CLASSIFICATIONS.some(([d,value]) => value === query.shirtType && p.shirtAttributes?.[d]?.includes(value)))) &&
+      (!query.shirtType || (SHIRT_CLASSIFICATIONS.some(([d,value]) => value === query.shirtType && p.shirtAttributes?.[d]?.includes(value)))) &&
       (query.minPrice === undefined || p.price >= query.minPrice) &&
       (query.maxPrice === undefined || p.price <= query.maxPrice),
   );

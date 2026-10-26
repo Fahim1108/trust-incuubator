@@ -55,7 +55,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
           <ProductDetailClient product={{...product,rating:reviewRating}} brandName={brand?.name} sizeGuide={sizeGuide} initialColorId={typeof sp.color === "string" ? sp.color : undefined} />
         </div>
 
-        <div className="mt-14 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
+        {!product.reviewOnly && <div className="mt-14 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
           <Accordion
             defaultOpen={["description"]}
             items={[
@@ -136,6 +136,7 @@ export default async function ProductPage({ params, searchParams }: { params: Pa
           </section>
         </div>
 
+        }
         <div className="mt-16">
           <ReviewList reviews={reviews} average={product.rating.average} count={product.rating.count} />
         </div>

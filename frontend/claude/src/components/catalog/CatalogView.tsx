@@ -1,3 +1,4 @@
+import { ShirtStyles } from "@/components/home/ShirtStyles";
 import { SearchX } from "lucide-react";
 import type { ReactNode } from "react";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -38,6 +39,7 @@ export function CatalogView({ title, description, breadcrumbs, query, result, br
             {description && <p className="mt-2 max-w-xl text-sm text-ink-muted">{description}</p>}
           </div>
         </div>
+        <ShirtStyles />
         {banner}
 
         <div className="sticky top-[151px] z-20 -mx-4 mt-5 flex items-center justify-between gap-2 border-y border-line bg-surface/95 px-4 py-2.5 backdrop-blur sm:mx-0 sm:px-0 lg:static lg:border-x-0 lg:border-t-0 lg:bg-transparent lg:pb-4 lg:pt-0">

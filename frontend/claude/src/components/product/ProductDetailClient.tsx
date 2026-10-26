@@ -14,6 +14,7 @@ export function ProductDetailClient({ product, brandName, sizeGuide }: { product
     <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:gap-14">
       <ProductGallery images={imagesForColor(product, colorId)} productName={product.name} />
       <div className="lg:sticky lg:top-28 lg:self-start">
+        {product.reviewOnly && <p className="mb-4 text-xs text-ink-muted">Size shown is provisional until the garment is measured.</p>}
         <ProductPurchasePanel product={product} brandName={brandName} colorId={colorId} onColorChange={() => {}} sizeGuide={sizeGuide} onSizeChange={selection?.setSize} />
       </div>
     </div>

@@ -1,0 +1,3 @@
+import Link from 'next/link';
+/** Pattern and styling navigation; fabrics and measurements are never inferred. */
+export function ShirtStyles(){return <nav aria-label="Shirt styles" className="my-5 flex flex-wrap gap-2">{[['solid','Solid'],['striped','Striped'],['checked','Checked / Plaid'],['formal','Formal'],['casual','Casual']].map(([slug,label])=><Link key={slug} href={`/shop?shirt=${slug}`} className="rounded-full border border-line bg-white px-4 py-2 text-sm text-ink transition-colors hover:border-primary hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">{label}</Link>)}</nav>}
