@@ -95,7 +95,7 @@ function MobileEditorialSlide({ banner, active, priority, logoSrc, intro }: { ba
 function SideTile({ banner }: { banner: Banner }) {
   return (
     <Link href={banner.cta?.href ?? "#"} className="group relative block overflow-hidden rounded-card bg-[#EDE8E2]">
-      <SmartImage src={banner.image.src} alt={banner.image.alt} fill sizes="25vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+      <SmartImage src={banner.image.src} alt={banner.image.alt} fill sizes="25vw" className="object-cover" />
       <div className="relative flex h-full flex-col justify-center p-6 xl:p-8">
         <h2 className="max-w-[8ch] font-serif text-[30px] leading-[1.05] text-ink xl:text-[36px]">{banner.title}</h2>
         {banner.cta && (

@@ -44,7 +44,6 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
   };
   const images = imagesForColor(product, colorId);
   const main = images[0];
-  const hover = images[1];
   const off = discountPercent(product.price, product.compareAtPrice);
   const soldOut = !product.reviewOnly && totalStock(product) === 0;
   const href = `/product/${product.slug}${colorId && colorId !== product.colors[0]?.id ? `?color=${colorId}` : ""}`;
@@ -52,11 +51,10 @@ export function ProductCard({ product, brandName, priority, sizes = "(min-width:
   return (
     <article className={cn("aa-product-card group relative", className)}>
       <div className={cn("relative overflow-hidden rounded-card", cfg.imageAspect === "portrait" ? "aspect-[4/5]" : cfg.imageAspect === "landscape" ? "aspect-[4/3]" : "aspect-square")} style={{ backgroundColor: cfg.imageBackground }}>
-        <Link href={href} aria-label={product.name} className="aa-press absolute inset-0">
-          {/* Hover (pointer devices only): gentle 1.05 zoom + cross-fade to the secondary image. */}
+        <Link href={href} aria-label={product.name} className="absolute inset-0">
+          {/* Original photography remains stable on scroll, hover and touch. */}
           <span className="aa-product-photo absolute inset-0">
-            {main && <SmartImage src={main.src} alt={main.alt} fill priority={priority} sizes={sizes} className={cn("aa-product-secondary", product.reviewOnly ? "object-contain bg-white" : "object-cover", hover && "[@media(hover:hover)]:group-hover:opacity-0")} />}
-            {hover && <SmartImage src={hover.src} alt="" fill sizes={sizes} className="aa-product-secondary object-cover opacity-0 [@media(hover:hover)]:group-hover:opacity-100" />}
+            {main && <SmartImage src={main.src} alt={main.alt} fill priority={priority} sizes={sizes} className={cn("aa-product-secondary", product.reviewOnly ? "object-contain bg-white" : "object-cover")} />}
           </span>
         </Link>
         <div className="pointer-events-none absolute left-2.5 top-2.5 flex flex-col items-start gap-1">

@@ -67,7 +67,7 @@ export function CheckoutForm({ manualPaymentConfiguration }: { manualPaymentConf
   const next = () => {
     if (step === 0 && !validate()) return;
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
-    window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const placeOrder = () => {

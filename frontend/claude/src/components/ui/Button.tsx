@@ -3,7 +3,7 @@ import { PendingIndicator } from "@/components/ui/LoadingSkeleton";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-/** Trailing icons (arrows) slide 5px right on hover/focus. */
+/** Keep trailing icons steady; button feedback is color plus a small press. */
 function ArrowSlot({ children }: { children: ReactNode }) {
   return <span className="aa-arrow">{children}</span>;
 }

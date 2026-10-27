@@ -3,7 +3,7 @@ export const motion = {
   fast: 150,
   normal: 220,
   slow: 350,
-  reveal: 450,
+  reveal: 350,
   loader: 1600,
   panel: 280,
   hero: 600,
