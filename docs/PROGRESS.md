@@ -514,3 +514,9 @@ Additional post-deployment QA (local verification-script improvement, not part o
 ### 2026-10-27 — Footer developer enquiry link
 
 Credit keeps regular400 “Created by” and bold700 linked “Firoj Ahamed Fahim”, centered on allwidths. The developer-only wa.me URL uses8801632915921 with the owner's exact URL-encoded service-enquiry message, newtab/noopener, subtlehoverunderline/color, keyboardfocus and reducedmotion support. No sending API or autosend. Customer support is separately centralized at01886456664 /8801886456664; floatingbutton and footer supportline use that storecontact. Logo/footerlayout/backend unchanged. Frontend lint/typecheck/82tests passed; build and hosted browser evidence follow.
+
+Footer release verified: acc8ad8d9156b7d5a0d67d26da0b3215726e5f74 deployed READY to separate Preview, targetstaging, URL https://attires-arena-frontend-preview-fcprwpeue-fahim-s-projects1.vercel.app/ . Hosted390/1440browserchecks passed exact encodedmessage, newtab/interceptednavigation(noWhatsAppsend), regularprefix/boldname/centering/hoverunderline and separatebusiness-supportURL8801886456664. Native strong text is bolder than the700link; verification asserts bold>=700 ratherthanbrowser-specific exactweight. Screenshots visuallyreviewed at artifacts/footer-credit/hosted; temporaryverificationaccessrevoked. Frontend lint/typecheck/82tests/build passed. This postdeploymentnote islocal/uncommitted; deployedsourceSHA is unchanged. Productionuntouched.
+
+### 2026-10-27 — Remove footer WhatsApp sentence
+
+Removed the visible “WhatsApp:01886456664” support line from the single shared storefront Footer, so it is absent on every page using that footer. Developer credit/link, official branding and floating support button/destination remain intact. Lint/typecheck and productionbuild passed. Preview release evidence follows.
