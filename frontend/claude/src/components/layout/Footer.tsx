@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useStorefront } from "@/context/StorefrontContext";
 import type { SocialLink } from "@/types";
-import { contact } from "@/config/contact";
+import { contact, developerContact } from "@/config/contact";
 import { Logo } from "./Logo";
 import styles from "./Footer.module.css";
 const socialIcons: Record<SocialLink["network"], typeof Facebook> = {
@@ -101,7 +101,7 @@ export function Footer() {
             <p className={styles.tagline}>Style Elevated. Always.</p>
           </div>
           <p className="mt-5 text-center text-sm text-[#D6C8C8]"><a href={contact.whatsappUrl} target="_blank" rel="noopener noreferrer" className="rounded hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">WhatsApp: <strong>{contact.whatsappNumber}</strong></a></p>
-          <p className={styles.credit}>Created by <strong>Firoj Ahamed Fahim</strong></p>
+          <p className={styles.credit}>Created by <a href={developerContact.whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.developerLink}><strong>{developerContact.name}</strong></a></p>
         </div>
       </div>
     </footer>

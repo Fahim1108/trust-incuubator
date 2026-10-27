@@ -121,8 +121,12 @@
   margin: 18px 0 0;
   max-width: 1050px;
 }
+.developerLink { font-weight: 700; text-underline-offset: 3px; transition: color 200ms ease; }
+.developerLink:hover { color: #fff; text-decoration: underline; }
+.developerLink:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 2px; }
 .credit {
   color: #cdbbbb;
+  font-weight: 400;
   font-size: 12px;
   line-height: 1.7;
   text-align: center;
@@ -183,7 +187,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .social a,
-  .links a {
+  .links a,
+  .developerLink {
     transition: none;
   }
   .social a:hover {
