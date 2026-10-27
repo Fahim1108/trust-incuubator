@@ -526,3 +526,13 @@ Footer removal deployed READY as1cdbaea9dd6703a3ee14d73a4a1eb78599e21efd to sepa
 ### 2026-10-27 — COD heading description
 
 Replaced only the COD description directly under its heading with the exact owner sentence: “ডেলিভারি চার্জ বাদে বাকি টাকা প্রোডাক্ট হাতে পেয়ে পরিশোধ করুন।” Added lang=bn to that paragraph for correct language handling; existing readable spacing retained. Online-payment description, other messages, advance policy, calculations, tabs, fields and submission boundaries unchanged. Sentence occurs once in source and only in COD mode. Frontend lint/typecheck/82tests/productionbuild passed; hosted verification follows.
+
+COD copy release verified: 4716ca1a61c60829a6a4b485fb9eebc15e05ebb6 deployed READY to separatePreview https://attires-arena-frontend-preview-mewc30zpc-fahim-s-projects1.vercel.app/ . Hosted390/1440checks passed exactsingleBengaliparagraph directlyunderCODheading/langbn, oldEnglishdescriptionabsent, no duplicate, advance70unchanged, bKash/Nagadpresent, onlinecopyunchanged andnooverflow. Screenshotsvisuallyreviewed under artifacts/cod-copy/hosted. Temporarytestaccessrevoked. Thispostdeploynote islocal/uncommitted; productionunchanged.
+
+### 2026-10-27 — Isolated scroll-motion atelier
+
+Added a verticallyscrollable showcase at /motion-preview, scoped entirely to that route: luxury softfade-up, staggeredrealshirtcards, subtleimage scale, minimalheading reveals; Elegant/Minimal toggles and fixed side-by-sidecomparisons, global/per-scene/per-panelreplay. Officiallogo and eightoriginalinventoryphotos/prices used; no inventedproducts, newdependencies, homepage/sharedanimation/backendchanges, navigationlinks or sitemapentries. Oldloader/trackinglab retained at /motion-preview?lab=components. ExplicitPreviewflag/production404gate preserved; route metadata noindex/nofollow.
+
+Progressive enhancement usesnativeWebAnimations/IntersectionObserver; defaultSSRcontent isvisible, transforms/opacityonly, mediachange cancelsmotionimmediately; keyboardfocusreveals content and replayhonorsreducedmotion. A mobile replaycould originally targetcontent justbelowviewport; fixed explicitreplay tobringits scene into view. No autoplay or fakependingstates.
+
+Lint/TypeScript/82unit tests/build passed. scripts/test-scroll-showcase.mjs passed390/1440browserchecks observingactualnativeeffects:780msElegant/380msMinimal,85msstagger, allfourkinds, independentreplay/comparison, photo loading, stable revealheight, nohorizontaloverflow, reducedmotion andJS-disabledcontentreadability. Screenshotsvisuallyreviewed in artifacts/scroll-showcase. Storefrontrollout awaitsownerstyleapproval. HostedPreviewverification follows.
