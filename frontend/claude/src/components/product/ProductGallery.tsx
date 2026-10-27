@@ -7,12 +7,13 @@ import { cn } from "@/lib/cn";
 import type { ProductImage } from "@/types";
 
 /**
- * Gallery with thumbnails, manually selected main images and explicit click-to-view
+ * Gallery with thumbnails, swipeable main image (mobile), hover zoom (desktop)
  * and a full-screen zoom modal.
  */
 export function ProductGallery({ images, productName }: { images: ProductImage[]; productName: string }) {
   const [index, setIndex] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
+  const [lens, setLens] = useState<{ x: number; y: number } | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
 
   const [previousImages, setPreviousImages] = useState(images);
@@ -26,7 +27,7 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
     const next = (i + images.length) % images.length;
     setIndex(next);
     const el = scroller.current;
-    if (el) el.scrollTo({ left: next * el.clientWidth, behavior: "auto" });
+    if (el) el.scrollTo({ left: next * el.clientWidth, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   };
 
   const current = images[index];
@@ -65,6 +66,12 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
             <div
               key={img.src}
               className="relative aspect-[4/5] w-full shrink-0 snap-center cursor-zoom-in"
+              onMouseMove={(e) => {
+                if (window.matchMedia("(hover: none)").matches) return;
+                const r = e.currentTarget.getBoundingClientRect();
+                setLens({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 });
+              }}
+              onMouseLeave={() => setLens(null)}
               onClick={() => setZoomOpen(true)}
             >
               <SmartImage
@@ -73,7 +80,8 @@ export function ProductGallery({ images, productName }: { images: ProductImage[]
                 fill
                 priority={i === 0}
                 sizes="(min-width:1024px) 50vw, 100vw"
-                className="object-cover"
+                className="object-cover transition-transform duration-200"
+                style={lens && i === index ? { transform: "scale(1.8)", transformOrigin: `${lens.x}% ${lens.y}%` } : undefined}
               />
             </div>
           ))}

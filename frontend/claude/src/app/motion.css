@@ -7,13 +7,13 @@
 .aa-press:disabled { cursor: not-allowed; }
 .aa-button { position: relative; transition: scale var(--motion-fast) var(--motion-ease), translate var(--motion-normal) var(--motion-ease), color var(--motion-normal), background-color var(--motion-normal); }
 .aa-arrow { display: inline-flex; transition: transform var(--motion-normal) var(--motion-ease); }
-
+.aa-button:focus-visible .aa-arrow { transform: translateX(3px); }
 .aa-search-form { border-radius: 10px; transition: border-color var(--motion-normal), box-shadow var(--motion-normal); }
 .aa-search-form:focus-within { border-color: rgb(var(--aa-primary) / .55); box-shadow: 0 0 0 3px rgb(var(--aa-primary) / .1); }
 .aa-search-icon { transition: color var(--motion-normal), scale var(--motion-normal) var(--motion-ease); }
-.aa-search-form:focus-within .aa-search-icon { color: rgb(var(--aa-primary)); }
+.aa-search-form:focus-within .aa-search-icon { color: rgb(var(--aa-primary)); scale: 1.05; }
 .aa-product-card { outline: 1px solid transparent; outline-offset: 4px; transition: outline-color var(--motion-normal); }
-.aa-product-photo { transform: none; }
+.aa-product-photo { transition: transform var(--motion-slow) var(--motion-ease); }
 .aa-product-secondary { transition: opacity var(--motion-slow) var(--motion-ease); }
 .aa-nav-link, .aa-nav-link::after { transition-duration: var(--motion-normal); }
 .aa-overlay { transition: opacity var(--motion-panel) var(--motion-ease); }
@@ -26,11 +26,11 @@
 .aa-content-pending > [data-results-content] { transition: opacity var(--motion-normal); }
 @keyframes aa-count-update { from { opacity: .6; scale: .96; } to { opacity: 1; scale: 1; } }
 @media (hover: hover) and (pointer: fine) {
-
-
+  .aa-button:hover:not(:disabled) { translate: 0 -1px; }
+  .aa-button:hover .aa-arrow { transform: translateX(3px); }
   .aa-search-form:hover { border-color: rgb(var(--aa-primary) / .35); }
   .aa-product-card:hover { outline-color: rgb(var(--aa-primary) / .12); }
-
+  .aa-product-card:hover .aa-product-photo { transform: scale(1.03); }
 }
 @media (prefers-reduced-motion: reduce) {
   .aa-press, .aa-button, .aa-search-icon, .aa-arrow { transition: none; }

@@ -1,4 +1,3 @@
-import { Reveal } from "./Reveal";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { CtaLink } from "@/types";
@@ -8,7 +7,7 @@ export function SectionHeading({ title, subtitle, cta, className, as: Tag = "h2"
   return (
     <div className={cn("mb-3 flex items-end justify-between gap-4 sm:mb-4", className)}>
       <div>
-        <Reveal><Tag className="font-display text-[22px] font-semibold leading-tight text-ink sm:text-[26px]">{title}</Tag></Reveal>
+        <Tag className="font-display text-[22px] font-semibold leading-tight text-ink sm:text-[26px]">{title}</Tag>
         {subtitle && <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>}
       </div>
       {cta && (

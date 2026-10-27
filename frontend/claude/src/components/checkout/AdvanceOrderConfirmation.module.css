@@ -1,5 +1,5 @@
-.check { width: 80px; height: 80px; margin: 0 auto; stroke: #6b0202; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;  }
-.check path { stroke-dasharray: 60; stroke-dashoffset: 0;  }
+.check { width: 80px; height: 80px; margin: 0 auto; stroke: #6b0202; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; animation: appear 350ms ease-out; }
+.check path { stroke-dasharray: 60; stroke-dashoffset: 0; animation: draw 500ms ease-out; }
 @keyframes draw { from { stroke-dashoffset: 60; } }
 @keyframes appear { from { opacity: 0; transform: scale(.96); } }
 @media (prefers-reduced-motion: reduce) { .check, .check path { animation: none; } }

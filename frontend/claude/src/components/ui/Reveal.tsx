@@ -1,30 +1,30 @@
 "use client";
-import {useEffect,useRef,type ReactNode} from 'react';
-import {cn} from '@/lib/cn';
+import { useEffect, useRef, type ReactNode } from "react";
+import { motion, motionEase } from "@/config/motion";
+import { cn } from "@/lib/cn";
 
-/** Heading-only, once-per-mount opacity enhancement. Containers and products never animate. */
-export function Reveal({children,className}:{children:ReactNode;className?:string}){
- const ref=useRef<HTMLDivElement>(null);
- useEffect(()=>{
-  const heading=ref.current?.querySelector<HTMLElement>('h1,h2,h3,h4');
-  if(!heading)return;
-  const media=matchMedia('(prefers-reduced-motion: reduce)');
-  heading.dataset.quietHeading='true';
-  if(media.matches||!heading.animate||!('IntersectionObserver' in window)){heading.dataset.headingState='static';return;}
-  // Initial/previously visible headings remain fully visible; never flash them after hydration.
-  if(heading.getBoundingClientRect().top<innerHeight){heading.dataset.headingState='initial';return;}
-  let animation:Animation|undefined;
-  heading.dataset.headingState='waiting';
-  const observer=new IntersectionObserver(entries=>{
-   if(!entries.some(entry=>entry.isIntersecting))return;
-   observer.disconnect();
-   if(media.matches)return;
-   heading.dataset.headingState='shown';
-   animation=heading.animate([{opacity:.4},{opacity:1}],{duration:350,easing:'ease-out'});
-  },{threshold:.1});
-  const stop=()=>{if(media.matches){observer.disconnect();animation?.cancel();heading.dataset.headingState='static';}};
-  observer.observe(heading);media.addEventListener('change',stop);
-  return()=>{observer.disconnect();animation?.cancel();media.removeEventListener('change',stop);};
- },[]);
- return <div ref={ref} className={cn('aa-heading-reveal',className)}>{children}</div>;
+/** Content is never hidden by React/CSS. Start a once-only entrance on intersection. */
+export function Reveal({ children, className }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!el || !el.animate || !("IntersectionObserver" in window) || media.matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight * .92) return;
+    let animation: Animation | undefined;
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      observer.disconnect();
+      el.dataset.reveal = "shown";
+      if (!media.matches) animation = el.animate([
+        { opacity: 0, transform: "translateY(12px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ], { duration: motion.reveal, easing: motionEase });
+    }, { rootMargin: "0px 0px -4% 0px", threshold: .01 });
+    const stop = () => { if (media.matches) { observer.disconnect(); animation?.cancel(); } };
+    media.addEventListener("change", stop);
+    observer.observe(el);
+    return () => { observer.disconnect(); animation?.cancel(); media.removeEventListener("change", stop); };
+  }, []);
+  return <div ref={ref} data-reveal="idle" className={cn("aa-reveal", className)}>{children}</div>;
 }

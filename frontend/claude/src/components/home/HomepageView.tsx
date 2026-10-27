@@ -22,6 +22,9 @@ export interface HomepageData {
   bestSellers: Product[];
 }
 
+/** Major editorial sections get a one-time scroll reveal; individual product cards never animate in. */
+const REVEAL_SECTIONS = new Set<HomepageSection["type"]>(["categories", "brands", "new-arrivals", "featured", "trending", "complete-look", "most-popular", "promo-banners", "best-sellers", "newsletter"]);
+
 type HomepageSettings = Pick<StorefrontSettings, "homepage" | "hero" | "promoBanners" | "valueProps" | "footer" | "theme" | "logo">;
 
 /**
@@ -41,7 +44,13 @@ export function HomepageView({ settings, data }: { settings: HomepageSettings; d
       {sections
         .map((section) => (
           <div key={section.id} data-section={section.type} className={section.type === "value-props" ? "hidden sm:block" : undefined}>
-            <SectionRenderer section={section} settings={settings} data={data} products={selected.get(section.id) ?? []} />
+            {REVEAL_SECTIONS.has(section.type) ? (
+              <Reveal>
+                <SectionRenderer section={section} settings={settings} data={data} products={selected.get(section.id) ?? []} />
+              </Reveal>
+            ) : (
+              <SectionRenderer section={section} settings={settings} data={data} products={selected.get(section.id) ?? []} />
+            )}
           </div>
         ))}
     </div>
@@ -59,7 +68,7 @@ function SectionRenderer({ section, settings, data, products }: { section: Homep
     case "categories":
       return (
         <section className="container" aria-label="Shop by Categories">
-          <Reveal><h2 className="mb-3 font-display text-[22px] font-semibold text-ink sm:text-[26px]">Shop by Categories</h2></Reveal>
+          <h2 className="mb-3 font-display text-[22px] font-semibold text-ink sm:text-[26px]">Shop by Categories</h2>
           <HomeCategories categories={data.categories} />
           <ShirtStyles products={(data.candidates ?? []).map(c=>c.product)} />
         </section>

@@ -11,3 +11,11 @@
 .card { outline:1px solid transparent;outline-offset:5px;transition:outline-color 200ms ease; }
 @media(hover:hover){.card:hover{outline-color:#eaeaea}}
 @media(prefers-reduced-motion:reduce){.card{transition:none}}
+.controls .switch{flex-wrap:wrap;border-radius:12px;gap:4px}
+.controls .switch button{min-height:44px;border-radius:8px;padding:10px 14px;transition:background-color 180ms ease,color 180ms ease}
+.controls .switch button span{font-weight:700;margin-right:5px}
+.controls button:active{scale:.99}
+.controls .switch button:hover{background:#f6eaea;color:#6b0202}
+.controls .switch button[aria-pressed=true]{background:#6b0202;color:#fff}
+@media(max-width:767px){.controls{gap:8px}.controls .switch{display:grid;grid-template-columns:1fr;width:100%;padding:3px}.controls .switch button{text-align:left;padding:7px 12px;min-height:40px}.scene{scroll-margin-top:230px}.intro h1{font-size:54px}}
+@media(prefers-reduced-motion:reduce){.controls .switch button{transition:none}.controls button:active{scale:1}}

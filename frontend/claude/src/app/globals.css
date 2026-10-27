@@ -23,7 +23,7 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-page font-sans text-ink antialiased;
