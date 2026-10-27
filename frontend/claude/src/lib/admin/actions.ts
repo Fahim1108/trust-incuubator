@@ -110,6 +110,9 @@ export async function saveThriftDraft(
       stock_quantity: Number(d.stock_quantity),
       actual_size: d.actual_size,
       actual_color: d.actual_color,
+      chest_inches:d.chest_inches,
+      length_inches:d.length_inches,
+      condition:d.condition,
     },
   });
   if (result.error)

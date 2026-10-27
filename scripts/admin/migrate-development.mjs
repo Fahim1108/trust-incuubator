@@ -5,6 +5,7 @@ const names = [
   "20261027000100_order_number_foundation",
   "20261027000200_admin_catalogue",
   "20261027000300_admin_edit_conflicts",
+  "20261028000100_thrift_measurements",
 ];
 const history = await query(
   "select version from supabase_migrations.schema_migrations order by version",

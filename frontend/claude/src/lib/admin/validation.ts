@@ -16,6 +16,7 @@ export const totpSchema = z.object({
   factorId: z.uuid(),
   code: z.string().regex(/^\d{6}$/),
 });
+const measurement=z.string().regex(/^([0-9]{1,3}(\.[0-9]{1,2})?)?$/).refine(v=>!v||(Number(v)>0&&Number(v)<=100),'Enter inches between 0 and 100.').optional().default('');
 export const draftSchema = z.object({
   id: z.uuid(),
   updated_at: z.iso.datetime({ offset: true }),
@@ -32,6 +33,9 @@ export const draftSchema = z.object({
       "Enter an actual size or leave blank.",
     ),
   actual_color: z.string().trim().max(80),
+  chest_inches:measurement,
+  length_inches:measurement,
+  condition:z.enum(["","excellent","very_good","good","fair"]).optional().default(""),
 });
 export function toMinorUnits(value: string): number {
   const [whole = "", fraction = ""] = value.split(".");
@@ -60,6 +64,9 @@ export const snapshotSchema = z.object({
       stock_quantity: z.number().int().min(0).max(1),
       actual_size: z.string().nullable(),
       actual_color: z.string().nullable(),
+      chest_inches:z.number().positive().max(100).nullable().optional(),
+      length_inches:z.number().positive().max(100).nullable().optional(),
+      condition:z.string().nullable().optional(),
       size_verified: z.boolean(),
       details_verified: z.boolean(),
     }),

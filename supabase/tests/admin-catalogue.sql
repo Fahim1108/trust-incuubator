@@ -17,6 +17,8 @@ select test.assert_true((select p.status='draft' and i.actual_size is null and n
 select test.denied($q$select public.admin_save_thrift_draft(p.id,'2000-01-01'::timestamptz,'{"name":"stale","description":"","price_minor":50000,"stock_quantity":1}') from public.products p join public.thrift_intake i on p.id=i.product_id where i.source_id='AA-SHIRT-018'$q$,'PT409','stale editor cannot overwrite');
 select test.denied($q$select public.admin_save_thrift_draft(p.id,p.updated_at,'{"name":"invalid","description":"","price_minor":1,"stock_quantity":2}') from public.products p join public.thrift_intake i on p.id=i.product_id where i.source_id='AA-SHIRT-018'$q$,'22023','intake cannot invent quantity');
 select test.denied('insert into public.admin_audit_logs(actor_id,action,target_id,changes) values(auth.uid(),''forged'',gen_random_uuid(),''{}'')','42501','staff cannot forge audit logs');
+select public.admin_save_thrift_draft(p.id,p.updated_at,'{"name":"Admin SQL test draft","description":"Original photo preserved","price_minor":55000,"stock_quantity":1,"actual_size":"","actual_color":"","chest_inches":"22.5","length_inches":"28","condition":"very_good"}') from public.products p join public.thrift_intake i on i.product_id=p.id where i.source_id='AA-SHIRT-018';
+select test.assert_true((select chest_inches=22.5 and length_inches=28 and condition='very_good' and not size_verified from public.thrift_intake where source_id='AA-SHIRT-018'),'measurements persist without automatic verification');
 reset role;
 -- Force audit failure and verify transactional rollback.
 create function test.reject_admin_audit() returns trigger language plpgsql as $$begin raise exception 'Injected audit failure' using errcode='23514';end $$;

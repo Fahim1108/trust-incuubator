@@ -101,6 +101,9 @@ export async function verifyAdminBrowser({
       .fill("Browser verified draft");
     await card.getByRole("button", { name: "Continue", exact: true }).click();
     await card.getByLabel("Price (BDT)").fill("580.29");
+    await card.getByLabel("Actual chest (inches)").fill("22.5");
+    await card.getByLabel("Actual length (inches)").fill("28");
+    await card.locator("select[name=condition]").selectOption("very_good");
 
     await card.getByRole("button", { name: "Continue", exact: true }).click();
 
@@ -146,6 +149,9 @@ export async function verifyAdminBrowser({
     await page.getByLabel("Authenticator code").fill(code(secret));
     await page.getByRole("button", { name: "Verify and continue" }).click();
     await page.waitForURL((url) => url.pathname === "/admin");
+    const {query:readSql,uuid:sqlUuid}=await import('../lib/supabase-development.mjs');
+    const measured=(await readSql(`select chest_inches,length_inches,condition from public.thrift_intake where product_id=${sqlUuid(product)}`))[0];
+    assert.equal(Number(measured.chest_inches),22.5);assert.equal(Number(measured.length_inches),28);assert.equal(measured.condition,'very_good');
     // Revoked membership is checked on each data/action request, not a hidden menu flag.
     const { query, uuid } = await import("../lib/supabase-development.mjs");
     await query(
