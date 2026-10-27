@@ -54,7 +54,7 @@ function ok(r) {
 const users = [],
   checks = [];
 const product = randomUUID();
-let fixtureInserted = false;
+
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const operator = createClient(projectUrl, await getTestAdminKey(), options);
 const password = randomBytes(32).toString("base64url");
@@ -72,7 +72,7 @@ try {
  insert into public.thrift_intake(source_id,product_id,image_path,image_sha256,price_minor) values('AA-SHIRT-999',${uuid(product)},'/inventory/thrift-shirts/AA-SHIRT-001-front.jpg',${literal(randomBytes(32).toString("hex"))},55000);`,
     false,
   );
-  fixtureInserted = true;
+
   let ownerContext;
   for (const role of ["customer", "owner", "analyst"]) {
     const email = `attires-admin-test-${randomUUID()}@example.com`;
@@ -230,18 +230,21 @@ try {
   console.error("Admin verification failed: " + e.message);
   process.exitCode = 1;
 } finally {
-  try {
-    if (fixtureInserted)
-      await query(
-        `delete from public.admin_audit_logs where target_id=${uuid(product)};delete from public.thrift_intake where product_id=${uuid(product)};delete from public.products where id=${uuid(product)};`,
-        false,
-      );
-    for (const id of users) ok(await operator.auth.admin.deleteUser(id));
-    pass("disposable accounts, roles, product and product-edit audit removed; operator provisioning audit retained");
-  } catch {
-    console.error("Fixture cleanup requires investigation.");
-    process.exitCode = 1;
+  // Cleanup operations are idempotent and independent: a network failure deleting
+  // the product must not prevent deletion of disposable Auth accounts.
+  async function clean(operation) {
+    for(let attempt=0;attempt<3;attempt++){
+      try { await operation(); return true; }
+      catch { if(attempt<2) await new Promise(resolve=>setTimeout(resolve,500)); }
+    }
+    return false;
   }
+  const productCleaned=await clean(()=>query(
+    `delete from public.admin_audit_logs where target_id=${uuid(product)};delete from public.thrift_intake where product_id=${uuid(product)};delete from public.products where id=${uuid(product)};`, false));
+  let usersCleaned=true;
+  for(const id of users){if(!await clean(async()=>ok(await operator.auth.admin.deleteUser(id))))usersCleaned=false;}
+  if(productCleaned&&usersCleaned)pass("disposable accounts, roles, product and product-edit audit removed; operator provisioning audit retained");
+  else {console.error("Fixture cleanup requires investigation.");process.exitCode=1;}
   await mkdir("artifacts/admin", { recursive: true });
   await writeFile(
     "artifacts/admin/hosted-results.json",
