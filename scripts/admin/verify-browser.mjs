@@ -91,6 +91,8 @@ export async function verifyAdminBrowser({
       await page.keyboard.press("Escape");
       assert.equal(await page.getByRole("dialog").count(), 0);
     }
+    await page.goto("/admin/products?q=one&q=two");
+    await page.getByRole("heading", {name:"Product drafts",exact:true}).waitFor();
     await page.goto("/admin/products");
     const card = page.locator("article").filter({ hasText: "AA-SHIRT-999" });
     await card.locator("summary").click();
@@ -168,7 +170,7 @@ export async function verifyAdminBrowser({
             "responsive no overflow",
             "mobile dialog Escape",
             "draft save survives reload",
-          "audit log displays persisted changes",
+            "audit log displays persisted changes",
             "logout invalidates browser access",
             "role revocation blocks data",
           ],

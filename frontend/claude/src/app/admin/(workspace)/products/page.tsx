@@ -3,11 +3,12 @@ import { IntakeEditor } from "@/components/admin/access/IntakeEditor";
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }) {
   const { session, snapshot } = await catalogueSnapshot();
-  const { q = "" } = await searchParams;
-  const search = q.slice(0, 200).toLowerCase();
+  const { q: rawQuery } = await searchParams;
+  const q = typeof rawQuery === "string" ? rawQuery.slice(0, 200) : "";
+  const search = q.toLowerCase();
   const items =
     snapshot?.items.filter((p) =>
       `${p.name} ${p.source_id}`.toLowerCase().includes(search),
