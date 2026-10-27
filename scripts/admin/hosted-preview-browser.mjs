@@ -40,8 +40,11 @@ export async function verifyHostedPreview(context) {
   assert.equal(deployment.target, "staging");
   assert.equal(deployment.readyState, "READY");
   assert.equal(deployment.meta.githubCommitSha, record.sha);
-  assert.equal(deployment.projectSettings.rootDirectory, "frontend/claude");
+  assert.equal(deployment.gitSource.sha, record.sha);
   const previous = await api(`/v9/projects/${project}?teamId=${team}`);
+  // Vercel omits rootDirectory from the deployment settings projection.
+  // Verify configured root independently, then prove the correct app in the browser.
+  assert.equal(previous.rootDirectory, "frontend/claude");
   const before = new Set(Object.keys(previous.protectionBypass || {}));
   let secret;
   try {
@@ -89,7 +92,7 @@ export async function verifyHostedPreview(context) {
         {
           url: record.url,
           sha: record.sha,
-          rootDirectory: deployment.projectSettings.rootDirectory,
+          rootDirectory: previous.rootDirectory,
           projectId: project,
           target: deployment.target,
           readyState: deployment.readyState,

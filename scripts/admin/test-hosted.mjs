@@ -237,7 +237,7 @@ try {
         false,
       );
     for (const id of users) ok(await operator.auth.admin.deleteUser(id));
-    pass("disposable accounts, roles, audit and product removed");
+    pass("disposable accounts, roles, product and product-edit audit removed; operator provisioning audit retained");
   } catch {
     console.error("Fixture cleanup requires investigation.");
     process.exitCode = 1;

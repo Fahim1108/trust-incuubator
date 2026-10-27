@@ -36,7 +36,7 @@ node --use-env-proxy scripts/admin/migrate-development.mjs
 node --use-env-proxy scripts/admin/test-hosted.mjs
 ```
 
-Migration script defaults to a rollback dry run, is fixed to development, and skips existing history. `--apply` is an explicit additive development apply. Hosted verification creates and deletes disposable Auth/MFA accounts and a single isolated intake fixture; it never edits real shirts. Do not run concurrent copies (reserved test source ID AA-SHIRT-999).
+Migration script defaults to a rollback dry run, is fixed to development, and skips existing history. `--apply` is an explicit additive development apply. Hosted verification creates and deletes disposable Auth/MFA accounts and a single isolated intake fixture; it never edits real shirts. Private operator provisioning audit records are retained intentionally; the disposable product-edit audit is cleaned with its fixture. Do not run concurrent copies (reserved test source ID AA-SHIRT-999).
 
 Browser verification: start the built app with `CLAUDE_DESIGN_PREVIEW=1 NODE_USE_ENV_PROXY=1 npm --prefix frontend/claude start -- --port 3001`, with configured development bindings, then run `ADMIN_BROWSER_BASE=http://localhost:3001 node --use-env-proxy scripts/admin/test-hosted.mjs`. Hosted protected Preview needs a temporary automation bypass supplied in memory; never put it in a public URL or commit it.
 
