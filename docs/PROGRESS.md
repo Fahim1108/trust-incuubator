@@ -520,3 +520,9 @@ Footer release verified: acc8ad8d9156b7d5a0d67d26da0b3215726e5f74 deployed READY
 ### 2026-10-27 — Remove footer WhatsApp sentence
 
 Removed the visible “WhatsApp:01886456664” support line from the single shared storefront Footer, so it is absent on every page using that footer. Developer credit/link, official branding and floating support button/destination remain intact. Lint/typecheck and productionbuild passed. Preview release evidence follows.
+
+Footer removal deployed READY as1cdbaea9dd6703a3ee14d73a4a1eb78599e21efd to separatePreview https://attires-arena-frontend-preview-2ue91c4s9-fahim-s-projects1.vercel.app/ . Hosted390/1440checks verified noWhatsAppnumber sentence on homepage/shop/checkout/account footers; exactdevelopercreditlink remains; floatingcustomersupportstill8801886456664. Screenshots in artifacts/footer-cleanup/hosted. Temporarytestaccessrevoked. Thispostdeploynote islocal/uncommitted; productionunchanged.
+
+### 2026-10-27 — COD heading description
+
+Replaced only the COD description directly under its heading with the exact owner sentence: “ডেলিভারি চার্জ বাদে বাকি টাকা প্রোডাক্ট হাতে পেয়ে পরিশোধ করুন।” Added lang=bn to that paragraph for correct language handling; existing readable spacing retained. Online-payment description, other messages, advance policy, calculations, tabs, fields and submission boundaries unchanged. Sentence occurs once in source and only in COD mode. Frontend lint/typecheck/82tests/productionbuild passed; hosted verification follows.

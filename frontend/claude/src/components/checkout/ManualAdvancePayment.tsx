@@ -73,7 +73,7 @@ export function ManualAdvancePayment({ configuration, totalMinor, division, dist
     <section aria-labelledby={`${id}-heading`} className="space-y-5 border-t border-[#EAEAEA] pt-5" data-advance-payment data-payment-mode={mode}>
       <div>
         <h3 id={`${id}-heading`} className="font-serif text-2xl">{mode === "cod" ? "COD advance payment" : "Full online payment"}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-[#74706C]">{mode === "cod" ? "The advance is credited against your total. Delivery is already included; this is not an additional delivery fee." : "Review payment of the complete order total, including delivery. Live collection is disabled."}</p>
+        <p lang={mode === "cod" ? "bn" : undefined} className="mt-2 text-sm leading-relaxed text-[#74706C]">{mode === "cod" ? "ডেলিভারি চার্জ বাদে বাকি টাকা প্রোডাক্ট হাতে পেয়ে পরিশোধ করুন।" : "Review payment of the complete order total, including delivery. Live collection is disabled."}</p>
       </div>
       <dl className="space-y-2 rounded-lg border border-[#EAEAEA] bg-white p-4 text-sm" data-advance-breakdown>
         <div className="flex justify-between gap-4"><dt>Order reference</dt><dd className="break-all text-right">{orderReference ?? "Not created yet"}</dd></div>
