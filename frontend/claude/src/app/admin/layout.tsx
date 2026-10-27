@@ -1,4 +1,13 @@
-import { notFound } from "next/navigation";
-// Appearance components are preserved, but no public admin access is enabled.
-// Integrate the existing verified staff authorization before mounting this UI.
-export default function AdminLayout() { notFound(); }
+import type { Metadata } from "next";
+import "./admin.css";
+export const metadata: Metadata = {
+  title: "Administration | Attires Arena",
+  robots: { index: false, follow: false },
+};
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <div className="aa-admin">{children}</div>;
+}

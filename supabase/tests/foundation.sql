@@ -45,7 +45,7 @@ insert into public.product_variants(id,product_id,sku,size,color,price_minor,act
  ('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000002','DRAFT','M','Black',10000,true),
  ('20000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001','INACTIVE','L','Black',10000,false);
 insert into public.inventory(variant_id,on_hand,reserved) values ('20000000-0000-0000-0000-000000000001',10,2);
-select test.assert_true((select count(*)=11 and bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r'), 'all eleven exposed tables enable RLS');
+select test.assert_true((select count(*)=12 and bool_and(relrowsecurity) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r'), 'all twelve exposed tables enable RLS');
 select test.denied($q$update public.product_variants set sale_price_minor=10001$q$,'23514','sale price cannot exceed regular price');
 select test.denied($q$update public.inventory set on_hand=1$q$,'23514','stock cannot fall below reserved quantity');
 select test.denied($q$update public.inventory set reserved=-1$q$,'23514','reserved stock cannot be negative');
