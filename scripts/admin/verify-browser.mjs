@@ -51,7 +51,7 @@ export async function verifyAdminBrowser({
     await page.getByRole("heading", { name: "Store overview" }).waitFor();
     assert.equal(
       await page
-        .getByText("No sample business metrics.", { exact: false })
+        .getByText("Your collection, priorities and daily operations in one place.", { exact: false })
         .count(),
       1,
     );

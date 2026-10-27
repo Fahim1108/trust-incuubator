@@ -578,3 +578,13 @@ RestorationreleaseREADY:84e30cde0eb1276ad99aeef8dfcfbb6af31bfef9 deployed tosepa
 - Latest deployment/hosted QA receipts and screenshots are stored under `artifacts/admin/`; these generated files are separate from source commits. Full admin system and production readiness remain incomplete as listed above.
 - A final hosted repeat encountered a transient Supabase HTTP 503 and interrupted cleanup. That failed run was not counted as passing. Its one disposable product and two test accounts were removed by scoped operator cleanup; the real catalogue was rechecked at 18 shirts, 18 physical units, all 18 sizes still unknown. The test cleanup now retries idempotent deletion and attempts Auth-account cleanup independently from product cleanup.
 - Hardened product-search query parsing against repeated URL parameters; added a browser regression check. Frontend lint, typecheck and production build passed again after that boundary fix.
+
+- Final hosted verification passed for pushed/deployed source `1592cd1612208353d47bb0433966cd31a7930769`: https://attires-arena-frontend-preview-8aw9e8ng1-fahim-s-projects1.vercel.app (Preview only). Secure cookie, sign-in/MFA, repeated URL query, persistent explicit draft save, audit history, all five widths, logout and role revocation checked in the actual hosted browser; bypass revoked. Cleanup confirmed 18 real products/units, no test accounts/products, no permanent owner/staff memberships.
+- Post-deployment report: `docs/ADMIN_VERIFICATION_REPORT.md`; generated evidence: `artifacts/admin/`. This final receipt note/report and generated artifacts are local post-deployment records, not claimed as part of the deployed source commit. Owner designation and the remaining admin/security modules remain pending.
+
+### 28 October 2026 — Management Milestone 1 interface
+
+- Added grouped role-aware Overview/Catalog/Settings navigation, official mobile logo, compact collection overview, real pending-size/draft checklist and recent intake links.
+- Existing real draft editing and audit operations retained. Unconnected Sales/Content/Marketing modules stay in a collapsed roadmap and explicit unavailable service cards; no fake quick actions or business metrics.
+- No database migrations or mutations, account changes, MFA changes, or storefront changes in this increment. Milestones 2 and 3 remain incomplete.
+- Verification and staging release in progress; do not count this entry as deployed until the release evidence is added.

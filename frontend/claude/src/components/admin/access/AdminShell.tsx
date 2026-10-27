@@ -13,33 +13,32 @@ export function AdminShell({
 }) {
   const path = usePathname();
   const drawer = useRef<HTMLDialogElement>(null);
-  const links = [
-    ["/admin", "Overview"],
-    ["/admin/products", "Products & intake"],
-    ...(roles.some((r) => r === "owner" || r === "product_manager")
-      ? [["/admin/audit", "Audit log"]]
-      : []),
+  const canRead=roles.some(r=>['owner','product_manager','order_manager','analyst'].includes(r));
+  const canManage=roles.some(r=>r==='owner'||r==='product_manager');
+  const groups=[
+    {title:'Overview',links:[['/admin','Dashboard']]},
+    ...(canRead?[{title:'Catalog',links:[['/admin/products','Products & intake']]}]:[]),
+    ...(canManage?[{title:'Settings',links:[['/admin/audit','Security & audit logs']]}]:[]),
+  ];
+  const upcoming=[
+    ['Overview','Analytics'],['Catalog','Categories · Inventory · Media Library'],
+    ['Sales','Orders · Payment Verification · Customers · Coupons · Offers · Reviews'],
+    ['Content','Homepage Manager · Hero Banners · Pages · Navigation & Footer · Blog'],
+    ['Marketing','SEO · Google Analytics · Meta Pixel & Conversions API · Integrations'],
+    ['Settings','Shipping · Payment Numbers · Staff & Roles'],
   ];
   const navigation = (
     <>
       <nav aria-label="Admin navigation">
-        {links.map(([href, label]) => (
-          <Link
-            key={href}
-            href={href!}
-            aria-current={path === href ? "page" : undefined}
-            onClick={() => drawer.current?.close()}
-          >
-            {label}
-          </Link>
-        ))}
+        {groups.map(group=><section className="aa-nav-group" key={group.title}>
+          <h2>{group.title}</h2>
+          {group.links.map(([href,label])=><Link key={href} href={href!} aria-current={path===href?'page':undefined} onClick={()=>drawer.current?.close()}>{label}</Link>)}
+        </section>)}
       </nav>
       <details className="aa-unavailable">
         <summary>Upcoming modules</summary>
-        <p>
-          Categories, media, reviews, orders, payments, coupons, CMS and
-          marketing are not connected in this increment.
-        </p>
+        <p>Not connected yet. These modules cannot change store data.</p>
+        {upcoming.map(([title,modules])=><div className="aa-roadmap-group" key={title}><strong>{title}</strong><p>{modules}</p></div>)}
       </details>
       <Link href="/">View storefront</Link>
       <p className="aa-role">
@@ -73,7 +72,7 @@ export function AdminShell({
           >
             Menu
           </button>
-          <span>Attires Arena / Admin</span>
+          <Image className="aa-mobile-brand" src="/brand/logo-maroon.png" alt="Attires Arena" width={46} height={44}/><span className="aa-admin-title">Store management</span>
           <span>Development · Preview</span>
         </header>
         <dialog
