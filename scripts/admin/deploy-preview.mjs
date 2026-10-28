@@ -1,3 +1,4 @@
+import { assertRemoteDatabaseIsolation } from '../lib/deployment-isolation.mjs';
 // Deploy an exact pushed commit to the existing separate Preview project only.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -29,6 +30,7 @@ const token =
       "utf8",
     ),
   ).token;
+await assertRemoteDatabaseIsolation('https://euoannuvovsbwxjqnriw.supabase.co');
 const response = await fetch(
   `https://api.vercel.com/v13/deployments?teamId=${team}`,
   {

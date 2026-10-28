@@ -1,3 +1,4 @@
+import { assertRemoteDatabaseIsolation } from './deployment-isolation.mjs';
 // Guard every hosted verification operation to the explicitly authorized development project.
 export const projectRef = 'euoannuvovsbwxjqnriw';
 export const projectUrl = `https://${projectRef}.supabase.co`;
@@ -17,6 +18,7 @@ export async function management(path, { method = 'GET', body } = {}) {
   const text = await response.text(); return text ? JSON.parse(text) : null;
 }
 export async function query(sql, readOnly = true) {
+  if (!readOnly) await assertRemoteDatabaseIsolation(projectUrl);
   return management('/database/query', { method: 'POST', body: { query: sql, read_only: readOnly } });
 }
 export function literal(value) { return "'" + String(value).replaceAll("'", "''") + "'"; }
@@ -25,6 +27,7 @@ export function uuid(value) {
   return literal(value);
 }
 export async function getTestAdminKey() {
+  await assertRemoteDatabaseIsolation(projectUrl);
   const keys = await management('/api-keys?reveal=true');
   const key = keys.find(item => item.name === 'service_role' || item.type === 'secret');
   if (!key?.api_key) throw new Error('An authorized test-only admin key is unavailable');
