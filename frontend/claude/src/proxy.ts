@@ -14,7 +14,7 @@ export async function proxy(request?: NextRequest) {
   // Resolve public product existence before streaming can commit a misleading HTTP 200.
   if (request?.nextUrl.pathname.startsWith("/product/")) {
     const slug = request.nextUrl.pathname.slice("/product/".length);
-    if (!(await browsableShirts()).some((product) => product.slug === slug)) {
+    if (!(await browsableShirts({liveReview:false})).some((product) => product.slug === slug)) {
       return new NextResponse(
         '<!doctype html><html lang="en"><head><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found | Attires Arena</title></head><body style="margin:0;background:#fff;color:#171717;font-family:system-ui"><main style="min-height:100vh;display:grid;place-content:center;text-align:center;padding:24px"><a href="/" aria-label="Attires Arena home"><img src="/brand/logo-maroon.png" alt="Attires Arena" width="96" height="92" style="object-fit:contain"></a><h1 style="color:#6B0202">Page not found</h1><p>This item is not currently available.</p><a href="/category/shirts" style="color:#6B0202">Back to Shirts</a></main></body></html>',
         {
@@ -57,7 +57,12 @@ export async function proxy(request?: NextRequest) {
     }
     return response;
   }
-  return NextResponse.next();
+  const response=NextResponse.next();
+  if(reviewInventoryEnabled()){
+    response.headers.set('Cache-Control','private, no-store');
+    response.headers.append('Vary','Cookie');
+  }
+  return response;
 }
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],

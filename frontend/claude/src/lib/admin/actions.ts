@@ -127,6 +127,7 @@ export async function saveThriftDraft(
     };
   revalidatePath("/admin");
   revalidatePath("/admin/products");
+  revalidatePath("/", "layout");
   if(form.get('save_next')==='1'){
    const next=await client.rpc('admin_catalogue_snapshot');
    const {snapshotSchema}=await import('./validation');

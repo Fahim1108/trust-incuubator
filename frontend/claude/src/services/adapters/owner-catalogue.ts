@@ -1,3 +1,4 @@
+import {readLiveReviewDrafts,projectSavedReview} from "./live-review-thrift";
 import "server-only";
 import { reviewInventoryEnabled } from "@/lib/storefront-policy";
 import { officialShirtSizeGuide } from "@/config/shirt-size-guide";
@@ -15,10 +16,18 @@ import type {Product} from '@/types';
 import type {StorefrontDataSource} from '../types';
 
 /** Verified publications supersede the matching design-review copy, never duplicate it. */
-export async function browsableShirts(){
+export async function browsableShirts(options:{liveReview?:boolean}={}){
  const published=await publishedShirts();
  const slugs=new Set(published.map(p=>p.slug));
- return [...published,...(reviewInventoryEnabled()?reviewShirts():[]).filter(p=>!slugs.has(p.slug))];
+ let review=reviewInventoryEnabled()?reviewShirts():[];
+ if(reviewInventoryEnabled()&&options.liveReview!==false){
+  const saved=await readLiveReviewDrafts();
+  if(saved!==null)review=saved.filter(item=>item.status!=='archived').flatMap(item=>{
+   const base=review.find(p=>p.slug===item.source_id.toLowerCase());
+   return base?[projectSavedReview(item,base)]:[];
+  });
+ }
+ return [...published,...review.filter(p=>!slugs.has(p.slug))];
 }
 const categories=storeCategories.map(c=>({...c,available:c.slug==='shirts',description:c.slug==='shirts'?'Individual thrift shirts, carefully selected.':'Coming soon.',...(c.slug==='shirts'?{image:{src:'/inventory/thrift-shirts/AA-SHIRT-001-front.jpg',alt:'Attires Arena thrift shirts'},thumbnail:{src:'/inventory/thrift-shirts/AA-SHIRT-001-front.jpg',alt:'Attires Arena thrift shirts'}}:{})}));
 

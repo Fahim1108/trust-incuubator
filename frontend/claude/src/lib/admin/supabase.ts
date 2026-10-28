@@ -14,6 +14,7 @@ export async function adminClient(writeCookies = false) {
       fetch: (url, init) =>
         fetch(url, {
           ...init,
+          cache: "no-store",
           signal: init?.signal
             ? AbortSignal.any([init.signal, AbortSignal.timeout(25000)])
             : AbortSignal.timeout(25000),

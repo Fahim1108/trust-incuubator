@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import {shirtAttributes} from "@/lib/admin/validation";
 import {missingProductFacts} from "@/lib/admin/product-review";
 import {useUnsavedDraft} from "./useUnsavedDraft";
@@ -38,6 +39,7 @@ export function IntakeEditor({
         </div>
       </div>
       <p>{missingProductFacts(item).join(" · ")||"Facts entered — verification and publication pending"}</p>
+      <Link href={"/product/"+item.slug} target="_blank" rel="noopener noreferrer" prefetch={false} className="aa-button aa-secondary">Preview saved product</Link>
       <details open={initiallyOpen||undefined}>
         <summary>
           {editable ? "Edit imported draft" : "View product details"}
