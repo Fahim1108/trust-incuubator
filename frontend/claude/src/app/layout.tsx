@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <StorefrontProvider settings={settings}>
           <ToastProvider>
             <WishlistProvider approvedProductIds={catalogue.items.map(p=>p.id)}>
-              <CartProvider initialItems={initialCart} approvedVariantIds={catalogue.items.flatMap(p=>p.variants.filter(v=>v.stock>0).map(v=>v.id))}>
+              <CartProvider approvedProducts={catalogue.items} initialItems={initialCart} approvedVariantIds={catalogue.items.flatMap(p=>p.variants.filter(v=>v.stock>0).map(v=>v.id))}>
                 <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-white">
                   Skip to content
                 </a>

@@ -1,9 +1,11 @@
+import "server-only";
+import { reviewInventoryEnabled } from "@/lib/storefront-policy";
 import intake from '@/data/inventory/thrift-shirts.json';
 import type {Product} from '@/types';
 
 /** Local test SKU projection only. Never creates database SKUs or publishes inventory drafts. */
 export function reviewShirts(): Product[] {
-  if (process.env.CLAUDE_DESIGN_PREVIEW !== '1' || process.env.VERCEL_ENV === 'production') return [];
+  if (!reviewInventoryEnabled()) return [];
   return intake.map(row => {
     const pattern = row.proposed_pattern === 'Solid' ? 'solid' : row.proposed_pattern === 'Striped' ? 'striped' : 'checked';
     const image = {src:row.image_path,alt:row.name};

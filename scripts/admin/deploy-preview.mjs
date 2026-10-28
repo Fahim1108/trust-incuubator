@@ -30,7 +30,19 @@ const token =
       "utf8",
     ),
   ).token;
-await assertRemoteDatabaseIsolation('https://euoannuvovsbwxjqnriw.supabase.co');
+// Explicitly authorized code-only boundary releases can be tested on Preview
+// while the database is shared. This NEVER enables hosted mutation tests or migrations.
+const codeOnly = process.argv.find(arg => arg.startsWith('--code-only-from='))?.split('=')[1];
+if (codeOnly) {
+  if (!/^[a-f0-9]{7,40}$/.test(codeOnly)) throw new Error('Expected a reviewed baseline commit SHA');
+  execFileSync('git',['merge-base','--is-ancestor',codeOnly,sha]);
+  const files=execFileSync('git',['diff','--name-only',codeOnly,sha],{encoding:'utf8'}).trim().split('\n');
+  if(files.some(path=>/^(supabase\/|scripts\/inventory\/|scripts\/admin\/migrate|scripts\/lib\/supabase-development)/.test(path)))
+    throw new Error('Code-only release contains database changes; refusing shared-database deployment');
+  console.log('Code-only Preview release: no database migrations or hosted mutation tests authorized.');
+} else {
+  await assertRemoteDatabaseIsolation('https://euoannuvovsbwxjqnriw.supabase.co');
+}
 const response = await fetch(
   `https://api.vercel.com/v13/deployments?teamId=${team}`,
   {

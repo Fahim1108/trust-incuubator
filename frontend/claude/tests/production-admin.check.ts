@@ -1,0 +1,13 @@
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
+const mocks=vi.hoisted(()=>({getUser:vi.fn(),roles:vi.fn(),aal:vi.fn()}));
+vi.mock('@/lib/admin/supabase',()=>({adminClient:async()=>({auth:{getUser:mocks.getUser,mfa:{getAuthenticatorAssuranceLevel:mocks.aal}},from:()=>({select:()=>({eq:mocks.roles})})})}));
+vi.mock('next/navigation',()=>({redirect:(path:string)=>{throw new Error('REDIRECT:'+path);}}));
+import {staffSession} from '@/lib/admin/access';
+beforeEach(()=>{vi.stubEnv('VERCEL_ENV','production');mocks.getUser.mockResolvedValue({data:{user:{id:'owner-fixture',is_anonymous:false}},error:null});mocks.roles.mockResolvedValue({data:[{role:'owner'}],error:null});mocks.aal.mockResolvedValue({data:{currentLevel:'aal2'},error:null});});
+afterEach(()=>{vi.unstubAllEnvs();vi.clearAllMocks();});
+it('retains Production Owner authorization with verified identity, DB role and MFA',async()=>{const session=await staffSession();expect(session.roles).toEqual(['owner']);expect(session.aal).toBe('aal2');expect(mocks.getUser).toHaveBeenCalled();expect(mocks.roles).toHaveBeenCalledWith('user_id','owner-fixture');});
+it('redirects an unauthenticated visitor to staff sign-in',async()=>{mocks.getUser.mockResolvedValue({data:{user:null},error:null});await expect(staffSession()).rejects.toThrow('REDIRECT:/admin/sign-in');});
+it('blocks customer metadata claiming Owner without a database role',async()=>{mocks.getUser.mockResolvedValue({data:{user:{id:'customer',user_metadata:{role:'owner'}}},error:null});mocks.roles.mockResolvedValue({data:[],error:null});await expect(staffSession()).rejects.toThrow('REDIRECT:/admin/sign-in?denied=1');});
+it('requires MFA even for an Owner with a valid password session',async()=>{mocks.aal.mockResolvedValue({data:{currentLevel:'aal1'},error:null});await expect(staffSession()).rejects.toThrow('REDIRECT:/admin/mfa');});
+it('rejects anonymous staff accounts',async()=>{mocks.getUser.mockResolvedValue({data:{user:{id:'anonymous',is_anonymous:true}},error:null});await expect(staffSession()).rejects.toThrow('REDIRECT:/admin/sign-in');});
+it('fails closed when role lookup or assurance verification fails',async()=>{mocks.roles.mockResolvedValue({data:null,error:{message:'offline'}});await expect(staffSession()).rejects.toThrow('REDIRECT:/admin/sign-in?denied=1');mocks.roles.mockResolvedValue({data:[{role:'owner'}],error:null});mocks.aal.mockResolvedValue({data:null,error:{message:'offline'}});await expect(staffSession()).rejects.toThrow('Unable to verify staff session');});

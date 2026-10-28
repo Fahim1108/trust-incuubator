@@ -1,13 +1,15 @@
+import { publicSupabaseConfiguration } from "@/lib/supabase-public";
+import { storefrontEnabled, isPreviewOnlyPath, reviewInventoryEnabled } from "@/lib/storefront-policy";
 import { createServerClient } from "@supabase/ssr";
 import { browsableShirts } from "@/services/adapters/owner-catalogue";
 import { NextResponse, type NextRequest } from "next/server";
 // Never publish sample inventory or sample customer accounts as a live store.
 export async function proxy(request?: NextRequest) {
   if (
-    process.env.CLAUDE_DESIGN_PREVIEW !== "1" ||
-    process.env.VERCEL_ENV === "production"
+    !storefrontEnabled() ||
+    (request && isPreviewOnlyPath(request.nextUrl.pathname) && !reviewInventoryEnabled())
   ) {
-    return new NextResponse("Design preview is disabled", { status: 404 });
+    return new NextResponse("Page not available", { status: 404 });
   }
   // Resolve public product existence before streaming can commit a misleading HTTP 200.
   if (request?.nextUrl.pathname.startsWith("/product/")) {
@@ -28,15 +30,9 @@ export async function proxy(request?: NextRequest) {
   if (request?.nextUrl.pathname.startsWith("/admin")) {
     let response = NextResponse.next({ request });
     response.headers.set("Cache-Control", "private, no-store");
-    const url =
-      process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key =
-      process.env.SUPABASE_PUBLISHABLE_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-    if (
-      url?.replace(/\/$/, "") === "https://euoannuvovsbwxjqnriw.supabase.co" &&
-      key
-    ) {
+    const config = publicSupabaseConfiguration();
+    if (config) {
+      const {url,key}=config;
       const client = createServerClient(url, key, {
         cookieOptions: {
           name: "aa-admin-auth",

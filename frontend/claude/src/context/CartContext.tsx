@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {reconcileCartLines} from "@/lib/cart-catalogue";
+import type {Product} from "@/types";
 import { commerce } from "@/config";
 import { isInsideDhaka } from "@/data/bangladesh";
 import { readStorage, STORAGE_KEYS, writeStorage } from "@/lib/storage";
@@ -31,7 +33,7 @@ const CartContext = createContext<CartContextValue | null>(null);
  * Codex: when a server cart exists, sync `items` with it here (the API of this
  * context can stay the same, so components need no changes).
  */
-export function CartProvider({ children, initialItems = [], approvedVariantIds = initialItems.map(i=>i.variantId) }: { children: ReactNode; initialItems?: CartItem[]; approvedVariantIds?: string[] }) {
+export function CartProvider({ children, initialItems = [], approvedVariantIds = initialItems.map(i=>i.variantId), approvedProducts=[] }: { children: ReactNode; initialItems?: CartItem[]; approvedVariantIds?: string[]; approvedProducts?:Product[] }) {
   const [approvedIds] = useState(()=>new Set(approvedVariantIds));
   const [initialSeed] = useState(initialItems);
   const [items, setItems] = useState<CartItem[]>([]);
@@ -43,7 +45,7 @@ export function CartProvider({ children, initialItems = [], approvedVariantIds =
     const frame = requestAnimationFrame(() => {
     const stored = readStorage<CartItem[] | null>(STORAGE_KEYS.cart, null);
     const seeded = readStorage<boolean>(STORAGE_KEYS.cartSeeded, false);
-    if (stored) setItems(stored.filter(item=>approvedIds.has(item.variantId)));
+    if (stored) setItems(reconcileCartLines(stored,approvedProducts).filter(item=>approvedIds.has(item.variantId)));
     else if (initialSeed.length && !seeded) {
       setItems(initialSeed);
       writeStorage(STORAGE_KEYS.cartSeeded, true);
@@ -51,7 +53,7 @@ export function CartProvider({ children, initialItems = [], approvedVariantIds =
     setHydrated(true);
     });
     return () => cancelAnimationFrame(frame);
-  }, [initialSeed, approvedIds]);
+  }, [initialSeed, approvedIds, approvedProducts]);
 
   useEffect(() => {
     if (hydrated) writeStorage(STORAGE_KEYS.cart, items);
@@ -59,6 +61,9 @@ export function CartProvider({ children, initialItems = [], approvedVariantIds =
 
   const addItem = useCallback<CartContextValue["addItem"]>((item, quantity = 1) => {
     if (!Number.isSafeInteger(quantity) || quantity < 1 || item.maxQuantity < 1) return;
+    const approved=reconcileCartLines([{variantId:item.variantId,quantity}],approvedProducts)[0];
+    if(!approved||!approvedIds.has(approved.variantId))return;
+    item=approved;
     setItems((current) => {
       const existing = current.find((i) => i.id === item.id);
       if (existing) {
@@ -66,7 +71,7 @@ export function CartProvider({ children, initialItems = [], approvedVariantIds =
       }
       return [...current, { ...item, quantity: Math.min(quantity, item.maxQuantity) }];
     });
-  }, []);
+  }, [approvedProducts,approvedIds]);
 
   const updateQuantity = useCallback((lineId: string, quantity: number) => {
     setItems((current) => current.map((i) => (i.id === lineId ? { ...i, quantity: Math.max(1, Math.min(quantity, i.maxQuantity)) } : i)));

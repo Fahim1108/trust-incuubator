@@ -1,38 +1,12 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-export function adminConfiguration() {
-  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (
-    url?.replace(/\/$/, "") !== "https://euoannuvovsbwxjqnriw.supabase.co" ||
-    !key
-  )
-    return null;
-  if (!key.startsWith("sb_publishable_")) {
-    try {
-      const claims: unknown = JSON.parse(
-        Buffer.from(key.split(".")[1] || "", "base64url").toString(),
-      );
-      if (
-        !claims ||
-        typeof claims !== "object" ||
-        !("role" in claims) ||
-        claims.role !== "anon"
-      )
-        return null;
-    } catch {
-      return null;
-    }
-  }
-  return { url, key };
-}
+export { publicSupabaseConfiguration as adminConfiguration } from "../supabase-public";
+import { publicSupabaseConfiguration as adminConfiguration } from "../supabase-public";
 export async function adminClient(writeCookies = false) {
   const config = adminConfiguration();
   if (!config)
-    throw new Error("Development Supabase configuration is unavailable.");
+    throw new Error("Supabase configuration is unavailable.");
   const store = await cookies();
   return createServerClient(config.url, config.key, {
     db: { timeout: 20000, retry: false },
