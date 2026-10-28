@@ -19,7 +19,7 @@ export default async function AdminOverview() {
               ["Sizes awaiting verification", snapshot.pending_sizes],
             ].map(([label, value]) => (
               <article className="aa-panel" key={label}>
-                <span>{label}</span>
+                <span>{label==="Sizes awaiting verification"?<Link href="/admin/products?filter=missing-size">{label}</Link>:label}</span>
                 <strong>{value}</strong>
               </article>
             ))}
@@ -28,7 +28,7 @@ export default async function AdminOverview() {
           <section className="aa-panel">
             <p className="aa-eyebrow">Next steps</p><h2>Prepare your collection</h2>
             <p>{snapshot.pending_sizes} imported shirts need actual size verification before publication.</p>
-            <Link className="aa-button" href="/admin/products">Review Draft Products</Link>
+            <Link className="aa-button" href="/admin/products?filter=missing-size">Review Draft Products</Link>
             <p className="aa-help">Enter measured sizes in the draft editor. Publishing and image uploads are the next product-management milestone.</p>
           </section>
           <section className="aa-panel">

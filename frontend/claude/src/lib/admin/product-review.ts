@@ -1,0 +1,3 @@
+import type {IntakeItem} from './validation';
+export function missingProductFacts(item:IntakeItem){return [!item.actual_size?'Missing Size':null,(!item.chest_inches||!item.length_inches)?'Missing Measurement':null,!item.condition?'Missing Condition':null].filter((v):v is string=>v!==null);}
+export function matchesProductFilter(item:IntakeItem,filter:string){if(filter==='missing-size')return !item.actual_size||!item.size_verified;if(filter==='missing-measurement')return !item.chest_inches||!item.length_inches;if(filter==='sold-out')return item.stock_quantity===0;return ['draft','published','archived'].includes(filter)?item.status===filter:true;}

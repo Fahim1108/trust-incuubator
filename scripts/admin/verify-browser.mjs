@@ -23,6 +23,7 @@ export async function verifyAdminBrowser({
   password,
   secret,
   product,
+  onCreatedId,
   extraHTTPHeaders,
   proxy,
 }) {
@@ -91,6 +92,12 @@ export async function verifyAdminBrowser({
       await page.keyboard.press("Escape");
       assert.equal(await page.getByRole("dialog").count(), 0);
     }
+    await page.goto('/admin/products/new');
+    const createdId=await page.locator('input[name=request_id]').inputValue();onCreatedId(createdId);
+    await page.getByLabel('Product name',{exact:true}).fill('Disposable browser created product');
+    await page.getByLabel('Description',{exact:true}).fill('QA draft creation only');
+    await page.getByRole('button',{name:'Create draft',exact:true}).click();
+    await page.getByRole('status').filter({hasText:'Basic product draft saved.'}).waitFor();
     await page.goto("/admin/products?q=one&q=two");
     await page.getByRole("heading", {name:"Product drafts",exact:true}).waitFor();
     await page.goto("/admin/products");
@@ -134,6 +141,11 @@ export async function verifyAdminBrowser({
         fullPage: true,
       });
     }
+    await page.goto('/admin/products?review=AA-SHIRT-999');
+    const review=page.locator('article.aa-product').filter({hasText:'AA-SHIRT-999'});
+    await review.getByRole('button',{name:'4. Review',exact:true}).click();
+    await review.getByRole('button',{name:'Save & Next',exact:true}).click();
+    await page.waitForURL('**/admin/products?filter=missing-size');
     await page.goto("/admin/audit");
     await page.getByRole("heading", { name: "Catalogue audit log", exact: true }).waitFor();
     assert((await page.getByRole("heading", { name: "thrift / draft saved", exact: true }).count()) > 0);

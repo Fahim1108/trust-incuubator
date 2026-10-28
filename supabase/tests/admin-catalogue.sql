@@ -28,3 +28,11 @@ select test.denied($q$select public.admin_save_thrift_draft(p.id,p.updated_at,'{
 select test.assert_true((select p.name='Admin SQL test draft' and i.price_minor=55000 and i.stock_quantity=1 from public.products p join public.thrift_intake i on p.id=i.product_id where i.source_id='AA-SHIRT-018'),'audit failure preserves original draft');
 reset role;
 drop trigger test_admin_audit_failure on public.admin_audit_logs;
+set local role authenticated;
+select test.assert_true(public.admin_create_product_draft('90000000-0000-4000-8000-000000000001','New garment','Real physical details pending')='90000000-0000-4000-8000-000000000001'::uuid,'MFA owner creates an audited draft');
+select public.admin_create_product_draft('90000000-0000-4000-8000-000000000001','New garment','Real physical details pending');
+select test.assert_true((select count(*)=1 from public.admin_audit_logs where target_id='90000000-0000-4000-8000-000000000001'),'duplicate creation creates one record and one audit');
+select test.denied($q$select public.admin_create_product_draft('90000000-0000-4000-8000-000000000001','Changed request','')$q$,'PT409','idempotency keys cannot be reused for a changed request');
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000011","role":"authenticated","aal":"aal2"}',true);
+select test.denied($q$select public.admin_create_product_draft(gen_random_uuid(),'Unauthorized','')$q$,'42501','MFA customer cannot create a product');
+reset role;

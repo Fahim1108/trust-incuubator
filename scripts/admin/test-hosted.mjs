@@ -54,6 +54,7 @@ function ok(r) {
 const users = [],
   checks = [];
 const product = randomUUID();
+const createdProducts=[];
 
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const operator = createClient(projectUrl, await getTestAdminKey(), options);
@@ -99,6 +100,7 @@ try {
     ok(await c.auth.signInWithPassword({ email, password }));
     assert((await c.rpc("admin_catalogue_snapshot")).error);
     pass(role + " AAL1 denied admin snapshot");
+  assert.equal((await c.rpc("admin_create_product_draft",{request_id:product,product_name:"Blocked",product_description:""})).error?.code,"42501");
     const factor = ok(
       await c.auth.mfa.enroll({
         factorType: "totp",
@@ -187,11 +189,13 @@ try {
         secret: factor.totp.secret,
         userId: user.id,
         product,
+        onCreatedId:id=>createdProducts.push(id),
       };
     } else {
       assert.equal(save.error?.code, "42501");
       pass(role + " cannot save drafts");
     }
+    if(role!=="owner")assert.equal((await c.rpc("admin_create_product_draft",{request_id:product,product_name:"Blocked",product_description:""})).error?.code,"42501");
     assert(
       (
         await c
@@ -239,8 +243,8 @@ try {
     }
     return false;
   }
-  const productCleaned=await clean(()=>query(
-    `delete from public.admin_audit_logs where target_id=${uuid(product)};delete from public.thrift_intake where product_id=${uuid(product)};delete from public.products where id=${uuid(product)};`, false));
+  let productCleaned=true;
+  for(const id of [product,...createdProducts])if(!await clean(()=>query(`delete from public.admin_audit_logs where target_id=${uuid(id)};delete from public.thrift_intake where product_id=${uuid(id)};delete from public.products where id=${uuid(id)};`,false)))productCleaned=false;
   let usersCleaned=true;
   for(const id of users){if(!await clean(async()=>ok(await operator.auth.admin.deleteUser(id))))usersCleaned=false;}
   if(productCleaned&&usersCleaned)pass("disposable accounts, roles, product and product-edit audit removed; operator provisioning audit retained");

@@ -1,4 +1,6 @@
 "use client";
+import {missingProductFacts} from "@/lib/admin/product-review";
+import {useUnsavedDraft} from "./useUnsavedDraft";
 import Image from "next/image";
 import { useActionState, useState } from "react";
 import { saveThriftDraft } from "@/lib/admin/actions";
@@ -6,11 +8,17 @@ import type { IntakeItem } from "@/lib/admin/validation";
 export function IntakeEditor({
   item,
   editable,
+  initiallyOpen=false,
 }: {
   item: IntakeItem;
   editable: boolean;
+  initiallyOpen?:boolean;
 }) {
-  const [state, action, pending] = useActionState(saveThriftDraft, {});
+  const [dirty,setDirty]=useState(false);
+  useUnsavedDraft(dirty);
+  const [state, action, pending] = useActionState(async(previous:import("@/lib/admin/validation").AdminActionState,form:FormData)=>{
+    const result=await saveThriftDraft(previous,form);if(result.success)setDirty(false);return result;
+  }, {});
   const [step, setStep] = useState(1);
   return (
     <article className="aa-panel aa-product">
@@ -28,11 +36,12 @@ export function IntakeEditor({
           </p>
         </div>
       </div>
-      <details>
+      <p>{missingProductFacts(item).join(" · ")||"Facts entered — verification and publication pending"}</p>
+      <details open={initiallyOpen||undefined}>
         <summary>
           {editable ? "Edit imported draft" : "View product details"}
         </summary>
-        <form action={action} className="aa-form">
+        <form action={action} className="aa-form" onChange={()=>setDirty(true)}>
           <input type="hidden" name="id" value={item.id} />
           <input type="hidden" name="updated_at" value={item.updated_at} />
           <ol className="aa-steps" aria-label="Product editor steps">
@@ -151,9 +160,12 @@ export function IntakeEditor({
               </button>
             ) : (
               editable && (
+                <>
                 <button key="save" type="submit" disabled={pending}>
                   {pending ? "Saving…" : "Save draft"}
                 </button>
+                <button type="submit" name="save_next" value="1" disabled={pending}>Save &amp; Next</button>
+                </>
               )
             )}
           </div>

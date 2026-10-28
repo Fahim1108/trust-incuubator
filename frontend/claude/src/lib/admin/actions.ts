@@ -124,8 +124,30 @@ export async function saveThriftDraft(
     };
   revalidatePath("/admin");
   revalidatePath("/admin/products");
+  if(form.get('save_next')==='1'){
+   const next=await client.rpc('admin_catalogue_snapshot');
+   const {snapshotSchema}=await import('./validation');
+   const parsedNext=snapshotSchema.safeParse(next.data);
+   const id=parsedNext.success?parsedNext.data.items.find(i=>i.id===d.id)?.source_id:undefined;
+   const following=parsedNext.success?parsedNext.data.items.find(i=>id&&i.source_id>id):undefined;
+   if(following)redirect('/admin/products?review='+encodeURIComponent(following.source_id));
+   redirect('/admin/products?filter=missing-size');
+  }
   return {
     success:
       "Draft saved. Actual measurements and publication still require verification.",
   };
+}
+
+export async function createProductDraft(_:AdminActionState,form:FormData):Promise<AdminActionState>{
+ const session=await staffSession();
+ if(!session.roles.some(r=>r==='owner'||r==='product_manager'))return {error:'Product creation is not authorized.'};
+ const {z}=await import('zod');
+ const parsed=z.object({request_id:z.uuid(),name:z.string().trim().min(1).max(200),description:z.string().max(20000)}).safeParse(Object.fromEntries(form));
+ if(!parsed.success)return {error:'Enter a product name (maximum 200 characters) and a description up to 20,000 characters.'};
+ const d=parsed.data;const client=await adminClient(true);
+ const result=await client.rpc('admin_create_product_draft',{request_id:d.request_id,product_name:d.name,product_description:d.description});
+ if(result.error)return {error:'Draft creation could not be confirmed. Reload the product list before retrying.'};
+ revalidatePath('/admin');revalidatePath('/admin/products');
+ return {success:'Basic product draft saved. Images, garment details and publication are not configured for this draft yet.'};
 }
