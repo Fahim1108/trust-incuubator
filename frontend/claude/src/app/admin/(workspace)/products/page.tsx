@@ -1,3 +1,4 @@
+import {reviewInventoryEnabled} from "@/lib/storefront-policy";
 import Link from "next/link";
 import {z} from "zod";
 import {matchesProductFilter} from "@/lib/admin/product-review";
@@ -57,6 +58,7 @@ export default async function ProductsPage({
           <IntakeEditor
             key={item.id}
             initiallyOpen={Boolean(review)}
+            previewEnabled={reviewInventoryEnabled()}
             item={item}
             editable={session.roles.some(
               (r) => r === "owner" || r === "product_manager",

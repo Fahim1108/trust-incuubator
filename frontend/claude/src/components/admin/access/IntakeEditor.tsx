@@ -11,10 +11,12 @@ export function IntakeEditor({
   item,
   editable,
   initiallyOpen=false,
+  previewEnabled=false,
 }: {
   item: IntakeItem;
   editable: boolean;
   initiallyOpen?:boolean;
+  previewEnabled?:boolean;
 }) {
   const [dirty,setDirty]=useState(false);
   useUnsavedDraft(dirty);
@@ -39,7 +41,7 @@ export function IntakeEditor({
         </div>
       </div>
       <p>{missingProductFacts(item).join(" · ")||"Facts entered — verification and publication pending"}</p>
-      <Link href={"/product/"+item.slug} target="_blank" rel="noopener noreferrer" prefetch={false} className="aa-button aa-secondary">Preview saved product</Link>
+      {previewEnabled&&editable&&item.status!=="archived"&&<Link href={"/product/"+item.slug} target="_blank" rel="noopener noreferrer" prefetch={false} className="aa-button aa-secondary">Preview saved product</Link>}
       <details open={initiallyOpen||undefined}>
         <summary>
           {editable ? "Edit imported draft" : "View product details"}
