@@ -1,4 +1,5 @@
 "use client";
+import {shirtAttributes} from "@/lib/admin/validation";
 import {missingProductFacts} from "@/lib/admin/product-review";
 import {useUnsavedDraft} from "./useUnsavedDraft";
 import Image from "next/image";
@@ -129,6 +130,8 @@ export function IntakeEditor({
               />
             </div>
             <div hidden={step !== 4}>
+              <fieldset><legend>Shirt attributes — choose all that apply</legend><div className="aa-fields">{shirtAttributes.map(attribute=><label key={attribute} style={{display:'flex',alignItems:'center',gap:8,minHeight:44}}><input style={{width:18,minHeight:18}} type="checkbox" name="attributes" value={attribute} defaultChecked={item.attributes.includes(attribute)}/>{attribute}</label>)}</div></fieldset>
+              <details><summary>SEO information</summary><label>SEO title<input name="seo_title" maxLength={70} defaultValue={item.seo_title||''}/></label><label htmlFor={`seo-${item.id}`}>SEO description</label><textarea id={`seo-${item.id}`} name="seo_description" maxLength={160} defaultValue={item.seo_description||''}/><p>Saved draft metadata; public SEO is unchanged until the publication workflow is connected.</p></details>
               <h3>Save for verification</h3>
               <p>
                 This saves an unpublished draft and records an audit entry. It

@@ -93,7 +93,7 @@ export async function saveThriftDraft(
   const session = await staffSession();
   if (!session.roles.some((r) => r === "owner" || r === "product_manager"))
     return { error: "You do not have catalogue editing permission." };
-  const parsed = draftSchema.safeParse(Object.fromEntries(form));
+  const parsed = draftSchema.safeParse({...Object.fromEntries(form),attributes:form.getAll("attributes")});
   if (!parsed.success)
     return {
       error: parsed.error.issues[0]?.message || "Check the product fields.",
@@ -113,6 +113,9 @@ export async function saveThriftDraft(
       chest_inches:d.chest_inches,
       length_inches:d.length_inches,
       condition:d.condition,
+      attributes:d.attributes,
+      seo_title:d.seo_title,
+      seo_description:d.seo_description,
     },
   });
   if (result.error)

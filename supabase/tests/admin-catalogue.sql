@@ -36,3 +36,8 @@ select test.denied($q$select public.admin_create_product_draft('90000000-0000-40
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000011","role":"authenticated","aal":"aal2"}',true);
 select test.denied($q$select public.admin_create_product_draft(gen_random_uuid(),'Unauthorized','')$q$,'42501','MFA customer cannot create a product');
 reset role;
+set local role authenticated;
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","aal":"aal2"}',true);
+select public.admin_save_thrift_draft(p.id,p.updated_at,'{"name":"Admin SQL test draft","description":"Original photo preserved","price_minor":55000,"stock_quantity":1,"actual_size":"","actual_color":"","attributes":["Solid","Formal","Long Sleeve"],"seo_title":"Original garment","seo_description":"Actual physical details pending"}') from public.products p join public.thrift_intake i on i.product_id=p.id where i.source_id='AA-SHIRT-018';
+select test.assert_true((select attributes @> array['Solid','Formal','Long Sleeve'] and seo_title='Original garment' and not size_verified from public.thrift_intake where source_id='AA-SHIRT-018'),'compatible attributes and SEO persist without verification');
+reset role;

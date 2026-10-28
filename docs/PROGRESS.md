@@ -607,3 +607,12 @@ RestorationreleaseREADY:84e30cde0eb1276ad99aeef8dfcfbb6af31bfef9 deployed tosepa
 - New additive development migration 20261028000200_create_product_draft uses database role/MFA checks, row-creation audit and an idempotent request UUID. Dry run passed before development apply; existing 18 garments were not changed. Previous schema may retain this unused function when rolling back the UI; no destructive rollback required.
 - Added unsaved-change protection for browser exit and link navigation. Owner/MFA/authentication and storefront remain unchanged. Publishing, storage/image management, full attributes/SEO and complete Milestone 2 remain incomplete; Milestone 3 not started.
 - Frontend lint/types/build, 91 unit tests and disposable SQL/RLS/inventory/audit/creation-idempotency tests passed. Hosted verification and staging deployment pending at this entry.
+- Preview release READY at https://attires-arena-frontend-preview-6bzjx3hfb-fahim-s-projects1.vercel.app/admin/products ; pushed/deployed source 83073f2dd9fe8fdf857402d549e119dc3438854a. Vercel credential expiry was resolved through its configured CLI refresh; production untouched.
+- Hosted browser regression was cancelled by the user at the permission step. Do not claim hosted creation/Save & Next, unsaved-change dialogs or new responsive screenshots as verified. Local lint/types/91 tests/build and database tests passed; final hosted acceptance remains pending.
+- Read-only post-cancellation check: 18 intake products, 18 physical units, original Owner assignment preserved, zero disposable Auth accounts. This post-deployment receipt is local and outside the deployed source commit.
+
+### 28 October 2026 — Draft attributes and SEO slice
+
+- Added independent multi-select shirt attributes (including compatible pattern/style/sleeve selections), draft SEO title/description and persisted reloading through the existing editor.
+- Additive development migration 20261028000300_draft_attributes_seo extends the existing MFA-gated audited/stale-protected save and snapshot functions; attributes are allowlisted/deduplicated and SEO length validated server-side. Old clients preserve fields when omitted. No guessed attributes or public SEO changes; new columns default to unknown/empty.
+- Local lint/types/build, 93 unit tests, and disposable SQL persistence/security/inventory tests passed. Dry run passed before development apply. Storage, publication, complete new-garment setup and full Milestone 2 remain incomplete. Milestone 3 not started.

@@ -143,6 +143,7 @@ try {
       draft: {
         name: "Verified disposable edit",
         description: "No real product changed",
+        attributes:["Solid","Formal","Long Sleeve"],seo_title:"QA garment",seo_description:"Disposable draft only",
         price_minor: 57500,
         stock_quantity: 1,
         actual_size: "",
@@ -154,13 +155,14 @@ try {
       ok(save);
       const after = (
         await query(
-          `select p.name,p.status,i.actual_size,i.price_minor from public.products p join public.thrift_intake i on i.product_id=p.id where p.id=${uuid(product)}`,
+          `select p.name,p.status,i.actual_size,i.price_minor,i.attributes,i.seo_title from public.products p join public.thrift_intake i on i.product_id=p.id where p.id=${uuid(product)}`,
         )
       )[0];
       assert.equal(after.name, "Verified disposable edit");
       assert.equal(after.status, "draft");
       assert.equal(after.actual_size, null);
       assert.equal(after.price_minor, 57500);
+      assert.deepEqual([...after.attributes].sort(),["Formal","Long Sleeve","Solid"]);assert.equal(after.seo_title,"QA garment");
       assert.equal(
         (
           await query(
