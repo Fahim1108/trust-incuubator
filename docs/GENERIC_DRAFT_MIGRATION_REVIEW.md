@@ -1,6 +1,6 @@
 # Review-ready increment: audited basic draft editing
 
-**Status: implemented and locally verified; awaiting explicit Staging migration authorization.** Permanent Staging Owner access is verified separately in `STAGING_OWNER_ACCESS.md`. Production remains untouched.
+**Current status: Staging migration applied and real Auth/PostgREST permissions verified.** The user's subsequent operational-management instruction authorized continuing Staging database-backed implementation. Migration 20261030000300 passed the existing rolled-back dry run and was applied once, preserving the earlier 12 migrations. Real temporary AAL2 Owner/Product Manager edits, stale-write rejection, validation, no-op auditing and customer/analyst/AAL1 denial passed. Permanent Owner/MFA remained unchanged after fixture cleanup. Hosted verification is tracked separately in PROGRESS.md; historical preparation details below describe the pre-activation checkpoint. Production remains untouched.
 
 ## Proposed exact database change
 

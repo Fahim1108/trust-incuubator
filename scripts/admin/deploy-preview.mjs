@@ -51,6 +51,7 @@ const stagingUrl=`https://${projects.staging}.supabase.co`;
 const stagingKey=await getStagingPublishableKey();
 const genericDrafts=process.argv.includes('--generic-drafts');
 const galleryEnabled=process.argv.includes('--product-gallery');
+const variantsEnabled=process.argv.includes('--variants');
 if(genericDrafts){
  if(codeOnly)throw new Error('Editor activation requires isolated Staging');
  const installed=await query("select to_regprocedure('public.admin_update_product_draft(uuid,timestamp with time zone,text,text)') is not null as present");
@@ -60,6 +61,11 @@ if(galleryEnabled){
  if(codeOnly)throw new Error('Gallery activation requires isolated Staging');
  const installed=await query("select to_regprocedure('public.admin_edit_product_gallery(uuid,timestamp with time zone,jsonb)') is not null as present");
  if(!installed[0]?.present)throw new Error('Product gallery migration is not installed');
+}
+if(variantsEnabled){
+ if(codeOnly)throw new Error('Variant activation requires isolated Staging');
+ const installed=await query("select to_regprocedure('public.admin_save_product_variant(uuid,timestamp with time zone,uuid,jsonb)') is not null as present");
+ if(!installed[0]?.present)throw new Error('Variant management migration is not installed');
 }
 const settings=await fetch(stagingUrl+'/auth/v1/settings',{headers:{apikey:stagingKey},signal:AbortSignal.timeout(20000)});
 if(!settings.ok)throw new Error('Staging public key failed gateway verification: HTTP '+settings.status);
@@ -75,7 +81,7 @@ const response = await fetch(
       name: "attires-arena-frontend-preview",
       project,
       target: "staging",
-      env:{SUPABASE_URL:stagingUrl,SUPABASE_PUBLISHABLE_KEY:stagingKey,CLAUDE_DESIGN_PREVIEW:"1",...(genericDrafts?{STAGING_GENERIC_DRAFT_EDITOR:'1'}:{}),...(galleryEnabled?{STAGING_PRODUCT_GALLERY:'1'}:{})},
+      env:{SUPABASE_URL:stagingUrl,SUPABASE_PUBLISHABLE_KEY:stagingKey,CLAUDE_DESIGN_PREVIEW:"1",...(genericDrafts?{STAGING_GENERIC_DRAFT_EDITOR:'1'}:{}),...(galleryEnabled?{STAGING_PRODUCT_GALLERY:'1'}:{}),...(variantsEnabled?{STAGING_VARIANT_MANAGEMENT:'1'}:{})},
       gitSource: { type: "github", repoId: 1233834845, ref: sha },
       projectSettings: {
         rootDirectory: "frontend/claude",

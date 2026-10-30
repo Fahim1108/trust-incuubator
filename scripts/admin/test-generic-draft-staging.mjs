@@ -32,8 +32,17 @@ try{
   else if(role!=='customer')await query(`insert into public.user_roles(user_id,role) values(${uuid(user.id)},${literal(role)})`,false);
   const c=client();ok(await c.auth.signInWithPassword({email,password}));
   assert.equal((await c.rpc('admin_update_product_draft',payload())).error?.code,'42501');pass(role+' AAL1 edit denied');
+  if(process.argv.includes('--variants')){
+   assert.equal((await c.rpc('admin_save_product_variant',{target_id:p,expected_updated_at:savedVersion,target_variant:randomUUID(),variant:{}})).error?.code,'42501');
+   assert.equal((await c.rpc('admin_adjust_product_stock',{target_id:p,expected_updated_at:savedVersion,target_variant:randomUUID(),quantity_delta:1,adjustment_reason:'Rejected AAL1 attempt'})).error?.code,'42501');
+  }
   const factor=ok(await c.auth.mfa.enroll({factorType:'totp',friendlyName:'Disposable metadata test'}));
   ok(await c.auth.mfa.challengeAndVerify({factorId:factor.id,code:totpCode(factor.totp.secret)}));
+  if(process.argv.includes('--variants')){
+   const {checkVariants}=await import('./check-variants-staging.mjs');
+   await checkVariants({c,role,product:p,version});savedVersion=await version();
+   pass(role+' actual SKU/pricing, zero initial stock, audited adjustments and negative/stale rejection');
+  }
   if(process.argv.includes('--gallery')){
    const {checkGallery}=await import('./check-gallery-staging.mjs');
    await checkGallery({c,user,role,product:p,version,trackPath:path=>storagePaths.push(path)});
@@ -67,7 +76,7 @@ try{
  }
  success=true;
 }finally{
- for(const p of products)await query(`delete from public.product_media where product_id=${uuid(p)};delete from public.admin_audit_logs where target_id=${uuid(p)};delete from public.products where id=${uuid(p)}`,false);
+ for(const p of products)await query(`delete from public.product_media where product_id=${uuid(p)};delete from public.inventory_movements where variant_id in (select id from public.product_variants where product_id=${uuid(p)});delete from public.inventory where variant_id in(select id from public.product_variants where product_id=${uuid(p)});delete from public.product_variants where product_id=${uuid(p)};delete from public.admin_audit_logs where target_id=${uuid(p)};delete from public.products where id=${uuid(p)}`,false);
  for(const id of users){
   const listed=ok(await admin.storage.from('attires-product-drafts').list(id,{limit:1000}));
   storagePaths.push(...listed.map(o=>id+'/'+o.name));

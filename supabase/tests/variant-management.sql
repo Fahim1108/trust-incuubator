@@ -1,0 +1,26 @@
+reset role;
+-- The earlier foundation test deliberately leaves its injected failure trigger.
+drop trigger reject_movement on public.inventory_movements;
+set local role authenticated;
+select set_config('request.jwt.claims','{"sub":"20000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}',true);
+select test.denied($q$select public.admin_save_product_variant('10000000-0000-4000-8000-000000000001',now(),'40000000-0000-4000-8000-000000000001','{}')$q$,'42501','customer cannot create SKU');
+select set_config('request.jwt.claims','{"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}',true);
+select test.denied($q$select public.admin_save_product_variant('10000000-0000-4000-8000-000000000001',now(),'40000000-0000-4000-8000-000000000001','{}')$q$,'42501','Owner without MFA cannot create SKU');
+select set_config('request.jwt.claims','{"sub":"20000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}',true);
+select public.admin_save_product_variant('10000000-0000-4000-8000-000000000001',(select updated_at from public.products where id='10000000-0000-4000-8000-000000000001'),'40000000-0000-4000-8000-000000000001','{"sku":"LOCAL-VARIANT-1","size":"M","color":"Maroon","price_minor":55050,"sale_price_minor":50000,"active":true}');
+select test.assert_true((select price_minor=55050 and sale_price_minor=50000 and size='M' from public.product_variants where id='40000000-0000-4000-8000-000000000001'),'exact SKU pricing and actual submitted size persist');
+select test.assert_true((select on_hand=0 and reserved=0 from public.inventory where variant_id='40000000-0000-4000-8000-000000000001'),'SKU creation never invents stock');
+select test.denied($q$select public.admin_save_product_variant('10000000-0000-4000-8000-000000000001',now(),'40000000-0000-4000-8000-000000000001','{"sku":"LOCAL-VARIANT-1","size":"N/A","color":"Maroon","price_minor":55050,"active":true}')$q$,'22023','unknown actual size refused');
+select test.denied($q$select public.admin_save_product_variant('10000000-0000-4000-8000-000000000001',now(),'40000000-0000-4000-8000-000000000001','{"sku":"LOCAL-VARIANT-1","size":"M","color":"Maroon","price_minor":55050,"sale_price_minor":60000,"active":true}')$q$,'22023','sale above regular refused');
+select test.denied($q$select public.admin_save_product_variant('10000000-0000-4000-8000-000000000004',(select updated_at from public.products where id='10000000-0000-4000-8000-000000000004'),'40000000-0000-4000-8000-000000000002','{"sku":"FAKE-THRIFT","size":"M","color":"Maroon","price_minor":55050,"active":true}')$q$,'22023','generic variant editor cannot manufacture thrift variants');
+select public.admin_adjust_product_stock('10000000-0000-4000-8000-000000000001',(select updated_at from public.products where id='10000000-0000-4000-8000-000000000001'),'40000000-0000-4000-8000-000000000001',2,'Physical count verified');
+select test.assert_true((select on_hand=2 and available=2 from public.inventory where variant_id='40000000-0000-4000-8000-000000000001'),'stock addition persists through transactional inventory function');
+reset role;
+update public.inventory set reserved=1 where variant_id='40000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select test.denied($q$select public.admin_adjust_product_stock('10000000-0000-4000-8000-000000000001',(select updated_at from public.products where id='10000000-0000-4000-8000-000000000001'),'40000000-0000-4000-8000-000000000001',-2,'Invalid stock reduction')$q$,'22023','cannot reduce on-hand below reservations');
+select public.admin_adjust_product_stock('10000000-0000-4000-8000-000000000001',(select updated_at from public.products where id='10000000-0000-4000-8000-000000000001'),'40000000-0000-4000-8000-000000000001',-1,'Damaged unreserved item');
+select test.assert_true((select count(*)=2 from public.inventory_movements where variant_id='40000000-0000-4000-8000-000000000001'),'successful stock adjustments each have inventory movement');
+select test.assert_true((select count(*)=2 from public.admin_audit_logs where target_id='10000000-0000-4000-8000-000000000001' and action='inventory.adjusted'),'stock updates have actual staff audit');
+select test.denied($q$select public.admin_adjust_product_stock('10000000-0000-4000-8000-000000000001',now(),'40000000-0000-4000-8000-000000000001',1,'Stale stock update')$q$,'PT409','stock editor rejects stale version');
+reset role;

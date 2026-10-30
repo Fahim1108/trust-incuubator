@@ -9,5 +9,5 @@ export async function PrivateProductGallery({id,updated_at}:{id:string;updated_a
   const signed=await client.storage.from('attires-product-drafts').createSignedUrl(image.storage_path,120);
   return {...image,url:signed.error?null:signed.data.signedUrl};
  }));
- return <ProductGalleryEditor key={updated_at} target={{id,updated_at}} images={images}/>;
+ return <ProductGalleryEditor target={{id,updated_at}} images={images}/>;
 }

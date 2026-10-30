@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import {randomUUID} from 'node:crypto';
 import {BasicDraftEditor} from '@/components/admin/access/BasicDraftEditor';
 import {PrivateProductGallery} from '@/components/admin/access/PrivateProductGallery';
+import {VariantEditor,StockEditor} from '@/components/admin/access/VariantEditor';
 import {readProductRecord} from '@/lib/admin/product-library';
 import {minorPrice} from '@/lib/admin/library-validation';
 export default async function ProductRecord({params}:{params:Promise<{id:string}>}){
@@ -11,6 +13,7 @@ export default async function ProductRecord({params}:{params:Promise<{id:string}
  {canManage&&product.status==='draft'&&process.env.STAGING_PRODUCT_GALLERY==='1'&&<PrivateProductGallery id={product.id} updated_at={product.updated_at}/>}
  {intake&&<section className="aa-panel"><h2>Physical garment intake</h2><dl><dt>Source</dt><dd>{intake.source_id}</dd><dt>Recorded size</dt><dd>{intake.actual_size||'Awaiting physical measurement'}</dd><dt>Recorded color</dt><dd>{intake.actual_color||'Not recorded'}</dd><dt>Recorded price</dt><dd>{minorPrice(intake.price_minor)}</dd><dt>Physical quantity</dt><dd>{intake.stock_quantity}</dd><dt>Size verified</dt><dd>{intake.size_verified?'Yes':'No'}</dd><dt>Details verified</dt><dd>{intake.details_verified?'Yes':'No'}</dd></dl><Link href={'/admin/products?review='+encodeURIComponent(intake.source_id)}>{canManage?'Edit garment draft':'View garment draft'}</Link></section>}
  <section className="aa-panel"><h2>Variants and inventory</h2>{variants.length?variants.map(v=>{const stock=inventory.find(i=>i.variant_id===v.id);return <article key={v.id}><h3>{v.sku}</h3><p>{v.size} · {v.color} · {v.active?'Active':'Inactive'}</p><p>Regular: {minorPrice(v.price_minor)}{v.sale_price_minor!==null&&<> · Sale: {minorPrice(v.sale_price_minor)}</>}</p>{stock?<p>On hand: {stock.on_hand} · Reserved: {stock.reserved} · Available: {stock.available}</p>:<p>No inventory record</p>}</article>;}):<p>No SKU variants configured. No size, price or sellable inventory has been invented.</p>}{hasMoreVariants&&<p>Showing the first 100 variants.</p>}</section>
- {!intake&&<p>Full garment setup and verified publication for this basic draft are not connected yet.</p>}
+ {canManage&&process.env.STAGING_VARIANT_MANAGEMENT==='1'&&<section className="aa-panel"><h2>Manage SKUs and stock</h2>{!intake&&product.status==='draft'&&<><VariantEditor target={product} newId={randomUUID()}/>{variants.map(v=><VariantEditor key={v.id} target={product} variant={v}/>)}</>}{variants.map(v=><section className="aa-panel" key={v.id}><h3>Adjust stock: {v.sku}</h3><StockEditor target={product} variantId={v.id}/></section>)}</section>}
+ {!intake&&<p>Verified publication for this draft remains a separate workflow.</p>}
  </main>;
 }

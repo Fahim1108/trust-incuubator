@@ -12,6 +12,7 @@
 }
 .aa-admin .aa-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:24px}
 .aa-admin .aa-gallery img{display:block;margin:0 auto 16px}
+.aa-admin input[type=checkbox]{display:inline-block;width:18px;height:18px;min-height:18px;vertical-align:middle;accent-color:#6b0202;margin-right:8px}
 .aa-admin .aa-editor-actions{flex-wrap:wrap}
 /* Staging admin tokens only. Storefront and Production admin retain their styles. */
 .aa-admin.aa-admin--dark{color-scheme:dark;background:#101114;color:#f4f2f3;--admin-burgundy:#6b0202}
