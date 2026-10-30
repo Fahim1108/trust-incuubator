@@ -55,3 +55,11 @@ Reproduce: `npm run lint`, `npm run typecheck`, `npm test`, `npm --prefix fronte
 The Management API still denies `auth_config_read` and `api_gateway_keys_read`. These are not runtime application dependencies or standalone release blockers: equivalent Auth/MFA/RLS/Storage behavior was tested directly. See `MANAGEMENT_API_LIMITATIONS.md`. Site URL/redirect settings were reviewed manually by the operator; mailbox verification/recovery delivery was not exercised using the disposable confirmed QA accounts.
 
 Product/media association, ordering, complete product CRUD/publishing, application-level media audit, richer inventory workflows and dark admin redesign remain Milestone 2. Orders, payment verification and other unconnected services remain unavailable. No Production deployment, Production database/account/MFA change, DNS modification or paid service was performed. Preview remains Vercel-protected, so its ordinary URL requires authorized Vercel access. Synthetic test accounts are deleted and cannot be used as permanent logins.
+
+## Source/change inventory
+
+Foundation private upload: `frontend/claude/src/app/admin/(workspace)/media/page.tsx`, `src/components/admin/access/DraftMediaForm.tsx`, `src/lib/admin/media-actions.ts`, `src/lib/admin/media-validation.ts` (the latter paths relative to `frontend/claude`), and `frontend/claude/tests/admin-media.check.ts`.
+
+Operator/browser tooling: `scripts/admin/deploy-preview.mjs`, `scripts/admin/hosted-preview-browser.mjs`, `scripts/admin/test-hosted.mjs`, `scripts/admin/verify-browser.mjs`, `scripts/admin/inspect-preview-login.mjs`; root `package.json`/`package-lock.json` add free test-only QR decoding dependencies. No application runtime animation or QR-decoding library was added.
+
+Reports: this sign-off, `MILESTONE_1_REPORT.md`, `MANAGEMENT_API_LIMITATIONS.md`, `PROGRESS.md` and `IMPLEMENTATION_PLAN.md`. Evidence is under `artifacts/admin/milestone-1/`. The subsequent Milestone 2 application revision `97f61fa0b06365dfaad51d8d187a8358fe65a3b3` also passed the full hosted security suite; see `MILESTONE_2_PRODUCT_MANAGEMENT.md`. Both milestones remain Staging only.

@@ -42,6 +42,14 @@ export async function verifyAdminBrowser({
   });
   const context = await browser.newContext({ baseURL, extraHTTPHeaders });
   const page = await context.newPage();
+  async function capture(options){
+    await page.evaluate(()=>document.fonts.ready);
+    await page.waitForFunction(()=>Array.from(document.images).filter(img=>{
+      const rect=img.getBoundingClientRect();
+      return rect.width>0&&rect.height>0&&rect.top<innerHeight&&rect.bottom>0;
+    }).every(img=>img.complete&&img.naturalWidth>0));
+    await page.screenshot(options);
+  }
   const failures = [];
   page.on("pageerror", (e) => failures.push(e.message));
   await mkdir("artifacts/admin", { recursive: true });
@@ -52,7 +60,7 @@ export async function verifyAdminBrowser({
     await page.waitForURL("**/admin/sign-in");
     assert.equal(await page.locator("input[type=password]").count(), 1);
     await page.setViewportSize({width:1440,height:900});
-    await page.screenshot({path:"artifacts/admin/login-1440.png",fullPage:true});
+    await capture({path:"artifacts/admin/login-1440.png",fullPage:true});
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Password", { exact: true }).fill(password);
     console.log("BROWSER: submit staff password");
@@ -97,7 +105,7 @@ export async function verifyAdminBrowser({
       );
     for (const width of [360, 390, 430, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await page.screenshot({
+      await capture({
         path: `artifacts/admin/overview-${width}.png`,
         fullPage: true,
       });
@@ -124,9 +132,9 @@ export async function verifyAdminBrowser({
     const uploaded=await page.getByLabel('Stored object path').inputValue();
     onUploadedPath(uploaded);
     assert(/^[a-f0-9-]+\/[a-f0-9-]+\.png$/.test(uploaded));
-    await page.screenshot({path:'artifacts/admin/private-upload-390.png',fullPage:true});
+    await capture({path:'artifacts/admin/private-upload-390.png',fullPage:true});
     await page.setViewportSize({width:1440,height:900});
-    await page.screenshot({path:'artifacts/admin/private-upload-1440.png',fullPage:true});
+    await capture({path:'artifacts/admin/private-upload-1440.png',fullPage:true});
     await page.setViewportSize({width:390,height:844});
     console.log('BROWSER: create product draft');
     await page.goto('/admin/products/new');
@@ -144,14 +152,14 @@ export async function verifyAdminBrowser({
     for(const width of [390,1440]){
       await page.setViewportSize({width,height:900});
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Product detail overflow');
-      await page.screenshot({path:`artifacts/admin/library-detail-${width}.png`,fullPage:true});
+      await capture({path:`artifacts/admin/library-detail-${width}.png`,fullPage:true});
     }
     await page.goto('/admin/products/library?status=draft&sort=name');
     await page.getByRole('heading',{name:'Product library',exact:true}).waitFor();
     for(const width of [390,1440]){
       await page.setViewportSize({width,height:900});
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Product library overflow');
-      await page.screenshot({path:`artifacts/admin/library-${width}.png`,fullPage:true});
+      await capture({path:`artifacts/admin/library-${width}.png`,fullPage:true});
     }
     await page.goto('/admin/products/library?q=Disposable%20browser%20created%20product&status=published');
     await page.getByText('No products match these filters.',{exact:true}).waitFor();
@@ -195,7 +203,7 @@ export async function verifyAdminBrowser({
       .waitFor();
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await page.screenshot({
+      await capture({
         path: `artifacts/admin/products-${width}.png`,
         fullPage: true,
       });
@@ -250,7 +258,7 @@ export async function verifyAdminBrowser({
         await page.getByRole('button',{name:'Verify and continue'}).click();
         await page.waitForURL(u=>u.pathname==='/admin');
         await page.getByRole('heading',{name:'Store overview',exact:true}).waitFor();
-        await page.screenshot({path:'artifacts/admin/analyst-1440.png',fullPage:true});
+        await capture({path:'artifacts/admin/analyst-1440.png',fullPage:true});
         await page.goto('/admin/products/new');await page.getByText('Your role cannot create products.',{exact:true}).waitFor();
         await page.goto('/admin/media');await page.getByText('Your role cannot upload draft images.',{exact:true}).waitFor();
         await page.goto('/admin/audit');await page.getByRole('heading',{name:'Audit access unavailable',exact:true}).waitFor();

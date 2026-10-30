@@ -1,0 +1,13 @@
+{
+  "projectRef": "jwccyndyaamodxjtjtfo",
+  "checkedAt": "2026-10-30T14:34:02.213Z",
+  "state": {
+    "auth_users": 0,
+    "staff_assignments": 0,
+    "products": 0,
+    "storage_objects": 0,
+    "applied_migrations": 12
+  },
+  "provisioningSecurityAudit": "retained",
+  "productionTouched": false
+}

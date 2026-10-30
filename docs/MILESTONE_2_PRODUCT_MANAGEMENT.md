@@ -23,3 +23,28 @@ This is **the first functional increment**, not completion of Full Product Manag
 6. **Dark admin design and full workflow QA.** Scope style tokens/components to admin; preserve storefront design. Verify product-manager permissions alongside Owner/analyst/customer; stale edits, duplicate submission, upload failure/cleanup, audit, database isolation and responsive browser flows.
 
 No Production database migration, environment update, DNS change, account/MFA change, live publication or Production deployment is authorized by this milestone. A permanent staging Owner still requires explicit approval. Management inspection permissions are not required for these runtime services; use the existing direct evidence and Dashboard verification documented in `MANAGEMENT_API_LIMITATIONS.md`.
+
+## Final verification of the first increment
+
+**PASSED** against application commit `97f61fa0b06365dfaad51d8d187a8358fe65a3b3`, deployment `dpl_5MhkBwzeYbC6WPTPWT73mfxdg8B1`:
+https://attires-arena-frontend-preview-k0on81mdt-fahim-s-projects1.vercel.app/admin/login
+
+Hosted browser created a real unpublished draft through the existing UI, found it using server-backed draft/name filters, opened its saved description and honest missing-variant state, verified published-only filtering excludes it, and captured 390px/1440px library/detail screenshots. All Milestone 1 browser checks passed again, including QR enrollment, TOTP, Owner/analyst/customer restrictions, private image UI, persisted edits/audit, logout and role revocation. Screenshot capture waits for visible images and fonts; original logo verified visually. Screenshots show temporary synthetic staging records, all subsequently removed.
+
+Root lint/TypeScript/58 tests, frontend lint/TypeScript/129 tests/optimized build and five operator security tests passed: **192 automated tests**, plus real API/hosted tests. The initial TypeScript BigInt-literal target error was corrected by using the supported BigInt constructor; no compiler target or security setting was weakened. No remaining final failures.
+
+Final read-only verification: 12 migrations unchanged, 12 RLS tables, 77 validated constraints, four Storage policies; zero Auth users, staff assignments, products and Storage objects. Security provisioning audit retained. Test cleanup now also discovers only the generated fixture-user folders so a lost upload response cannot leave an untracked binary. Deployment-only share access was revoked and project-wide protection matched before/after. No permanent Owner, migrations, Production changes or paid services.
+
+Evidence: `artifacts/admin/milestone-2/` (fresh screenshots and machine-readable results). Test-only capture/cleanup refinements and reports may be committed after the application deployment; the deployed application source SHA above is the exact browser-verified revision. The default Preview key was repaired as Sensitive staging configuration; no Production key was read or changed. Ordinary Preview access still requires authorized Vercel access. There are no permanent test login credentials.
+
+### Exact application files for this increment
+
+- `frontend/claude/src/lib/admin/library-validation.ts`
+- `frontend/claude/src/lib/admin/product-library.ts`
+- `frontend/claude/src/app/admin/(workspace)/products/library/page.tsx`
+- `frontend/claude/src/app/admin/(workspace)/products/[id]/page.tsx`
+- `frontend/claude/src/app/admin/(workspace)/layout.tsx`
+- `frontend/claude/src/components/admin/access/AdminShell.tsx`
+- `frontend/claude/tests/admin-library.check.ts`
+
+Remaining tasks and restrictions above still apply: this is the verified library/detail increment, **not complete Full Product Management**. Next: audited generic-draft editing and persistent private-media association, with separately reviewed version-controlled Staging database changes where required. Do not apply migrations or enable live publication without the necessary authorization.

@@ -71,7 +71,7 @@ function pass(label) {
 }
 try {
   const anonymous = client();
-  assert((await anonymous.rpc("admin_catalogue_snapshot")).error);
+  assert.equal((await anonymous.rpc("admin_catalogue_snapshot")).error?.code,"42501");
   pass("anonymous cannot read admin snapshot");
   await query(
     `insert into public.products(id,name,slug) values(${uuid(product)},'Disposable admin verification shirt',${literal("admin-test-" + product)});
@@ -286,7 +286,15 @@ try {
     return false;
   }
   let storageCleaned=true;
-  for(const path of storagePaths){
+  // A response may be lost after a successful browser upload. Discover only
+  // objects in this run's generated account folders before deleting accounts.
+  for(const id of users){
+    if(!await clean(async()=>{
+      const objects=ok(await operator.storage.from(bucket).list(id,{limit:1000}));
+      for(const object of objects)storagePaths.push(id+'/'+object.name);
+    }))storageCleaned=false;
+  }
+  for(const path of new Set(storagePaths)){
     if(!await clean(async()=>{ok(await operator.storage.from(bucket).remove([path]));assert((await operator.storage.from(bucket).download(path)).error);}))storageCleaned=false;
   }
   if(storageCleaned)pass('temporary binary Storage objects removed and absence verified');
