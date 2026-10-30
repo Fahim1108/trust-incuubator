@@ -224,6 +224,7 @@ try {
         password,
         secret: factor.totp.secret,
         userId: user.id,
+        factorId: factor.id,
         product,
         onCreatedId:id=>createdProducts.push(id),
       };
@@ -256,7 +257,10 @@ try {
     const { verifyHostedPreview } = await import(
       "./hosted-preview-browser.mjs"
     );
-    await verifyHostedPreview({...ownerContext,staff:browserAccounts.analyst,customer:browserAccounts.customer,onUploadedPath:path=>storagePaths.push(path)});
+    // Remove only this disposable Owner's API-created factor so the hosted UI
+    // must perform its own genuine QR enrollment and six-digit verification.
+    ok(await operator.auth.admin.mfa.deleteFactor({userId:ownerContext.userId,id:ownerContext.factorId}));
+    await verifyHostedPreview({...ownerContext, staff:browserAccounts.analyst,customer:browserAccounts.customer,onUploadedPath:path=>storagePaths.push(path)});
     pass("hosted Preview browser verified at the exact deployed commit");
   } else if (process.env.ADMIN_BROWSER_BASE) {
     const { verifyAdminBrowser } = await import("./verify-browser.mjs");

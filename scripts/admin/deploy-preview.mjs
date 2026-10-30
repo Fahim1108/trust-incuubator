@@ -1,5 +1,6 @@
 import projects from '../../frontend/claude/src/config/supabase-projects.json' with {type:'json'};
 import { assertRemoteDatabaseIsolation } from '../lib/deployment-isolation.mjs';
+import {getStagingPublishableKey} from '../lib/supabase-development.mjs';
 // Deploy an exact pushed commit to the existing separate Preview project only.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -44,6 +45,12 @@ if (codeOnly) {
 } else {
   await assertRemoteDatabaseIsolation(`https://${projects.staging}.supabase.co`);
 }
+// Pin this deployment to the already verified staging public configuration.
+// No project-wide variables or Production configuration are changed.
+const stagingUrl=`https://${projects.staging}.supabase.co`;
+const stagingKey=await getStagingPublishableKey();
+const settings=await fetch(stagingUrl+'/auth/v1/settings',{headers:{apikey:stagingKey},signal:AbortSignal.timeout(20000)});
+if(!settings.ok)throw new Error('Staging public key failed gateway verification: HTTP '+settings.status);
 const response = await fetch(
   `https://api.vercel.com/v13/deployments?teamId=${team}`,
   {
@@ -56,6 +63,7 @@ const response = await fetch(
       name: "attires-arena-frontend-preview",
       project,
       target: "staging",
+      env:{SUPABASE_URL:stagingUrl,SUPABASE_PUBLISHABLE_KEY:stagingKey,CLAUDE_DESIGN_PREVIEW:"1"},
       gitSource: { type: "github", repoId: 1233834845, ref: sha },
       projectSettings: {
         rootDirectory: "frontend/claude",

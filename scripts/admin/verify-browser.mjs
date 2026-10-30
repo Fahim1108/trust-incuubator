@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { chromium } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createHmac } from "node:crypto";
+import jsQR from "jsqr";
+import {PNG} from "pngjs";
 function code(secret) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
   let bits = "";
@@ -35,6 +37,7 @@ export async function verifyAdminBrowser({
     executablePath:
       process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || "/usr/bin/chromium",
     headless: true,
+    env:{...process.env,...(process.env.ADMIN_BROWSER_XDG_DATA_HOME?{XDG_DATA_HOME:process.env.ADMIN_BROWSER_XDG_DATA_HOME}:{})},
     ...(proxy ? { proxy } : {}),
   });
   const context = await browser.newContext({ baseURL, extraHTTPHeaders });
@@ -51,6 +54,16 @@ export async function verifyAdminBrowser({
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Sign in securely" }).click();
     await page.waitForURL("**/admin/mfa");
+    await page.getByRole('button',{name:'Set up authenticator',exact:true}).click();
+    const qr=page.getByAltText('Private authenticator enrollment QR code');
+    await qr.waitFor();
+    // Decode only in memory. Never save QR screenshots, TOTP secrets or codes.
+    const image=PNG.sync.read(await qr.screenshot());
+    const decoded=jsQR(new Uint8ClampedArray(image.data),image.width,image.height);
+    assert(decoded,'Authenticator QR must be readable');
+    const uri=new URL(decoded.data);
+    assert.equal(uri.protocol,'otpauth:');
+    secret=uri.searchParams.get('secret');assert(secret);
     await page.getByLabel("Authenticator code").fill(code(secret));
     await page.getByRole("button", { name: "Verify and continue" }).click();
     await page.waitForURL((url) => url.pathname === "/admin");
@@ -218,7 +231,7 @@ export async function verifyAdminBrowser({
           checks: [
             "unauthenticated redirect",
             "password sign-in",
-            "real TOTP MFA",
+            "real browser QR enrollment and six-digit TOTP verification",
             "HttpOnly session cookies",
             "real catalogue snapshot",
             "responsive no overflow",
@@ -243,7 +256,8 @@ export async function verifyAdminBrowser({
         path: "artifacts/admin/browser-failure.png",
         fullPage: true,
       });
-    throw e;
+    const summary=String(e.message||'Browser operation failed').split('\n')[0];
+    throw new Error('Hosted browser verification failed at '+new URL(page.url()).pathname+': '+summary.replaceAll(password,'[redacted]').replaceAll(email,'[test account]').replace(/([?&]_vercel_share=)[A-Za-z0-9_-]+/g,'$1[redacted]'));
   } finally {
     await context.close();
     await browser.close();
