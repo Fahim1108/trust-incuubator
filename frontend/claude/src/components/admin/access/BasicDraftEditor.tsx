@@ -10,7 +10,7 @@ export function BasicDraftEditor({product}:{product:{id:string;name:string;descr
  <form action={action} className="aa-form" onChange={()=>setDirty(true)}>
  <input type="hidden" name="id" value={product.id}/><input type="hidden" name="updated_at" value={product.updated_at}/>
  <label>Product name<input name="name" defaultValue={product.name} maxLength={200} required disabled={pending}/></label>
- <label>Description<textarea name="description" defaultValue={product.description} maxLength={20000} rows={6} disabled={pending}/></label>
+ <label htmlFor={'draft-description-'+product.id}>Description</label><textarea id={'draft-description-'+product.id} name="description" defaultValue={product.description} maxLength={20000} rows={6} disabled={pending}/>
  {state.error&&<p role="alert">{state.error}</p>}{state.success&&<p role="status">{state.success}</p>}
  <button disabled={pending}>{pending?'Saving…':'Save draft details'}</button>
  </form></section>;

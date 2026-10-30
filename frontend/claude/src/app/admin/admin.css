@@ -10,6 +10,23 @@
 .aa-admin * {
   box-sizing: border-box;
 }
+.aa-admin .aa-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:24px}
+.aa-admin .aa-gallery img{display:block;margin:0 auto 16px}
+.aa-admin .aa-editor-actions{flex-wrap:wrap}
+/* Staging admin tokens only. Storefront and Production admin retain their styles. */
+.aa-admin.aa-admin--dark{color-scheme:dark;background:#101114;color:#f4f2f3;--admin-burgundy:#6b0202}
+.aa-admin.aa-admin--dark p,.aa-admin.aa-admin--dark .aa-top,.aa-admin.aa-admin--dark .aa-metrics span,.aa-admin.aa-admin--dark .aa-intake-list small,.aa-admin.aa-admin--dark .aa-nav-group h2{color:#b8b4bd}
+.aa-admin.aa-admin--dark .aa-panel,.aa-admin.aa-admin--dark .aa-sidebar,.aa-admin.aa-admin--dark .aa-drawer{background:#191a20;color:#f4f2f3}
+.aa-admin.aa-admin--dark .aa-panel,.aa-admin.aa-admin--dark .aa-sidebar,.aa-admin.aa-admin--dark .aa-top,.aa-admin.aa-admin--dark .aa-drawer,.aa-admin.aa-admin--dark .aa-status,.aa-admin.aa-admin--dark .aa-service-grid article,.aa-admin.aa-admin--dark .aa-task-list li,.aa-admin.aa-admin--dark .aa-intake-list>a,.aa-admin.aa-admin--dark .aa-roadmap-group{border-color:#35353e}
+.aa-admin.aa-admin--dark input,.aa-admin.aa-admin--dark select,.aa-admin.aa-admin--dark textarea{background:#111216;border-color:#41414a;color:#fafafa;min-width:0}
+.aa-admin.aa-admin--dark .aa-secondary{background:#25252d;border-color:#4a4650;color:#f4f2f3}
+.aa-admin.aa-admin--dark button,.aa-admin.aa-admin--dark .aa-button{background:#6b0202;border-color:#a14650}
+.aa-admin.aa-admin--dark .aa-eyebrow,.aa-admin.aa-admin--dark .aa-product summary,.aa-admin.aa-admin--dark .aa-task-list strong,.aa-admin.aa-admin--dark .aa-metrics strong{color:#edbac0}
+.aa-admin.aa-admin--dark .aa-sidebar nav a[aria-current=page],.aa-admin.aa-admin--dark .aa-drawer nav a[aria-current=page]{background:#3a2027;color:#ffe1e5}
+.aa-admin.aa-admin--dark .aa-form [role=alert]{color:#ffb4aa}.aa-admin.aa-admin--dark .aa-form [role=status]{color:#96dfb1}
+.aa-admin.aa-admin--dark a:focus-visible,.aa-admin.aa-admin--dark button:focus-visible,.aa-admin.aa-admin--dark input:focus,.aa-admin.aa-admin--dark textarea:focus,.aa-admin.aa-admin--dark select:focus{outline-color:#e6a1ab}
+.aa-admin.aa-admin--dark button:not(:disabled):hover,.aa-admin.aa-admin--dark .aa-button:hover{background:#831e2b}
+@media(prefers-reduced-motion:no-preference){.aa-admin.aa-admin--dark button,.aa-admin.aa-admin--dark a{transition:background-color .18s,color .18s,border-color .18s}}
 .aa-admin h1 {
   font-size: clamp(25px, 3vw, 34px);
   font-weight: 600;

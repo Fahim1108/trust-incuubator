@@ -12,6 +12,7 @@ const admin=createClient(projectUrl,await getTestAdminKey(),options);
 const key=await getStagingPublishableKey();
 const client=()=>createClient(projectUrl,key,options);
 const users=[],products=[],checks=[];
+const storagePaths=[];
 const password=randomBytes(32).toString('base64url');
 const ok=r=>{if(r.error)throw new Error('Staging operation rejected: '+r.error.code);return r.data;};
 const pass=s=>{checks.push(s);console.log('PASS: '+s);};
@@ -33,6 +34,12 @@ try{
   assert.equal((await c.rpc('admin_update_product_draft',payload())).error?.code,'42501');pass(role+' AAL1 edit denied');
   const factor=ok(await c.auth.mfa.enroll({factorType:'totp',friendlyName:'Disposable metadata test'}));
   ok(await c.auth.mfa.challengeAndVerify({factorId:factor.id,code:totpCode(factor.totp.secret)}));
+  if(process.argv.includes('--gallery')){
+   const {checkGallery}=await import('./check-gallery-staging.mjs');
+   await checkGallery({c,user,role,product:p,version,trackPath:path=>storagePaths.push(path)});
+   savedVersion=await version();
+   pass(role+' private binary gallery authorization, linkage and Storage protection');
+  }
   if(['customer','analyst'].includes(role))assert.equal((await c.rpc('admin_update_product_draft',payload())).error?.code,'42501');
   else{
    const before=savedVersion;
@@ -60,7 +67,12 @@ try{
  }
  success=true;
 }finally{
- for(const p of products)await query(`delete from public.admin_audit_logs where target_id=${uuid(p)};delete from public.products where id=${uuid(p)}`,false);
+ for(const p of products)await query(`delete from public.product_media where product_id=${uuid(p)};delete from public.admin_audit_logs where target_id=${uuid(p)};delete from public.products where id=${uuid(p)}`,false);
+ for(const id of users){
+  const listed=ok(await admin.storage.from('attires-product-drafts').list(id,{limit:1000}));
+  storagePaths.push(...listed.map(o=>id+'/'+o.name));
+ }
+ if(storagePaths.length)ok(await admin.storage.from('attires-product-drafts').remove([...new Set(storagePaths)]));
  for(const id of users)ok(await admin.auth.admin.deleteUser(id));
  assert.deepEqual(await query("select u.id, array(select id::text from auth.mfa_factors where user_id=u.id and status='verified' order by id) as factors from auth.users u where email='attiresarena664@gmail.com'"),permanent);
  pass('generated fixtures removed; permanent Owner and verified MFA factors unchanged');

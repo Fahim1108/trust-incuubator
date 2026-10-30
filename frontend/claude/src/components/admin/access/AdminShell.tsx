@@ -56,7 +56,7 @@ export function AdminShell({
       <aside className="aa-sidebar">
         <Link href="/admin" aria-label="Attires Arena administration">
           <Image
-            src="/brand/logo-maroon.png"
+            src={stagingTools?'/brand/logo-white.png':'/brand/logo-maroon.png'}
             alt="Attires Arena"
             width={90}
             height={86}
@@ -74,7 +74,7 @@ export function AdminShell({
           >
             Menu
           </button>
-          <Image className="aa-mobile-brand" src="/brand/logo-maroon.png" alt="Attires Arena" width={46} height={44}/><span className="aa-admin-title">Store management</span>
+          <Image className="aa-mobile-brand" src={stagingTools?'/brand/logo-white.png':'/brand/logo-maroon.png'} alt="Attires Arena" width={46} height={44}/><span className="aa-admin-title">Store management</span>
           <span>Development · Preview</span>
         </header>
         <dialog
