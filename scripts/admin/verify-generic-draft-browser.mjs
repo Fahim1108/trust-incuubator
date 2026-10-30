@@ -34,6 +34,12 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
    const record=page.locator('article').filter({has:page.getByRole('heading',{name,exact:true})});await record.waitFor();
    await record.locator('summary').click();await record.getByLabel('Name',{exact:true}).fill(name+' updated');await record.getByRole('button',{name:'Save catalogue record',exact:true}).click();
    await page.getByRole('heading',{name:name+' updated',exact:true}).waitFor();
+   await mkdir('artifacts/admin/taxonomy',{recursive:true});
+   for(const width of [390,1440]){
+    await page.setViewportSize({width,height:900});await page.evaluate(()=>document.fonts.ready);
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    await page.screenshot({path:`artifacts/admin/taxonomy/records-${width}.png`,fullPage:true});
+   }
    await page.goto('/admin/products/'+product);
    const brand=page.getByLabel('Brand',{exact:true});await brand.selectOption({label:name+' updated'});
    const selected=await brand.inputValue();
@@ -79,11 +85,11 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
    console.log('BROWSER: binary multi-upload, persisted image description, cover reorder and removal passed');
   }
   await mkdir('artifacts/admin/generic-draft',{recursive:true});
-  for(const width of [390,1440]){
+  for(const width of [360,390,430,768,1440]){
    await page.setViewportSize({width,height:900});await page.evaluate(()=>document.fonts.ready);
    await page.waitForFunction(()=>Array.from(document.images).filter(i=>i.getBoundingClientRect().width>0).every(i=>i.complete&&i.naturalWidth>0));
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   await page.screenshot({path:`artifacts/admin/generic-draft/editor-${width}.png`,fullPage:true});
+   if(width===390||width===1440)await page.screenshot({path:`artifacts/admin/generic-draft/editor-${width}.png`,fullPage:true});
   }
   await page.getByRole('button',{name:'Sign out',exact:true}).click();await page.waitForURL('**/admin/sign-in');
   await page.goto('/admin/products/'+product);await page.waitForURL('**/admin/sign-in');

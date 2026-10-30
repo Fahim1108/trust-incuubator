@@ -76,6 +76,9 @@ try{
     const {verifyGenericDraftBrowser}=await import('./verify-generic-draft-browser.mjs');
     await verifyHostedPreview({email,password,secret:factor.totp.secret,product:p},verifyGenericDraftBrowser);
     pass('hosted browser password/TOTP login, actual edit, reload persistence, 390/1440 screenshots, logout protection');
+    if(process.argv.includes('--gallery'))pass('hosted browser original-photo multi-upload, persisted alt text, cover order and gallery removal');
+    if(process.argv.includes('--variants'))pass('hosted browser SKU/pricing creation, zero initial stock, actual stock adjustment and negative-stock rejection');
+    if(process.argv.includes('--taxonomy'))pass('hosted browser brand creation/edit, taxonomy screenshots and persisted product-brand assignment');
    }
   }
   assert((await c.from('products').update({name:'Unaudited'}).eq('id',p)).error);

@@ -1,5 +1,5 @@
 'use client';
-import {useActionState} from 'react';
+import {useActionState,useId} from 'react';
 import {saveTerm,assignProductTerms} from '@/lib/admin/taxonomy-actions';
 type Term={id:string;name:string;slug:string;published:boolean;updated_at:string};
 export function TaxonomyForm({kind,id,record}:{kind:string;id:string;record?:Term}){
@@ -13,9 +13,10 @@ export function TaxonomyForm({kind,id,record}:{kind:string;id:string;record?:Ter
 }
 export function ProductTaxonomyForm({product,categories,terms,assigned}:{product:{id:string;updated_at:string;category_id:string|null};categories:{id:string;name:string}[];terms:{id:string;name:string;kind:string}[];assigned:string[]}){
  const [state,action,pending]=useActionState(assignProductTerms,{});
+ const fieldId=useId();
  return <section className="aa-panel"><h2>Product categories and discovery</h2><form action={action} className="aa-form"><input type="hidden" name="id" value={product.id}/><input type="hidden" name="updated_at" value={product.updated_at}/>
- <label>Category<select name="category" defaultValue={product.category_id||''}><option value="">Not assigned</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
- <label>Brand<select name="terms" defaultValue={assigned.find(id=>terms.some(t=>t.id===id&&t.kind==='brand'))||''}><option value="">Not assigned</option>{terms.filter(t=>t.kind==='brand').map(t=><option value={t.id} key={t.id}>{t.name}</option>)}</select></label>
- {(['collection','tag'] as const).map(kind=><label key={kind}>{kind==='collection'?'Collections':'Tags'}<select name="terms" multiple size={4} defaultValue={assigned.filter(id=>terms.some(t=>t.id===id&&t.kind===kind))}>{terms.filter(t=>t.kind===kind).map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></label>)}
+ <label htmlFor={fieldId+'-category'}>Category</label><select id={fieldId+'-category'} name="category" defaultValue={product.category_id||''}><option value="">Not assigned</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select>
+ <label htmlFor={fieldId+'-brand'}>Brand</label><select id={fieldId+'-brand'} name="terms" defaultValue={assigned.find(id=>terms.some(t=>t.id===id&&t.kind==='brand'))||''}><option value="">Not assigned</option>{terms.filter(t=>t.kind==='brand').map(t=><option value={t.id} key={t.id}>{t.name}</option>)}</select>
+ {(['collection','tag'] as const).map(kind=><div key={kind}><label htmlFor={fieldId+'-'+kind}>{kind==='collection'?'Collections':'Tags'}</label><select id={fieldId+'-'+kind} name="terms" multiple size={4} defaultValue={assigned.filter(id=>terms.some(t=>t.id===id&&t.kind===kind))}>{terms.filter(t=>t.kind===kind).map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></div>)}
  <p>Manage available records in Catalogue taxonomy. Publishing a brand record does not claim affiliation or authorisation.</p><button disabled={pending}>{pending?'Saving…':'Save product taxonomy'}</button>{state.error&&<p role="alert">{state.error}</p>}{state.success&&<p role="status">{state.success}</p>}</form></section>;
 }

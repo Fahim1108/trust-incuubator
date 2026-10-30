@@ -1,5 +1,7 @@
 # Milestone 2 — Full Product Management
 
+**Current checkpoint, 31 October 2026 (Bangladesh):** Permanent Staging access is verified. Draft metadata, private gallery, generic SKU/pricing and inventory workflows passed hosted-browser verification at `30be3260937391f89957f68c23defaa05ae3f558`; evidence is in `artifacts/admin/product-core/`. Staging now contains 16 migrations including the additive taxonomy increment. Its real API tests passed; taxonomy hosted-browser verification is in progress. See `PRODUCT_MANAGEMENT_OPERATIONAL_REPORT.md` and the latest PROGRESS entry for current results and limitations. Full Product Management is not signed off. Earlier sections below are historical checkpoints, not the current migration/access state.
+
 Milestone 1 staging security foundation passed before implementation started. Production is unchanged. Budget remains $0. No existing migrations are rerun; no new migration has been applied in this increment.
 
 ## First implemented increment
