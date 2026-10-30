@@ -35,7 +35,13 @@ export async function verifyHostedPreview(context, verify = verifyAdminBrowser) 
     if (!r.ok) throw new Error("Preview verification API HTTP " + r.status);
     return r.json();
   }
-  const deployment = await api(`/v13/deployments/${record.id}?teamId=${team}`);
+  let deployment = await api(`/v13/deployments/${record.id}?teamId=${team}`);
+  const readyDeadline=Date.now()+10*60*1000;
+  while(['QUEUED','BUILDING','INITIALIZING'].includes(deployment.readyState)&&Date.now()<readyDeadline){
+    console.log('Waiting for the exact Preview build to become READY.');
+    await new Promise(resolve=>setTimeout(resolve,15000));
+    deployment=await api(`/v13/deployments/${record.id}?teamId=${team}`);
+  }
   assert.equal(deployment.projectId, project);
   assert.equal(deployment.target, "staging");
   assert.equal(deployment.readyState, "READY");

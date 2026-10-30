@@ -26,7 +26,14 @@ Migration `20261030000600` applied once to Staging after the local suite and rol
 
 Frontend: `/admin/taxonomy` provides real name search, type selection, deterministic 24-record pagination, creation, editing and deletion. Product details provide persisted category, brand, collection and tag selection. Actions recheck actual staff identity, MFA, role and exact Staging configuration. Activation flag is Preview feature-branch only; navigation is omitted while disabled.
 
-Latest local validation: root/frontend lint and TypeScript; 58 root tests, 140 frontend tests and 9 operator tests (**207 total**); optimized frontend build; **172 local SQL assertions**, plus genuine two-connection inventory and stale-edit concurrency tests. Local PostgreSQL simulates Auth claims; real signed Supabase sessions and hosted browser results are recorded separately. Taxonomy real API/hosted verification is in progress at this report checkpoint; do not count build readiness as a browser pass.
+Latest local validation: root/frontend lint and TypeScript; 58 root tests, 140 frontend tests and 9 operator tests (**207 total**); optimized frontend build; **172 local SQL assertions**, plus genuine two-connection inventory and stale-edit concurrency tests. Local PostgreSQL simulates Auth claims; real signed Supabase sessions and hosted browser results are recorded separately.
+
+**Taxonomy hosted verification passed**, application `e3a3f4972e40d890e04ea4d68c1ceb4f091d5609`:
+https://attires-arena-frontend-preview-44efej5lt-fahim-s-projects1.vercel.app/admin/login
+
+Actual UI created and renamed a brand, assigned it to the test product and confirmed the saved selection after reload. All core password/TOTP, draft, gallery, SKU/pricing, stock and logout checks passed again on this exact deployment. Real signed-session API checks verified customer/analyst/AAL1 rejection; Owner/Product Manager CRUD and assignments; no public exposure of an unoffered brand; stale versions; protected references; inventory audit and nonnegative stock. Responsive overflow checks passed at 360/390/430/768/1440px, with screenshots at 390px and 1440px. Original shirt photos were uploaded only as private disposable test images. Test accounts, records and bytes were removed; permanent Owner and verified MFA factor IDs compared unchanged. Deployment-only automation access revoked; project protection unchanged. Evidence: `artifacts/admin/taxonomy/`.
+
+An initial hosted run exposed a label association defect in the product taxonomy selects. Explicit labels/IDs fixed it; the final complete hosted run passed. Earlier certificate-trust/queued-build test setup failures were corrected without disabling TLS or weakening application security. No remaining failing check in the final run.
 
 ## Current limits and next work
 
@@ -38,3 +45,45 @@ Latest local validation: root/frontend lint and TypeScript; 58 root tests, 140 f
 - Real checkout/order persistence, payment verification, Customers, Marketing, Analytics and Settings are subsequent work. No fake sales, revenue, profit, orders or payments are added.
 
 Reproduce local checks with the commands in `package.json`; remote verification uses `node --use-env-proxy scripts/admin/test-generic-draft-staging.mjs --gallery --variants --taxonomy`. Hosted verification additionally uses `ADMIN_VERCEL_DEPLOYMENT_FILE` pointing at the exact Preview deployment record. It creates only disposable Staging fixtures and revokes deployment-specific automation access afterward.
+
+## Exact implementation files through e3a3f49
+
+- `frontend/claude/.env.example`
+- `frontend/claude/src/app/admin/(workspace)/layout.tsx`
+- `frontend/claude/src/app/admin/(workspace)/products/[id]/page.tsx`
+- `frontend/claude/src/app/admin/(workspace)/taxonomy/page.tsx`
+- `frontend/claude/src/app/admin/admin.css`
+- `frontend/claude/src/app/admin/layout.tsx`
+- `frontend/claude/src/components/admin/access/AdminShell.tsx`
+- `frontend/claude/src/components/admin/access/BasicDraftEditor.tsx`
+- `frontend/claude/src/components/admin/access/PrivateProductGallery.tsx`
+- `frontend/claude/src/components/admin/access/PrivateProductTaxonomy.tsx`
+- `frontend/claude/src/components/admin/access/ProductGalleryEditor.tsx`
+- `frontend/claude/src/components/admin/access/TaxonomyForms.tsx`
+- `frontend/claude/src/components/admin/access/VariantEditor.tsx`
+- `frontend/claude/src/lib/admin/gallery-actions.ts`
+- `frontend/claude/src/lib/admin/gallery-validation.ts`
+- `frontend/claude/src/lib/admin/taxonomy-actions.ts`
+- `frontend/claude/src/lib/admin/taxonomy-validation.ts`
+- `frontend/claude/src/lib/admin/variant-actions.ts`
+- `frontend/claude/src/lib/admin/variant-management.ts`
+- `frontend/claude/tests/admin-gallery.check.ts`
+- `frontend/claude/tests/admin-taxonomy.check.ts`
+- `frontend/claude/tests/admin-variant-management.check.ts`
+- `scripts/admin/check-gallery-staging.mjs`
+- `scripts/admin/check-taxonomy-staging.mjs`
+- `scripts/admin/check-variants-staging.mjs`
+- `scripts/admin/configure-staging-product-flags.mjs`
+- `scripts/admin/deploy-preview.mjs`
+- `scripts/admin/test-generic-draft-staging.mjs`
+- `scripts/admin/verify-generic-draft-browser.mjs`
+- `scripts/admin/verify-staging-foundation.mjs`
+- `scripts/test-db.sh`
+- `supabase/migrations/20261030000400_private_product_gallery.sql`
+- `supabase/migrations/20261030000500_variant_inventory_management.sql`
+- `supabase/migrations/20261030000600_catalogue_taxonomy.sql`
+- `supabase/tests/bootstrap.sql`
+- `supabase/tests/catalogue-taxonomy.sql`
+- `supabase/tests/foundation.sql`
+- `supabase/tests/product-gallery.sql`
+- `supabase/tests/variant-management.sql`
