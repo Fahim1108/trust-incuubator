@@ -26,6 +26,10 @@ export async function verifyAdminBrowser({
   onCreatedId,
   extraHTTPHeaders,
   proxy,
+  accessURL,
+  onUploadedPath,
+  staff,
+  customer,
 }) {
   const browser = await chromium.launch({
     executablePath:
@@ -39,6 +43,7 @@ export async function verifyAdminBrowser({
   page.on("pageerror", (e) => failures.push(e.message));
   await mkdir("artifacts/admin", { recursive: true });
   try {
+    if(accessURL)await page.goto(accessURL);
     await page.goto("/admin/products");
     await page.waitForURL("**/admin/sign-in");
     assert.equal(await page.locator("input[type=password]").count(), 1);
@@ -92,6 +97,14 @@ export async function verifyAdminBrowser({
       await page.keyboard.press("Escape");
       assert.equal(await page.getByRole("dialog").count(), 0);
     }
+    await page.goto('/admin/media');
+    await page.getByLabel('Private draft image',{exact:true}).setInputFiles({name:'verification.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')});
+    await page.getByRole('button',{name:'Upload private image',exact:true}).click();
+    await page.getByText('Private image uploaded.',{exact:true}).waitFor();
+    const uploaded=await page.getByLabel('Stored object path').inputValue();
+    onUploadedPath(uploaded);
+    assert(/^[a-f0-9-]+\/[a-f0-9-]+\.png$/.test(uploaded));
+    await page.screenshot({path:'artifacts/admin/private-upload-390.png',fullPage:true});
     await page.goto('/admin/products/new');
     const createdId=await page.locator('input[name=request_id]').inputValue();onCreatedId(createdId);
     await page.getByLabel('Product name',{exact:true}).fill('Disposable browser created product');
@@ -172,6 +185,29 @@ export async function verifyAdminBrowser({
     );
     await page.goto("/admin/products");
     await page.waitForURL("**/admin/sign-in?denied=1");
+    for(const [role,account] of [['analyst',staff],['customer',customer]]){
+      if(!account)throw new Error('Missing browser role fixture: '+role);
+      await context.clearCookies();
+      if(accessURL)await page.goto(accessURL);
+      await page.goto('/admin/sign-in');
+      await page.getByLabel('Email',{exact:true}).fill(account.email);
+      await page.getByLabel('Password',{exact:true}).fill(account.password);
+      await page.getByRole('button',{name:'Sign in securely'}).click();
+      if(role==='customer'){
+        await page.getByRole('alert').filter({hasText:'This account does not have staff access.'}).waitFor();
+        await page.goto('/admin');await page.waitForURL('**/admin/sign-in');
+      }else{
+        await page.waitForURL('**/admin/mfa');
+        await page.getByLabel('Authenticator code').fill(code(account.secret));
+        await page.getByRole('button',{name:'Verify and continue'}).click();
+        await page.waitForURL(u=>u.pathname==='/admin');
+        await page.getByRole('heading',{name:'Store overview',exact:true}).waitFor();
+        await page.screenshot({path:'artifacts/admin/analyst-1440.png',fullPage:true});
+        await page.goto('/admin/products/new');await page.getByText('Your role cannot create products.',{exact:true}).waitFor();
+        await page.goto('/admin/media');await page.getByText('Your role cannot upload draft images.',{exact:true}).waitFor();
+        await page.goto('/admin/audit');await page.getByRole('heading',{name:'Audit access unavailable',exact:true}).waitFor();
+      }
+    }
     assert(!failures.length, "Browser errors: " + failures.length);
     await writeFile(
       "artifacts/admin/browser-results.json",
@@ -191,6 +227,9 @@ export async function verifyAdminBrowser({
             "audit log displays persisted changes",
             "logout invalidates browser access",
             "role revocation blocks data",
+            "real private image upload through UI",
+            "analyst dashboard and create/upload/audit restrictions",
+            "customer browser sign-in rejected",
           ],
           success: true,
         },

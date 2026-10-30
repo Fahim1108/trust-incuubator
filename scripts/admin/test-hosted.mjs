@@ -56,6 +56,10 @@ const users = [],
   checks = [];
 const product = randomUUID();
 const createdProducts=[];
+const storagePaths=[];
+const bucket='attires-product-drafts';
+const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64');
+const roleClients=new Map();
 
 const key = await getStagingPublishableKey();
 const operator = createClient(projectUrl, await getTestAdminKey(), options);
@@ -76,6 +80,7 @@ try {
   );
 
   let ownerContext;
+  const browserAccounts={};
   for (const role of ["customer", "owner", "analyst"]) {
     const email = `attires-admin-test-${randomUUID()}@example.com`;
     const user = ok(
@@ -102,6 +107,8 @@ try {
     assert((await c.rpc("admin_catalogue_snapshot")).error);
     pass(role + " AAL1 denied admin snapshot");
   assert.equal((await c.rpc("admin_create_product_draft",{request_id:product,product_name:"Blocked",product_description:""})).error?.code,"42501");
+    assert((await c.storage.from(bucket).upload(`${user.id}/${randomUUID()}.png`,png,{contentType:'image/png'})).error);
+    pass(role + " AAL1 cannot upload private image");
     const factor = ok(
       await c.auth.mfa.enroll({
         factorType: "totp",
@@ -118,6 +125,31 @@ try {
       ok(await c.auth.mfa.getAuthenticatorAssuranceLevel()).currentLevel,
       "aal2",
     );
+    browserAccounts[role]={email,password,secret:factor.totp.secret};
+    roleClients.set(role,c);
+    if(role==='owner'){
+      const path=`${user.id}/${randomUUID()}.png`;
+      storagePaths.push(path);
+      ok(await c.storage.from(bucket).upload(path,png,{contentType:'image/png'}));
+      const downloaded=ok(await c.storage.from(bucket).download(path));
+      assert.deepEqual(Buffer.from(await downloaded.arrayBuffer()),png);
+      assert((await anonymous.storage.from(bucket).download(path)).error);
+      // Even a real AAL2 customer has no staff media permission.
+      assert((await roleClients.get('customer').storage.from(bucket).download(path)).error);
+      const publicURL=c.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+      assert(!(await fetch(publicURL,{signal:AbortSignal.timeout(20000)})).ok);
+      assert((await c.storage.from(bucket).upload(`${randomUUID()}/foreign.png`,png,{contentType:'image/png'})).error);
+      assert((await c.storage.from(bucket).upload(`${user.id}/invalid-${randomUUID()}.txt`,Buffer.from('test'),{contentType:'text/plain'})).error);
+      const signed=ok(await c.storage.from(bucket).createSignedUrl(path,30));
+      const response=await fetch(signed.signedUrl,{signal:AbortSignal.timeout(20000)});
+      assert(response.ok);assert.deepEqual(Buffer.from(await response.arrayBuffer()),png);
+      pass('AAL2 owner binary PNG upload/download matches; anonymous/public/customer and foreign-folder/MIME access rejected; signed URL works');
+    }
+    if(role==='analyst'){
+      assert((await c.storage.from(bucket).upload(`${user.id}/${randomUUID()}.png`,png,{contentType:'image/png'})).error);
+      assert.deepEqual(Buffer.from(await ok(await c.storage.from(bucket).download(storagePaths[0])).arrayBuffer()),png);
+      pass('AAL2 analyst can read private image but cannot upload');
+    }
     const snapshot = await c.rpc("admin_catalogue_snapshot");
     if (role === "customer") {
       assert(snapshot.error);
@@ -125,6 +157,7 @@ try {
         (await c.from("user_roles").insert({ user_id: user.id, role: "owner" }))
           .error,
       );
+      assert((await c.storage.from(bucket).upload(`${user.id}/${randomUUID()}.png`,png,{contentType:'image/png'})).error);
       pass(
         "MFA customer still denied; metadata and role writes cannot promote",
       );
@@ -214,14 +247,16 @@ try {
           .eq("variant_id", product)
       ).error,
     );
-    if (role !== "owner") ok(await c.auth.signOut());
+
   }
+  for(const c of roleClients.values())ok(await c.auth.signOut());
+  pass('all temporary signed sessions explicitly logged out');
   // Optional browser adapter runs while disposable owner exists; no secrets written to disk.
   if (process.env.ADMIN_VERCEL_DEPLOYMENT_FILE) {
     const { verifyHostedPreview } = await import(
       "./hosted-preview-browser.mjs"
     );
-    await verifyHostedPreview(ownerContext);
+    await verifyHostedPreview({...ownerContext,staff:browserAccounts.analyst,customer:browserAccounts.customer,onUploadedPath:path=>storagePaths.push(path)});
     pass("hosted Preview browser verified at the exact deployed commit");
   } else if (process.env.ADMIN_BROWSER_BASE) {
     const { verifyAdminBrowser } = await import("./verify-browser.mjs");
@@ -246,6 +281,12 @@ try {
     }
     return false;
   }
+  let storageCleaned=true;
+  for(const path of storagePaths){
+    if(!await clean(async()=>{ok(await operator.storage.from(bucket).remove([path]));assert((await operator.storage.from(bucket).download(path)).error);}))storageCleaned=false;
+  }
+  if(storageCleaned)pass('temporary binary Storage objects removed and absence verified');
+  else {console.error('Storage cleanup requires investigation.');process.exitCode=1;}
   let productCleaned=true;
   for(const id of [product,...createdProducts])if(!await clean(()=>query(`delete from public.admin_audit_logs where target_id=${uuid(id)};delete from public.thrift_intake where product_id=${uuid(id)};delete from public.products where id=${uuid(id)};`,false)))productCleaned=false;
   let usersCleaned=true;

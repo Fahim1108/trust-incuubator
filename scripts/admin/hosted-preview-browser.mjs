@@ -45,24 +45,16 @@ export async function verifyHostedPreview(context) {
   // Vercel omits rootDirectory from the deployment settings projection.
   // Verify configured root independently, then prove the correct app in the browser.
   assert.equal(previous.rootDirectory, "frontend/claude");
-  const before = new Set(Object.keys(previous.protectionBypass || {}));
+  // Deployment-only, one-hour share link. Never alter project-wide protection.
+  const before = new Set(Object.keys(deployment.protectionBypass || {}));
   let secret;
   try {
-    await api(
-      `/v1/projects/${project}/protection-bypass?teamId=${team}`,
-      "PATCH",
-      {
-        generate: {
-          note: "Temporary admin browser verification; automatically revoked",
-        },
-      },
-    );
-    const updated = await api(`/v9/projects/${project}?teamId=${team}`);
-    const added = Object.keys(updated.protectionBypass || {}).filter(
-      (k) => !before.has(k),
-    );
-    assert.equal(added.length, 1);
-    secret = added[0];
+    const shared=await api(`/aliases/${record.id}/protection-bypass?teamId=${team}`, 'PATCH', {ttl:3600});
+    const updated=await api(`/v13/deployments/${record.id}?teamId=${team}`);
+    const added=Object.keys(updated.protectionBypass||shared.protectionBypass||{}).filter(k=>!before.has(k));
+    secret=added[0] || shared.secret;
+    assert(typeof secret==='string'&&secret.length>10,'Deployment-scoped share link unavailable');
+    assert(added.length<=1,'Unexpected share link changes');
     const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
     let proxy;
     if (proxyUrl) {
@@ -80,10 +72,7 @@ export async function verifyHostedPreview(context) {
     await verifyAdminBrowser({
       ...context,
       baseURL: record.url,
-      extraHTTPHeaders: {
-        "x-vercel-protection-bypass": secret,
-        "x-vercel-set-bypass-cookie": "true",
-      },
+      accessURL: record.url + "/?_vercel_share=" + encodeURIComponent(secret),
       proxy,
     });
     await writeFile(
@@ -104,14 +93,13 @@ export async function verifyHostedPreview(context) {
     );
   } finally {
     if (secret) {
-      await api(
-        `/v1/projects/${project}/protection-bypass?teamId=${team}`,
-        "PATCH",
-        { revoke: { secret, regenerate: false } },
-      );
-      const current = await api(`/v9/projects/${project}?teamId=${team}`);
-      assert(!Object.keys(current.protectionBypass || {}).includes(secret));
-      console.log("Temporary Preview automation access revoked.");
+      await api(`/aliases/${record.id}/protection-bypass?teamId=${team}`, 'PATCH', {revoke:{secret,regenerate:false}});
+      const current=await api(`/v13/deployments/${record.id}?teamId=${team}`);
+      assert(!Object.keys(current.protectionBypass||{}).includes(secret));
+      const projectAfter=await api(`/v9/projects/${project}?teamId=${team}`);
+      assert.deepEqual(projectAfter.ssoProtection,previous.ssoProtection);
+      assert.deepEqual(projectAfter.protectionBypass||{},previous.protectionBypass||{});
+      console.log('Deployment-only browser access revoked; project protection unchanged.');
     }
   }
 }
