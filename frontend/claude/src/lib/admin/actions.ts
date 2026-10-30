@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { adminClient } from "./supabase";
+import {isProductionStorefront} from "../storefront-policy";
 import { staffSession } from "./access";
 import {
   signInSchema,
@@ -63,8 +64,8 @@ export async function enrollStaffMfa(): Promise<AdminActionState> {
   }
   const result = await client.auth.mfa.enroll({
     factorType: "totp",
-    issuer: "Attires Arena",
-    friendlyName: "Store administration",
+    issuer: isProductionStorefront()?"Attires Arena":"Attires Arena Staging",
+    friendlyName: isProductionStorefront()?"Store administration":"Staging store administration",
   });
   if (result.error)
     return { error: "Authenticator setup unavailable. Try again later." };

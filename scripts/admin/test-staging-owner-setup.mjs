@@ -64,7 +64,7 @@ try{
    pass('setup route cannot bypass already enrolled MFA using an AAL1 session');
   }finally{await context.close();await browser.close();}
  });
-}catch(error){console.error('Owner setup verification failed: '+String(error.message).split('\n')[0].replace(/#.*$/,'#[redacted]').replaceAll(password,'[redacted]'));process.exitCode=1;}
+}catch(error){console.error('Owner setup verification failed: '+String(error.message).split('\n')[0].replace(/#.*$/,'#[redacted]').replace(/([?&]_vercel_share=)[A-Za-z0-9_-]+/g,'$1[redacted]').replaceAll(password,'[redacted]'));process.exitCode=1;}
 finally{
  if(id){const result=await operator.auth.admin.deleteUser(id);if(result.error){console.error('Disposable setup account cleanup failed');process.exitCode=1;}else cleaned=true;}
  await mkdir('artifacts/admin/owner-setup',{recursive:true});
