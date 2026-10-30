@@ -70,3 +70,9 @@ No fake order/payment, guessed physical measurement, automatic product publicati
 Premium dark admin redesign and complete product/image/price/category/measurement/inventory/publishing management; then real orders, customers, payments, discounts, shipping and staff-management workflows. Existing source foundations are preserved. Do not start those milestones or claim the whole business platform finished before approval and the required security gates.
 
 Future target URLs and HTTPS/SSL, backup, migration compatibility, exact-commit promotion and rollback gates are documented in `PRODUCTION_RELEASE_PLAN.md`. Production DNS/env/schema changes and releases require separate explicit authorization. An old Preview URL is not evidence of this milestone's deployed code.
+
+## Remaining-permission investigation
+
+The provider now gives exact evidence: `/config/auth` requires `auth_config_read`; both API-key metadata and revealed-key requests require `api_gateway_keys_read`. Project metadata and database access work. Supported Dashboard/manual configuration and secure operator test-key alternatives are documented in [STAGING_VERIFICATION_ACCESS.md](STAGING_VERIFICATION_ACCESS.md). These permissions were not changed or bypassed.
+
+A read-only digest check confirmed every one of the 12 applied migrations matches source. No new Auth user, staff assignment, product or Storage object was created. Real Auth/MFA, binary upload and hosted verification remain blocked; no success is claimed for them. Operator-only test helpers now support explicitly supplied staging test keys from secure execution settings as an alternative to Management API key retrieval; Production legacy JWTs and public keys are rejected for that privileged use.
