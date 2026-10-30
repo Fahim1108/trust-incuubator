@@ -46,14 +46,19 @@ export async function verifyAdminBrowser({
   page.on("pageerror", (e) => failures.push(e.message));
   await mkdir("artifacts/admin", { recursive: true });
   try {
+    console.log("BROWSER: open deployment and protected admin route");
     if(accessURL)await page.goto(accessURL);
     await page.goto("/admin/products");
     await page.waitForURL("**/admin/sign-in");
     assert.equal(await page.locator("input[type=password]").count(), 1);
+    await page.setViewportSize({width:1440,height:900});
+    await page.screenshot({path:"artifacts/admin/login-1440.png",fullPage:true});
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Password", { exact: true }).fill(password);
+    console.log("BROWSER: submit staff password");
     await page.getByRole("button", { name: "Sign in securely" }).click();
     await page.waitForURL("**/admin/mfa");
+    console.log('BROWSER: enroll authenticator through UI');
     await page.getByRole('button',{name:'Set up authenticator',exact:true}).click();
     const qr=page.getByAltText('Private authenticator enrollment QR code');
     await qr.waitFor();
@@ -67,6 +72,7 @@ export async function verifyAdminBrowser({
     await page.getByLabel("Authenticator code").fill(code(secret));
     await page.getByRole("button", { name: "Verify and continue" }).click();
     await page.waitForURL((url) => url.pathname === "/admin");
+    console.log("BROWSER: MFA verified; inspect dashboard");
     await page.getByRole("heading", { name: "Store overview" }).waitFor();
     assert.equal(
       await page
@@ -110,6 +116,7 @@ export async function verifyAdminBrowser({
       await page.keyboard.press("Escape");
       assert.equal(await page.getByRole("dialog").count(), 0);
     }
+    console.log('BROWSER: private upload');
     await page.goto('/admin/media');
     await page.getByLabel('Private draft image',{exact:true}).setInputFiles({name:'verification.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')});
     await page.getByRole('button',{name:'Upload private image',exact:true}).click();
@@ -118,17 +125,43 @@ export async function verifyAdminBrowser({
     onUploadedPath(uploaded);
     assert(/^[a-f0-9-]+\/[a-f0-9-]+\.png$/.test(uploaded));
     await page.screenshot({path:'artifacts/admin/private-upload-390.png',fullPage:true});
+    await page.setViewportSize({width:1440,height:900});
+    await page.screenshot({path:'artifacts/admin/private-upload-1440.png',fullPage:true});
+    await page.setViewportSize({width:390,height:844});
+    console.log('BROWSER: create product draft');
     await page.goto('/admin/products/new');
     const createdId=await page.locator('input[name=request_id]').inputValue();onCreatedId(createdId);
     await page.getByLabel('Product name',{exact:true}).fill('Disposable browser created product');
     await page.getByLabel('Description',{exact:true}).fill('QA draft creation only');
     await page.getByRole('button',{name:'Create draft',exact:true}).click();
     await page.getByRole('status').filter({hasText:'Basic product draft saved.'}).waitFor();
+    console.log('BROWSER: persisted library filters and product details');
+    await page.goto('/admin/products/library?q=Disposable%20browser%20created%20product&status=draft&sort=name');
+    await page.getByRole('link',{name:'Disposable browser created product',exact:true}).click();
+    await page.getByRole('heading',{name:'Disposable browser created product',exact:true}).waitFor();
+    await page.getByText('QA draft creation only',{exact:true}).waitFor();
+    await page.getByText('No SKU variants configured.',{exact:false}).waitFor();
+    for(const width of [390,1440]){
+      await page.setViewportSize({width,height:900});
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Product detail overflow');
+      await page.screenshot({path:`artifacts/admin/library-detail-${width}.png`,fullPage:true});
+    }
+    await page.goto('/admin/products/library?status=draft&sort=name');
+    await page.getByRole('heading',{name:'Product library',exact:true}).waitFor();
+    for(const width of [390,1440]){
+      await page.setViewportSize({width,height:900});
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Product library overflow');
+      await page.screenshot({path:`artifacts/admin/library-${width}.png`,fullPage:true});
+    }
+    await page.goto('/admin/products/library?q=Disposable%20browser%20created%20product&status=published');
+    await page.getByText('No products match these filters.',{exact:true}).waitFor();
+    await page.setViewportSize({width:390,height:844});
+
     await page.goto("/admin/products?q=one&q=two");
     await page.getByRole("heading", {name:"Product drafts",exact:true}).waitFor();
     await page.goto("/admin/products");
-    const card = page.locator("article").filter({ hasText: "AA-SHIRT-999" });
-    await card.locator("summary").click();
+    const card = page.locator("article.aa-product").filter({ hasText: "AA-SHIRT-999" });
+    await card.getByText("Edit imported draft",{exact:true}).click();
     await card
       .getByLabel("Product name", { exact: true })
       .fill("Browser verified draft");
@@ -172,6 +205,7 @@ export async function verifyAdminBrowser({
     await review.getByRole('button',{name:'4. Review',exact:true}).click();
     await review.getByRole('button',{name:'Save & Next',exact:true}).click();
     await page.waitForURL('**/admin/products?filter=missing-size');
+    console.log("BROWSER: inspect persisted audit and logout");
     await page.goto("/admin/audit");
     await page.getByRole("heading", { name: "Catalogue audit log", exact: true }).waitFor();
     assert((await page.getByRole("heading", { name: "thrift / draft saved", exact: true }).count()) > 0);
@@ -198,6 +232,7 @@ export async function verifyAdminBrowser({
     );
     await page.goto("/admin/products");
     await page.waitForURL("**/admin/sign-in?denied=1");
+    console.log('BROWSER: verify analyst and customer restrictions');
     for(const [role,account] of [['analyst',staff],['customer',customer]]){
       if(!account)throw new Error('Missing browser role fixture: '+role);
       await context.clearCookies();
@@ -243,6 +278,8 @@ export async function verifyAdminBrowser({
             "real private image upload through UI",
             "analyst dashboard and create/upload/audit restrictions",
             "customer browser sign-in rejected",
+            "product library persists real created drafts and filters by actual status",
+            "product detail shows persisted description and no invented variants",
           ],
           success: true,
         },

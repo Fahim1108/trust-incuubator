@@ -1,0 +1,27 @@
+{
+  "baseURL": "https://attires-arena-frontend-preview-3jhjabgw1-fahim-s-projects1.vercel.app",
+  "viewports": [
+    360,
+    390,
+    430,
+    768,
+    1440
+  ],
+  "checks": [
+    "unauthenticated redirect",
+    "password sign-in",
+    "real browser QR enrollment and six-digit TOTP verification",
+    "HttpOnly session cookies",
+    "real catalogue snapshot",
+    "responsive no overflow",
+    "mobile dialog Escape",
+    "draft save survives reload",
+    "audit log displays persisted changes",
+    "logout invalidates browser access",
+    "role revocation blocks data",
+    "real private image upload through UI",
+    "analyst dashboard and create/upload/audit restrictions",
+    "customer browser sign-in rejected"
+  ],
+  "success": true
+}

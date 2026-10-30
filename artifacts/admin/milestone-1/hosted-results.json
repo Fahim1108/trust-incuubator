@@ -1,0 +1,25 @@
+{
+  "scope": "Real development Supabase Auth, TOTP MFA and PostgREST",
+  "passed": [
+    "anonymous cannot read admin snapshot",
+    "customer AAL1 denied admin snapshot",
+    "customer AAL1 cannot upload private image",
+    "MFA customer still denied; metadata and role writes cannot promote",
+    "customer cannot save drafts",
+    "owner AAL1 denied admin snapshot",
+    "owner AAL1 cannot upload private image",
+    "AAL2 owner binary PNG upload/download matches; anonymous/public/customer and foreign-folder/MIME access rejected; signed URL works",
+    "owner AAL2 sees actual intake",
+    "real owner draft save persists, audit records actor, stale update denied",
+    "analyst AAL1 denied admin snapshot",
+    "analyst AAL1 cannot upload private image",
+    "AAL2 analyst can read private image but cannot upload",
+    "analyst AAL2 sees actual intake",
+    "analyst cannot save drafts",
+    "all temporary signed sessions explicitly logged out",
+    "hosted Preview browser verified at the exact deployed commit",
+    "temporary binary Storage objects removed and absence verified",
+    "disposable accounts, roles, product and product-edit audit removed; operator provisioning audit retained"
+  ],
+  "success": true
+}

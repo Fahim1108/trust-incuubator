@@ -1,5 +1,7 @@
 # Implementation plan
 
+**Current Admin 2.0 checkpoint:** Milestone 1 staging security foundation signed off after real hosted verification. Milestone 2 has begun; see [active product-management plan](MILESTONE_2_PRODUCT_MANAGEMENT.md). Original storefront phase checklists below are historical and do not imply all commerce/admin features are complete. Production release remains separately approval-gated.
+
 Use small reviewable increments. Existing task checkouts are isolated; do not create worktrees unless requested. Preserve user work. Never run destructive production migrations or publish without authorization.
 
 ## Phase 0 — audit
@@ -84,3 +86,7 @@ The supplied storefront UI refinements are implemented; see `FINAL_REFINEMENT_RE
 ## 30 October 2026 — Admin 2.0 staging-first gate
 
 Approved Milestone 1 is limited to the isolated staging foundation. Database/bootstrap, private draft Storage and legacy MFA/audit hardening are applied and SQL-verified; actual signed Auth/MFA/Storage API/browser verification is still blocked by staging Auth/API-key read permissions. See [actual results](MILESTONE_1_REPORT.md). Full product management and the dark admin redesign have not started as the next milestone. Production release remains a separate approval gate under [the release plan](PRODUCTION_RELEASE_PLAN.md).
+
+### 30 October 2026 — Milestone 1 signed off; Milestone 2 authorized
+
+Final hosted browser verification passed on e279ccc / dpl_7Aty6LyTJjuQGb7WzTJEyXqXYXbZ after correcting Preview public configuration and the test selector. All synthetic users, roles, products and Storage objects removed; provisioning audit retained. Twelve migrations preserved; no migrations rerun or Production changes. Detailed sign-off and current evidence: [HOSTED_MILESTONE_1_VERIFICATION.md](HOSTED_MILESTONE_1_VERIFICATION.md). The two Management API read-scope restrictions are documented inspection limitations, not runtime security blockers. Milestone 2 may now start under the user's authorization, Staging only, $0. Production release remains separately gated.

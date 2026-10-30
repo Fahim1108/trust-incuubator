@@ -1,5 +1,8 @@
 # Progress
 
+**Latest checkpoint (30 October 2026): Admin 2.0 Milestone 1 staging foundation PASSED including hosted browser verification; Milestone 2 first functional product-library increment is in progress. Production unchanged. See [sign-off](HOSTED_MILESTONE_1_VERIFICATION.md) and [Milestone 2 scope](MILESTONE_2_PRODUCT_MANAGEMENT.md). Earlier phase entries below are historical, not the current admin status.
+
+
 Current phase: Phase 0 complete; Phase 1 incomplete. Real development Supabase Auth/PostgREST, database security and development-browser sessions are verified. Public signup/email delivery and the full browser email callback remain blocked/unverified. Not production ready.
 
 ## Completed
@@ -707,3 +710,11 @@ Final read-only `verify:staging`: 12 public tables with RLS, 12 existing migrati
 Verification: root lint, TypeScript and 58 tests passed; frontend lint, TypeScript, 122 tests and optimized production build passed; five operator security tests passed; `git diff --check` passed. Frontend unit tests emit existing Tailwind content configuration warning; production build succeeded. No migrations rerun, Production changes, paid resources or Milestone 2 work.
 
 Remaining: Management `/config/auth` still HTTP 403 `auth_config_read`; API-key metadata HTTP 403 `api_gateway_keys_read`. Direct Auth public settings and configured operator keys permit tested operations without these optional reads. Full Auth Site URL/redirect allowlist remains Dashboard-reported, not API-inspected. Hosted browser verification has NOT run: latest read-only Vercel Preview remains `a14fa59de02cf9ab5edd6d402141c1621c0f919a` at `https://attires-arena-frontend-preview-6aj4cqn5v-fahim-s-projects1.vercel.app`, predating current staging changes. No browser bypass credential configured; existing automation would mutate project-wide protection shared with Production, so it was not used. Milestone 1 remains pending current-code staging Preview/browser verification; do not represent backend API checks as browser completion.
+
+### 30 October 2026 — Milestone 1 signed off; Milestone 2 authorized
+
+Final hosted browser verification passed on e279ccc / dpl_7Aty6LyTJjuQGb7WzTJEyXqXYXbZ after correcting Preview public configuration and the test selector. All synthetic users, roles, products and Storage objects removed; provisioning audit retained. Twelve migrations preserved; no migrations rerun or Production changes. Detailed sign-off and current evidence: [HOSTED_MILESTONE_1_VERIFICATION.md](HOSTED_MILESTONE_1_VERIFICATION.md). The two Management API read-scope restrictions are documented inspection limitations, not runtime security blockers. Milestone 2 may now start under the user's authorization, Staging only, $0. Production release remains separately gated.
+
+### 30 October 2026 — Milestone 2 first implementation increment
+
+Started after final hosted M1 pass. Added a staging-only, typed product library and record detail using actual authenticated PostgreSQL reads: literal name search, status, sort, exact counts/pagination, truthful missing facts, real variants/inventory and links to existing audited creation/intake editing. No migration or new database write surface. Full CRUD, media/product association, publication and dark admin redesign remain pending; see MILESTONE_2_PRODUCT_MANAGEMENT.md. Current increment browser verification is pending its exact-commit Preview deployment.

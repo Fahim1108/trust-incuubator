@@ -1,6 +1,8 @@
 # Admin 2.0 Milestone 1 — 30 October 2026
 
-**Status: database/Storage foundation implemented and verified; full Milestone 1 acceptance remains blocked by Auth/API credentials permissions.** No next milestone has started. This is not a full e-commerce/admin completion or launch claim.
+**Current status: PASSED — staging admin security foundation signed off.** Real hosted browser, Auth, QR/TOTP, role restrictions, draft persistence/audit and binary Storage UI/API tests passed on `e279ccc3a39fa58938e514b442d9810cc13ee775`. Cleanup is verified. Milestone 2 has started with a staging-only product library; full product management and Production release are not complete. See [current sign-off](HOSTED_MILESTONE_1_VERIFICATION.md).
+
+The original bootstrap assessment and subsequent dated entries below are historical; their earlier blockers/deployment statements are superseded by the current sign-off.
 
 ## Scope and safety
 
@@ -106,3 +108,7 @@ Final read-only `verify:staging`: 12 public tables with RLS, 12 existing migrati
 Verification: root lint, TypeScript and 58 tests passed; frontend lint, TypeScript, 122 tests and optimized production build passed; five operator security tests passed; `git diff --check` passed. Frontend unit tests emit existing Tailwind content configuration warning; production build succeeded. No migrations rerun, Production changes, paid resources or Milestone 2 work.
 
 Remaining: Management `/config/auth` still HTTP 403 `auth_config_read`; API-key metadata HTTP 403 `api_gateway_keys_read`. Direct Auth public settings and configured operator keys permit tested operations without these optional reads. Full Auth Site URL/redirect allowlist remains Dashboard-reported, not API-inspected. Hosted browser verification has NOT run: latest read-only Vercel Preview remains `a14fa59de02cf9ab5edd6d402141c1621c0f919a` at `https://attires-arena-frontend-preview-6aj4cqn5v-fahim-s-projects1.vercel.app`, predating current staging changes. No browser bypass credential configured; existing automation would mutate project-wide protection shared with Production, so it was not used. Milestone 1 remains pending current-code staging Preview/browser verification; do not represent backend API checks as browser completion.
+
+### 30 October 2026 — Milestone 1 signed off; Milestone 2 authorized
+
+Final hosted browser verification passed on e279ccc / dpl_7Aty6LyTJjuQGb7WzTJEyXqXYXbZ after correcting Preview public configuration and the test selector. All synthetic users, roles, products and Storage objects removed; provisioning audit retained. Twelve migrations preserved; no migrations rerun or Production changes. Detailed sign-off and current evidence: [HOSTED_MILESTONE_1_VERIFICATION.md](HOSTED_MILESTONE_1_VERIFICATION.md). The two Management API read-scope restrictions are documented inspection limitations, not runtime security blockers. Milestone 2 may now start under the user's authorization, Staging only, $0. Production release remains separately gated.
