@@ -22,7 +22,7 @@ This is **the first functional increment**, not completion of Full Product Manag
 5. **Validated publication/archive workflow.** Refuse publication without real required facts, approved image and valid active SKU/inventory. Preserve Production catalogue safeguards and avoid enabling new generic-product publication until public adapters are explicitly updated and tested. Prefer reversible archiving; do not delete products referenced by orders.
 6. **Dark admin design and full workflow QA.** Scope style tokens/components to admin; preserve storefront design. Verify product-manager permissions alongside Owner/analyst/customer; stale edits, duplicate submission, upload failure/cleanup, audit, database isolation and responsive browser flows.
 
-No Production database migration, environment update, DNS change, account/MFA change, live publication or Production deployment is authorized by this milestone. A permanent staging Owner still requires explicit approval. Management inspection permissions are not required for these runtime services; use the existing direct evidence and Dashboard verification documented in `MANAGEMENT_API_LIMITATIONS.md`.
+No Production database migration, environment update, DNS change, account/MFA change, live publication or Production deployment is authorized by this milestone. A permanent Staging Owner was explicitly approved and is now confirmed with verified TOTP and user-confirmed dashboard access; see STAGING_OWNER_ACCESS.md. Management inspection permissions are not required for these runtime services; use the existing direct evidence and Dashboard verification documented in `MANAGEMENT_API_LIMITATIONS.md`.
 
 ## Final verification of the first increment
 
@@ -48,3 +48,7 @@ Evidence: `artifacts/admin/milestone-2/` (fresh screenshots and machine-readable
 - `frontend/claude/tests/admin-library.check.ts`
 
 Remaining tasks and restrictions above still apply: this is the verified library/detail increment, **not complete Full Product Management**. Next: audited generic-draft editing and persistent private-media association, with separately reviewed version-controlled Staging database changes where required. Do not apply migrations or enable live publication without the necessary authorization.
+
+## Next increment prepared — basic draft metadata editing
+
+Permanent access is now verified. Added the validated frontend, default-off Staging activation gate, additive migration 20261030000300 and executable SQL/concurrency tests for basic name/description editing. Local checks passed: 201 JS/TS/operator tests, 138 SQL assertions, true overlapping draft edit conflict handling and the existing concurrent inventory test. **Not applied to Staging or enabled in Preview**; the existing 12 remote migrations remain intact and the new RPC is absent. The required exact approval and verification procedure is documented in [GENERIC_DRAFT_MIGRATION_REVIEW.md](GENERIC_DRAFT_MIGRATION_REVIEW.md). Full product management remains incomplete.

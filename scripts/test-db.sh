@@ -14,6 +14,7 @@ if [ "$ready" != true ]; then docker logs "$container_id"; exit 1; fi
 run_sql() { docker exec -i "$container_id" psql -X -U postgres -v ON_ERROR_STOP=1 < "$1"; }
 run_sql supabase/tests/bootstrap.sql
 for migration in supabase/migrations/*.sql; do run_sql "$migration"; done
-{ sed '/^rollback;$/,$d' supabase/tests/foundation.sql; cat supabase/tests/auth-security.sql; sed '1d;$d' scripts/inventory/thrift-drafts.sql; cat supabase/tests/thrift-reviews.sql; cat supabase/tests/order-number.sql; cat supabase/tests/admin-catalogue.sql; cat supabase/tests/draft-storage.sql; printf '\nrollback;\n'; } | docker exec -i "$container_id" psql -X -U postgres -v ON_ERROR_STOP=1
+{ sed '/^rollback;$/,$d' supabase/tests/foundation.sql; cat supabase/tests/auth-security.sql; sed '1d;$d' scripts/inventory/thrift-drafts.sql; cat supabase/tests/thrift-reviews.sql; cat supabase/tests/order-number.sql; cat supabase/tests/admin-catalogue.sql; cat supabase/tests/draft-storage.sql; cat supabase/tests/generic-draft.sql; printf '\nrollback;\n'; } | docker exec -i "$container_id" psql -X -U postgres -v ON_ERROR_STOP=1
 python3 scripts/test-db-concurrency.py "$container_id"
+python3 scripts/test-generic-draft-concurrency.py "$container_id"
 printf 'Database migration and RLS tests passed. Container will be removed.\n'
