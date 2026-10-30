@@ -1,45 +1,45 @@
-# Secure development admin access
+# Secure staging administration access
 
-This increment runs only in the existing Claude Preview application. Do not deploy this sample-data frontend to Production.
+Staging project: `jwccyndyaamodxjtjtfo`. Production `euoannuvovsbwxjqnriw` must not be used for development, QA or provisioning under Milestone 1.
 
-1. The designated owner must have a confirmed, nonanonymous Supabase Auth account in development project `euoannuvovsbwxjqnriw`.
-2. The store owner must explicitly identify that account. An earlier customer-test email is not authorization to promote it.
-3. A trusted operator verifies its UUID and confirmed email in Supabase, then executes the existing private provisioning function from the development SQL editor:
+## Current state
 
-```sql
-select private.provision_owner(
-  '<verified-user-uuid>'::uuid,
-  '<matching-confirmed-email>',
-  'Store owner explicitly designated this development account'
-);
-```
+Staging schema and private draft-media policies are installed. There are **zero Auth accounts and zero staff assignments**. No permanent Owner, password or MFA factor has been created. The existing Production Owner is not copied or modified.
 
-The function is not callable through customer PostgREST or public registration; it validates both identity fields and records an operator audit. Never grant its execution to anon/authenticated. Never send passwords, MFA secrets, QR images, OTPs or access tokens in chat.
+The stable application entry is `/admin/login`, which redirects to the preserved `/admin/sign-in` flow. `/admin` requires verified identity, a database role and AAL2. This code has not been deployed by Milestone 1; do not assume an old Preview deployment uses the new staging configuration.
 
-4. Visit `/admin/sign-in`, enter that account's own credentials, and enroll an authenticator. Scan its private QR, enter a current six-digit code, then enter the protected workspace.
-5. Owner/product_manager may save imported drafts; analyst/order_manager can read catalogue data; other existing roles have no catalogue permission. No new roles are assigned through this UI.
-6. Authenticator recovery/unenrollment is a trusted Supabase operator task for now. The UI cannot bypass MFA or perform account recovery. Keep a secure recovery process before real business use.
+## Future designated staging Owner
 
-Server config: `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (existing NEXT_PUBLIC equivalents accepted). The development project URL is explicitly checked. The application never needs service-role or management tokens. Cookies are HttpOnly, SameSite=Lax, Secure over deployed HTTPS, namespaced separately from the root app; proxy refresh is scoped to `/admin`. Staff membership is checked before data access and each server action. New RPCs independently require AAL2 and DB permissions.
+Only after explicit account approval:
 
-Next.js Server Actions enforce same-origin requests. Supabase Auth supplies provider-side authentication/MFA rate limits; a distributed application-specific throttle and automated abuse testing remain pending. No MFA enrollment secret is logged or stored by application code.
+1. Create/identify a separate confirmed, nonanonymous staging Auth account. Do not copy Production UUIDs, passwords, sessions or MFA secrets.
+2. Verify its exact staging UID and email. A trusted staging operator may then invoke the existing private provisioning function with those verified values and an authorization reason. It is not exposed to customer/browser execution. No default password exists.
+3. Sign into the staging Preview, enroll TOTP and verify a current code. Membership lookup remains available before MFA, while privileged data/mutations require AAL2.
+4. Never share passwords, verification links, OTPs, tokens or MFA QR/secrets in chat. Account recovery must be separately authorized; never remove MFA to make a test pass.
 
-## Verification commands
+No provisioning command was executed by Milestone 1.
+
+## Environment
+
+The application needs `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for staging; see `frontend/claude/.env.example`. Vercel provides its own environment identity automatically. For a local optimized Preview server, explicitly use `VERCEL_ENV=preview`. Do not use historical Production NEXT_PUBLIC bindings as local staging defaults.
+
+Privileged operator/test keys never belong in the application or NEXT_PUBLIC configuration. The scoped operator token still lacks staging Auth-configuration/API-key read access; real Auth/MFA/Storage API verification is blocked until this is resolved securely.
+
+## Commands
 
 ```sh
+npm run verify:staging
+npm run migrate:staging
+npm run test:staging:sql
+npm run test:db
 npm --prefix frontend/claude run lint
 npm --prefix frontend/claude run typecheck
 npm --prefix frontend/claude test
-CLAUDE_DESIGN_PREVIEW=1 npm --prefix frontend/claude run build
-npm run test:db
-node --use-env-proxy scripts/admin/migrate-development.mjs
-node --use-env-proxy scripts/admin/test-hosted.mjs
+npm --prefix frontend/claude run build
 ```
 
-Migration script defaults to a rollback dry run, is fixed to development, and skips existing history. `--apply` is an explicit additive development apply. Hosted verification creates and deletes disposable Auth/MFA accounts and a single isolated intake fixture; it never edits real shirts. Private operator provisioning audit records are retained intentionally; the disposable product-edit audit is cleaned with its fixture. Do not run concurrent copies (reserved test source ID AA-SHIRT-999).
+`migrate:staging` defaults to a rolled-back dry run; `-- --apply` is explicit and staging-isolated. `test:staging:sql` uses temporary transaction-local fixtures and simulated claims with actual Supabase SQL helpers, then rolls everything back; it is **not** signed Auth/GoTrue or binary upload verification. `test:db` runs in a disposable network-isolated PostgreSQL container.
 
-Browser verification: start the built app with `CLAUDE_DESIGN_PREVIEW=1 NODE_USE_ENV_PROXY=1 npm --prefix frontend/claude start -- --port 3001`, with configured development bindings, then run `ADMIN_BROWSER_BASE=http://localhost:3001 node --use-env-proxy scripts/admin/test-hosted.mjs`. Hosted protected Preview needs a temporary automation bypass supplied in memory; never put it in a public URL or commit it.
+Historical inventory/customer/staff/development verification scripts are blocked before any remote operation. Use current staging commands. The real hosted Auth harness is `scripts/admin/test-hosted.mjs`; it must not be counted as passed until its required staging-only credentials/access and cleanup are verified.
 
-## Remaining security scope
-
-This is an incremental admin foundation, not a launch-ready commerce admin. Legacy catalogue read and inventory/moderation RPCs retain their original permission policies and do not all enforce AAL2; new entry points do. Role management, owner recovery, distributed app rate limiting, comprehensive session revocation/abuse E2E, CSP and safe storage uploads need further work. Sales/payment/CMS modules remain unavailable. Draft saving does not publish or manufacture a variant. No production data or settings are changed.
+See `MILESTONE_1_REPORT.md` for actual results and blockers, and `PRODUCTION_RELEASE_PLAN.md` for the approval-gated future same-domain deployment plan.

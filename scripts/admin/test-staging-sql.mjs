@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {query,projectRef,projectUrl} from '../lib/supabase-development.mjs';
+import {assertRemoteDatabaseIsolation} from '../lib/deployment-isolation.mjs';
+await assertRemoteDatabaseIsolation(projectUrl);
+const before=await query("select (select count(*)::int from auth.users) as users,(select count(*)::int from public.products) as products,(select count(*)::int from public.user_roles) as roles,(select count(*)::int from public.admin_audit_logs) as audit,(select count(*)::int from storage.objects) as objects");
+await query(await readFile('supabase/tests/staging-foundation.sql','utf8'),false);
+const after=await query("select (select count(*)::int from auth.users) as users,(select count(*)::int from public.products) as products,(select count(*)::int from public.user_roles) as roles,(select count(*)::int from public.admin_audit_logs) as audit,(select count(*)::int from storage.objects) as objects");
+assert.deepEqual(after,before);assert.equal((await query("select to_regnamespace('attire_m1_test') is null as clean"))[0].clean,true);
+console.log(JSON.stringify({stagingProject:projectRef,sqlRlsPermissionAuditAndStorageMetadataTests:'passed',fixturesRolledBack:true,stateUnchanged:after[0],signedAuthTest:false,storageApiUploadTest:false}));

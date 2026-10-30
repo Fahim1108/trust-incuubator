@@ -1,3 +1,5 @@
+import {rejectLegacyRemoteTool} from './lib/legacy-remote-tool.mjs';
+rejectLegacyRemoteTool();
 // Real signed-JWT permission matrix; only disposable accounts in the authorized dev project.
 import assert from 'node:assert/strict';
 import { randomUUID,randomBytes } from 'node:crypto';

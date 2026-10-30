@@ -68,10 +68,15 @@ select test.denied($q$insert into public.role_permissions values ('customer_supp
 select test.assert_true((select count(*)=0 from public.inventory),'customer cannot read private inventory');
 select test.denied($q$select public.adjust_inventory('20000000-0000-0000-0000-000000000001',1,'Unauthorized')$q$,'42501','customer cannot mutate inventory via RPC');
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000004',true);
-select test.assert_true((select count(*)=2 from public.products),'analyst can read drafts');
+select test.assert_true((select count(*)=1 from public.products),'analyst without MFA cannot read drafts');
+select set_config('request.jwt.claims','{"aal":"aal2"}',true);
+select test.assert_true((select count(*)=2 from public.products),'MFA analyst can read drafts');
 select test.denied($q$select public.adjust_inventory('20000000-0000-0000-0000-000000000001',1,'Unauthorized')$q$,'42501','read-only analyst cannot adjust stock');
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',true);
 select test.denied('update public.inventory set on_hand=100','42501','staff cannot bypass inventory ledger');
+select set_config('request.jwt.claims','{"aal":"aal1"}',true);
+select test.denied($q$select public.adjust_inventory('20000000-0000-0000-0000-000000000001',-3,'MFA required')$q$,'42501','staff password alone cannot adjust inventory');
+select set_config('request.jwt.claims','{"aal":"aal2"}',true);
 select public.adjust_inventory('20000000-0000-0000-0000-000000000001',-3,'Stock reconciliation');
 select test.assert_true((select on_hand=7 and reserved=2 and available=5 from public.inventory),'authorized adjustment preserves reserved stock');
 select test.assert_true((select count(*)=1 from public.inventory_movements where delta=-3 and on_hand_after=7 and actor_id=auth.uid()),'adjustment creates attributable ledger record');

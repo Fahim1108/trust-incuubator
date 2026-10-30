@@ -21,6 +21,7 @@ worker = """
 begin;
 set local role authenticated;
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',true);
+select set_config('request.jwt.claims','{"aal":"aal2"}',true);
 select public.adjust_inventory('20000000-0000-0000-0000-000000000001',-1,'Concurrent adjustment');
 """
 first = subprocess.Popen(base, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)

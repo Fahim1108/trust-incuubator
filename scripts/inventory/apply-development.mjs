@@ -1,3 +1,5 @@
+import {rejectLegacyRemoteTool} from '../lib/legacy-remote-tool.mjs';
+rejectLegacyRemoteTool();
 import {readFile} from 'node:fs/promises';
 const ref='euoannuvovsbwxjqnriw';
 const token=process.env.SUPABASE_ACCESS_TOKEN;if(!token)throw new Error('SUPABASE_ACCESS_TOKEN missing; configure securely.');

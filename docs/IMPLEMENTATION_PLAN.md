@@ -80,3 +80,7 @@ The user authorized homepage implementation before completing the outstanding pu
 ## 27 October 2026 refinement checkpoint
 
 The supplied storefront UI refinements are implemented; see `FINAL_REFINEMENT_REPORT.md`. Preview shopping of the 18 actual photos remains available with explicitly provisional sizes, while verified size/classification facets fail closed. This does not complete the commerce phases above. Next backend increment must establish real order/payment state machines and atomic inventory reservation before enabling checkout, short public references, authenticated customer tracking or first-order rewards. The private order-reference foundation is dormant and requires binding to actual order records; all reward issuance/redemption remains disabled. Owner must confirm actual garment sizes/details before live publication. Production remains unauthorized.
+
+## 30 October 2026 — Admin 2.0 staging-first gate
+
+Approved Milestone 1 is limited to the isolated staging foundation. Database/bootstrap, private draft Storage and legacy MFA/audit hardening are applied and SQL-verified; actual signed Auth/MFA/Storage API/browser verification is still blocked by staging Auth/API-key read permissions. See [actual results](MILESTONE_1_REPORT.md). Full product management and the dark admin redesign have not started as the next milestone. Production release remains a separate approval gate under [the release plan](PRODUCTION_RELEASE_PLAN.md).

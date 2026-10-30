@@ -658,3 +658,13 @@ RestorationreleaseREADY:84e30cde0eb1276ad99aeef8dfcfbb6af31bfef9 deployed tosepa
 - Frontend lint/types/122 tests/build; root lint/58 tests; 14 local guard/migration/operator checks; disposable PostgreSQL migration/RLS/concurrency suite passed. Actual staging Auth/database/Storage/hosted tests remain blocked, not claimed as passing.
 - Direct staging-host health access was denied by execution proxy; user cancelled escalated retry. Do not retry or bypass that cancellation. New operator access and network permission may be needed.
 - Latest existing Preview deployment predates environment separation; do not use its admin for staging writes. A new isolated Preview should only be created after successful staging bootstrap. Full evidence and manual setup requirements: docs/STAGING_SETUP_REPORT.md.
+
+### 30 October 2026 — Approved Milestone 1 staging foundation
+
+- Applied ten repository baseline migrations plus new versions 20261030000100/20261030000200 to jwccyndyaamodxjtjtfo only, each after rollback dry run. Actual staging verification: 12 RLS-protected public tables, 12 history versions, 77 validated constraints. No Production database request, environment/DNS/Owner/MFA change or deployment.
+- Hardened legacy inventory/review mutations and all staff permission reads to require MFA. Revoked direct intake mutations that bypassed audit/stale protection. Own-role lookup remains available for MFA enrollment; customer metadata cannot grant staff roles.
+- Created private draft-image bucket with 5 MiB/JPEG/PNG/WebP limits and four AAL2/permission/UID-folder Storage policies. No binary upload, public bucket, paid transform/service, permanent Owner or real data import.
+- Added /admin/login compatibility entry, quarantined five old remote tools, added read-only staging schema verification and rollback-only SQL security tests. Actual staging SQL checks passed and fixtures fully rolled back: users/products/roles/audit/objects all zero.
+- Frontend lint/types/122 tests/build; root lint/types/58 tests; 19 safety tests; final isolated PostgreSQL MFA/RLS/media/concurrency suite passed. One negative moderation test needed direct invocation after stricter RLS hid its SELECT input; corrected and rerun successfully.
+- Full M1 acceptance still BLOCKED: token denies staging Auth configuration and API-key read (403), so signed Auth/MFA/PostgREST/binary Storage/hosted browser verification did not run. No fake success or full Milestone 1 completion claim. No next milestone started.
+- Reports/setup: docs/MILESTONE_1_REPORT.md, docs/ADMIN_ACCESS.md, docs/PRODUCTION_RELEASE_PLAN.md. This is source/staging database work, not a deployed website change. No paid resources enabled.

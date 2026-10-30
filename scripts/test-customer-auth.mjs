@@ -1,3 +1,5 @@
+import {rejectLegacyRemoteTool} from './lib/legacy-remote-tool.mjs';
+rejectLegacyRemoteTool();
 // Interactive customer-only test. No Management API, admin key, SQL or admin methods.
 // Password and session remain in process memory; nothing sensitive is printed or saved.
 import { createClient } from '@supabase/supabase-js';

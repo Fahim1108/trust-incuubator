@@ -1,5 +1,7 @@
 # Isolated staging setup — 30 October 2026
 
+Historical pre-bootstrap report. See [Milestone 1 report](MILESTONE_1_REPORT.md) for the subsequent staging database/Storage apply and current Auth/API-key permission blockers.
+
 ## Verified, read-only
 
 - Vercel project: `attires-arena-frontend-preview`; root `frontend/claude`.

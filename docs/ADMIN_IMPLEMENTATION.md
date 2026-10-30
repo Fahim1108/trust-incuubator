@@ -1,5 +1,7 @@
 # Admin audit and incremental delivery
 
+Historical implementation record. Current Admin 2.0 staging foundation status and blockers: [Milestone 1 report](MILESTONE_1_REPORT.md). Do not treat the historical development project reference below as a staging target.
+
 Scope: Claude frontend; development Supabase project euoannuvovsbwxjqnriw; Preview only. Existing root Auth, inventory, reviews and storefront are preserved.
 
 | Module | Audit result | Next step |

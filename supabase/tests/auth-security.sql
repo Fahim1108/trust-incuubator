@@ -26,7 +26,9 @@ select private.provision_owner('00000000-0000-0000-0000-000000000009','owner-tes
 select test.assert_true((select count(*)=1 from public.user_roles where user_id='00000000-0000-0000-0000-000000000009') and (select count(*)=1 from private.owner_provisioning_log),'trusted provisioning is idempotent and audited');
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated"}',true);
-select test.assert_true(private.has_permission('inventory.adjust'),'verified database role grants owner access');
+select test.assert_true(not private.has_permission('inventory.adjust'),'database role alone cannot bypass MFA');
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","aal":"aal2"}',true);
+select test.assert_true(private.has_permission('inventory.adjust'),'verified database role with MFA grants owner access');
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","is_anonymous":true}',true);
 select test.assert_true(not private.has_permission('inventory.adjust'),'anonymous Auth claim denies staff permission');
 reset role;

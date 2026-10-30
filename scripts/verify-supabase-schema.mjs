@@ -1,3 +1,5 @@
+import {rejectLegacyRemoteTool} from './lib/legacy-remote-tool.mjs';
+rejectLegacyRemoteTool();
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';

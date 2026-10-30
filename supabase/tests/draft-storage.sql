@@ -1,0 +1,18 @@
+reset role;
+select test.assert_true((select not public and file_size_limit=5242880 from storage.buckets where id='attires-product-drafts'),'draft bucket is private with size limit');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','',true);
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1"}',true);
+select test.denied($q$insert into storage.objects(bucket_id,name) values('attires-product-drafts','00000000-0000-0000-0000-000000000003/qa.jpg')$q$,'42501','staff without MFA cannot upload');
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
+insert into storage.objects(bucket_id,name) values('attires-product-drafts','00000000-0000-0000-0000-000000000003/qa.jpg');
+select test.assert_true((select count(*)=1 from storage.objects),'MFA product manager can upload and read');
+select test.denied($q$insert into storage.objects(bucket_id,name) values('attires-product-drafts','another-user/qa.jpg')$q$,'42501','cannot upload into another user folder');
+select test.denied($q$update storage.objects set name='another-user/stolen.jpg'$q$,'42501','cannot move object into another user folder');
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}',true);
+select test.assert_true((select count(*)=0 from storage.objects),'customer cannot read draft images');
+select test.denied($q$insert into storage.objects(bucket_id,name) values('attires-product-drafts','00000000-0000-0000-0000-000000000001/qa.jpg')$q$,'42501','customer cannot upload draft images');
+reset role;
+set local role anon;
+select test.assert_true((select count(*)=0 from storage.objects),'anonymous cannot read draft images');
+reset role;

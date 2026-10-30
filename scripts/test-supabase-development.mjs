@@ -1,3 +1,5 @@
+import {rejectLegacyRemoteTool} from './lib/legacy-remote-tool.mjs';
+rejectLegacyRemoteTool();
 // Real hosted tests, confined to the explicitly authorized development reference.
 // Never writes tokens, keys, passwords, cookies or email links to logs/artifacts.
 import assert from 'node:assert/strict';

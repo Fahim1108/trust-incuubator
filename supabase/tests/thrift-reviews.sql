@@ -21,7 +21,11 @@ select test.assert_true((select count(*)=0 from public.product_reviews),'new rea
 reset role;
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}',true);
-select test.assert_true((select count(*)=18 from public.thrift_intake),'permitted staff can edit inventory intake');
+select test.assert_true((select count(*)=0 from public.thrift_intake),'staff without MFA cannot read intake');
+select test.denied($q$select public.moderate_product_review('00000000-0000-0000-0000-000000000001',true)$q$,'42501','staff password alone cannot moderate');
+select test.denied($q$update public.thrift_intake set stock_quantity=0$q$,'42501','direct intake writes cannot bypass audited RPC');
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}',true);
+select test.assert_true((select count(*)=18 from public.thrift_intake),'MFA staff can read intake');
 select public.moderate_product_review(id,true) from public.product_reviews;
 select test.assert_true((select count(*)=1 from public.review_moderation_log),'moderation creates an audit record');
 reset role;
