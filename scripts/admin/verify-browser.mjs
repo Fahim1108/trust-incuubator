@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { createHmac } from "node:crypto";
 import jsQR from "jsqr";
 import {PNG} from "pngjs";
-function code(secret) {
+export function totpCode(secret) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
   let bits = "";
   for (const c of secret.toUpperCase().replace(/=+$/, ""))
@@ -77,7 +77,7 @@ export async function verifyAdminBrowser({
     const uri=new URL(decoded.data);
     assert.equal(uri.protocol,'otpauth:');
     secret=uri.searchParams.get('secret');assert(secret);
-    await page.getByLabel("Authenticator code").fill(code(secret));
+    await page.getByLabel("Authenticator code").fill(totpCode(secret));
     await page.getByRole("button", { name: "Verify and continue" }).click();
     await page.waitForURL((url) => url.pathname === "/admin");
     console.log("BROWSER: MFA verified; inspect dashboard");
@@ -226,7 +226,7 @@ export async function verifyAdminBrowser({
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Sign in securely" }).click();
     await page.waitForURL("**/admin/mfa");
-    await page.getByLabel("Authenticator code").fill(code(secret));
+    await page.getByLabel("Authenticator code").fill(totpCode(secret));
     await page.getByRole("button", { name: "Verify and continue" }).click();
     await page.waitForURL((url) => url.pathname === "/admin");
     const {query:readSql,uuid:sqlUuid}=await import('../lib/supabase-development.mjs');
@@ -254,7 +254,7 @@ export async function verifyAdminBrowser({
         await page.goto('/admin');await page.waitForURL('**/admin/sign-in');
       }else{
         await page.waitForURL('**/admin/mfa');
-        await page.getByLabel('Authenticator code').fill(code(account.secret));
+        await page.getByLabel('Authenticator code').fill(totpCode(account.secret));
         await page.getByRole('button',{name:'Verify and continue'}).click();
         await page.waitForURL(u=>u.pathname==='/admin');
         await page.getByRole('heading',{name:'Store overview',exact:true}).waitFor();

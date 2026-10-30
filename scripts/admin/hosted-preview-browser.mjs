@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFile, writeFile } from "node:fs/promises";
 import { verifyAdminBrowser } from "./verify-browser.mjs";
-export async function verifyHostedPreview(context) {
+export async function verifyHostedPreview(context, verify = verifyAdminBrowser) {
   const record = JSON.parse(
     await readFile(
       process.env.ADMIN_VERCEL_DEPLOYMENT_FILE ||
@@ -69,7 +69,7 @@ export async function verifyHostedPreview(context) {
           : {}),
       };
     }
-    await verifyAdminBrowser({
+    await verify({
       ...context,
       baseURL: record.url,
       accessURL: record.url + "/?_vercel_share=" + encodeURIComponent(secret),
