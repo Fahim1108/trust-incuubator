@@ -7,5 +7,5 @@ export default async function WorkspaceLayout({
   children: React.ReactNode;
 }) {
   const session = await staffSession();
-  return <AdminShell roles={session.roles} stagingTools={!isProductionStorefront()}>{children}</AdminShell>;
+  return <AdminShell roles={session.roles} stagingTools={!isProductionStorefront()} taxonomyTools={process.env.STAGING_CATALOGUE_TAXONOMY==='1'}>{children}</AdminShell>;
 }

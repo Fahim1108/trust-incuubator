@@ -13,6 +13,7 @@ const key=await getStagingPublishableKey();
 const client=()=>createClient(projectUrl,key,options);
 const users=[],products=[],checks=[];
 const storagePaths=[];
+const taxonomyIds=[];
 const password=randomBytes(32).toString('base64url');
 const ok=r=>{if(r.error)throw new Error('Staging operation rejected: '+r.error.code);return r.data;};
 const pass=s=>{checks.push(s);console.log('PASS: '+s);};
@@ -36,18 +37,24 @@ try{
    assert.equal((await c.rpc('admin_save_product_variant',{target_id:p,expected_updated_at:savedVersion,target_variant:randomUUID(),variant:{}})).error?.code,'42501');
    assert.equal((await c.rpc('admin_adjust_product_stock',{target_id:p,expected_updated_at:savedVersion,target_variant:randomUUID(),quantity_delta:1,adjustment_reason:'Rejected AAL1 attempt'})).error?.code,'42501');
   }
+  if(process.argv.includes('--taxonomy'))assert.equal((await c.rpc('admin_save_catalogue_term',{term_type:'brand',target_id:randomUUID(),expected_updated_at:null,term:{name:'Rejected AAL1',slug:'rejected',published:false}})).error?.code,'42501');
   const factor=ok(await c.auth.mfa.enroll({factorType:'totp',friendlyName:'Disposable metadata test'}));
   ok(await c.auth.mfa.challengeAndVerify({factorId:factor.id,code:totpCode(factor.totp.secret)}));
+  if(process.argv.includes('--taxonomy')){
+   const {checkTaxonomy}=await import('./check-taxonomy-staging.mjs');
+   await checkTaxonomy({c,role,product:p,version,trackTerm:t=>taxonomyIds.push(t),anonymous:client()});savedVersion=await version();
+   pass(['owner','product_manager'].includes(role)?role+' real taxonomy CRUD, assignment, version conflict and referenced-delete protection':role+' taxonomy mutation denied');
+  }
   if(process.argv.includes('--variants')){
    const {checkVariants}=await import('./check-variants-staging.mjs');
    await checkVariants({c,role,product:p,version});savedVersion=await version();
-   pass(role+' actual SKU/pricing, zero initial stock, audited adjustments and negative/stale rejection');
+   pass(['owner','product_manager'].includes(role)?role+' actual SKU/pricing, zero initial stock, audited adjustments and negative/stale rejection':role+' SKU and stock mutations denied');
   }
   if(process.argv.includes('--gallery')){
    const {checkGallery}=await import('./check-gallery-staging.mjs');
    await checkGallery({c,user,role,product:p,version,trackPath:path=>storagePaths.push(path)});
    savedVersion=await version();
-   pass(role+' private binary gallery authorization, linkage and Storage protection');
+   pass(['owner','product_manager'].includes(role)?role+' private binary gallery linkage and Storage protection':role+' private upload and gallery mutation denied');
   }
   if(['customer','analyst'].includes(role))assert.equal((await c.rpc('admin_update_product_draft',payload())).error?.code,'42501');
   else{
@@ -76,7 +83,14 @@ try{
  }
  success=true;
 }finally{
- for(const p of products)await query(`delete from public.product_media where product_id=${uuid(p)};delete from public.inventory_movements where variant_id in (select id from public.product_variants where product_id=${uuid(p)});delete from public.inventory where variant_id in(select id from public.product_variants where product_id=${uuid(p)});delete from public.product_variants where product_id=${uuid(p)};delete from public.admin_audit_logs where target_id=${uuid(p)};delete from public.products where id=${uuid(p)}`,false);
+ for(const p of products)await query(`${process.argv.includes('--taxonomy')?`delete from public.product_catalogue_terms where product_id=${uuid(p)};`:''}delete from public.product_media where product_id=${uuid(p)};delete from public.inventory_movements where variant_id in (select id from public.product_variants where product_id=${uuid(p)});delete from public.inventory where variant_id in(select id from public.product_variants where product_id=${uuid(p)});delete from public.product_variants where product_id=${uuid(p)};delete from public.admin_audit_logs where target_id=${uuid(p)};delete from public.products where id=${uuid(p)}`,false);
+ if(process.argv.includes('--taxonomy')&&users.length){
+  // Also discover UI-created records if a response was lost after commit.
+  const actors=users.map(uuid).join(',');
+  const discovered=await query(`select distinct t.id,t.kind from public.catalogue_terms t join public.admin_audit_logs l on l.target_id=t.id where l.actor_id in(${actors}) and l.action='catalogue.term_saved' union select distinct c.id,'category' as kind from public.categories c join public.admin_audit_logs l on l.target_id=c.id where l.actor_id in(${actors}) and l.action='catalogue.term_saved'`);
+  taxonomyIds.push(...discovered);
+  for(const term of new Map(taxonomyIds.map(t=>[t.id,t])).values())await query(`delete from public.admin_audit_logs where target_id=${uuid(term.id)};delete from public.${term.kind==='category'?'categories':'catalogue_terms'} where id=${uuid(term.id)}`,false);
+ }
  for(const id of users){
   const listed=ok(await admin.storage.from('attires-product-drafts').list(id,{limit:1000}));
   storagePaths.push(...listed.map(o=>id+'/'+o.name));

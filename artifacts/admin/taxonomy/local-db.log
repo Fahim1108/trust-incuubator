@@ -1,0 +1,1812 @@
+
+> attire-arena@1.0.0 test:db
+> bash scripts/test-db.sh
+
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+CREATE TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+GRANT
+GRANT
+CREATE SCHEMA
+CREATE TABLE
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+CREATE FUNCTION
+GRANT
+GRANT
+GRANT
+BEGIN
+CREATE SCHEMA
+REVOKE
+GRANT
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 12
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE FUNCTION
+REVOKE
+DO
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+GRANT
+CREATE POLICY
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE FUNCTION
+REVOKE
+CREATE TRIGGER
+INSERT 0 0
+REVOKE
+GRANT
+CREATE TABLE
+ALTER TABLE
+REVOKE
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE TABLE
+ALTER TABLE
+REVOKE
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+CREATE FUNCTION
+REVOKE
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE TABLE
+ALTER TABLE
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE TABLE
+ALTER TABLE
+GRANT
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+CREATE SEQUENCE
+CREATE TABLE
+ALTER TABLE
+REVOKE
+REVOKE
+COMMENT
+CREATE FUNCTION
+REVOKE
+COMMENT
+BEGIN
+CREATE FUNCTION
+REVOKE
+CREATE TABLE
+CREATE INDEX
+ALTER TABLE
+REVOKE
+GRANT
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE FUNCTION
+COMMIT
+BEGIN
+ALTER TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+COMMIT
+BEGIN
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+ALTER TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+COMMIT
+BEGIN
+REVOKE
+DROP POLICY
+DROP POLICY
+CREATE FUNCTION
+CREATE FUNCTION
+INSERT 0 1
+DO
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+COMMIT
+BEGIN
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE TABLE
+CREATE INDEX
+ALTER TABLE
+REVOKE
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE TABLE
+CREATE TRIGGER
+CREATE TABLE
+CREATE INDEX
+ALTER TABLE
+ALTER TABLE
+REVOKE
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+COMMIT
+BEGIN
+CREATE SCHEMA
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+GRANT
+INSERT 0 4
+UPDATE 4
+INSERT 0 2
+INSERT 0 4
+INSERT 0 4
+INSERT 0 2
+INSERT 0 3
+INSERT 0 1
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: all fifteen exposed tables enable RLS
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: sale price cannot exceed regular price
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: stock cannot fall below reserved quantity
+NOTICE:  PASS: reserved stock cannot be negative
+ denied 
+--------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: anonymous sees only published products
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: anonymous cannot see draft or inactive variants
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: anonymous cannot read customer profiles
+NOTICE:  PASS: anonymous cannot read exact stock
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: anonymous cannot execute inventory mutation
+RESET
+SET
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000001
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: customer reads only their own profile
+UPDATE 1
+NOTICE:  PASS: customer can update own profile
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot update another profile
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot self-assign owner
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot change permission mapping
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot read private inventory
+ assert_true 
+-------------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot mutate inventory via RPC
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000004
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: analyst without MFA cannot read drafts
+   set_config   
+----------------
+ {"aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: MFA analyst can read drafts
+ assert_true 
+-------------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: read-only analyst cannot adjust stock
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000003
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: staff cannot bypass inventory ledger
+   set_config   
+----------------
+ {"aal":"aal1"}
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: staff password alone cannot adjust inventory
+   set_config   
+----------------
+ {"aal":"aal2"}
+(1 row)
+
+ adjust_inventory 
+------------------
+ 
+(1 row)
+
+NOTICE:  PASS: authorized adjustment preserves reserved stock
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: adjustment creates attributable ledger record
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: adjustment cannot consume reserved stock
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: adjustment requires a meaningful reason
+ assert_true 
+-------------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: failed adjustments leave stock and ledger unchanged
+NOTICE:  PASS: staff cannot delete movement history
+RESET
+CREATE FUNCTION
+CREATE TRIGGER
+SET
+NOTICE:  PASS: ledger failure is propagated
+ denied 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+SET
+NOTICE:  PASS: ledger failure rolls back the entire adjustment
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000005
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: owner has defined management permissions
+NOTICE:  PASS: undefined permissions are denied even to owner
+ assert_true 
+-------------
+ 
+(1 row)
+
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000006
+(1 row)
+
+NOTICE:  PASS: order manager may read but not adjust stock
+ assert_true 
+-------------
+ 
+(1 row)
+
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000007
+(1 row)
+
+NOTICE:  PASS: marketing role receives no inventory permissions
+ assert_true 
+-------------
+ 
+(1 row)
+
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000008
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: support role receives no inventory permissions
+NOTICE:  PASS: staff cannot read arbitrary customer profiles
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+RESET
+INSERT 0 1
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: registration creates a customer profile
+NOTICE:  PASS: registration metadata cannot provision owner
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: unconfirmed email cannot be provisioned
+ denied 
+--------
+ 
+(1 row)
+
+UPDATE 1
+NOTICE:  PASS: operator must match verified email and UUID
+ denied 
+--------
+ 
+(1 row)
+
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+                                                       set_config                                                       
+------------------------------------------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","user_metadata":{"role":"owner","is_admin":true}}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: JSON JWT subject and role resolve
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: JWT user metadata cannot grant staff access
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: JSON JWT claims preserve customer isolation
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot change product prices
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot change reserved stock
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot rewrite profile system fields
+NOTICE:  PASS: customer cannot execute owner provisioning
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+        set_config        
+--------------------------
+ {"role":"authenticated"}
+(1 row)
+
+NOTICE:  PASS: customer cannot read operator audit records
+NOTICE:  PASS: missing JWT subject fails closed
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+ provision_owner 
+-----------------
+ 
+(1 row)
+
+ provision_owner 
+-----------------
+ 
+(1 row)
+
+NOTICE:  PASS: trusted provisioning is idempotent and audited
+ assert_true 
+-------------
+ 
+(1 row)
+
+SET
+                              set_config                               
+-----------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated"}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: database role alone cannot bypass MFA
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","aal":"aal2"}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: verified database role with MFA grants owner access
+                                        set_config                                         
+-------------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","is_anonymous":true}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+RESET
+INSERT 0 2
+NOTICE:  PASS: anonymous Auth claim denies staff permission
+NOTICE:  PASS: anonymous Auth accounts cannot be provisioned as owner
+ denied 
+--------
+ 
+(1 row)
+
+CREATE FUNCTION
+CREATE TRIGGER
+NOTICE:  PASS: owner audit write failure is propagated
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: audit failure rolls back owner role assignment
+ assert_true 
+-------------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: anonymous visitor cannot provision an owner
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: 18 physical in-stock drafts preserve supplied prices, quantity and unknown size
+NOTICE:  PASS: no artificial thrift size variants created
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot publish unverified size/details
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: N/A cannot become an actual size
+SET
+NOTICE:  PASS: anonymous cannot read draft intake
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: pending reviews never public
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: signed out cannot submit reviews
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+                              set_config                               
+-----------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}
+(1 row)
+
+NOTICE:  PASS: customer cannot see draft owner intake
+ assert_true 
+-------------
+ 
+(1 row)
+
+        submit_product_review         
+--------------------------------------
+ f004339c-8606-478a-8e97-e217a896a798
+(1 row)
+
+NOTICE:  PASS: duplicate review denied
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot review unpublished products
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customers cannot self approve
+NOTICE:  PASS: customers cannot moderate
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+NOTICE:  PASS: new real submission remains pending
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+SET
+                              set_config                               
+-----------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated"}
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: staff without MFA cannot read intake
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: staff password alone cannot moderate
+NOTICE:  PASS: direct intake writes cannot bypass audited RPC
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: MFA staff can read intake
+ assert_true 
+-------------
+ 
+(1 row)
+
+ moderate_product_review 
+-------------------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+SET
+NOTICE:  PASS: moderation creates an audit record
+NOTICE:  PASS: approved review readable publicly
+ assert_true 
+-------------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: public review cannot disclose private account identifiers
+RESET
+INSERT 0 3
+SET
+                              set_config                               
+-----------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated"}
+(1 row)
+
+        submit_product_review         
+--------------------------------------
+ 2a676021-885e-4ce7-8171-50d1966627ac
+(1 row)
+
+        submit_product_review         
+--------------------------------------
+ 87068dca-2f44-42bc-aceb-d91325ad0d34
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: review submission rate limit enforced
+RESET
+RESET
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: numeric reference requires an order UUID
+NOTICE:  PASS: missing real order service cannot mint references
+ denied 
+--------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: missing order service leaves reference ledger empty
+CREATE TABLE
+ALTER TABLE
+INSERT 0 4
+NOTICE:  PASS: nonexistent order cannot mint references
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: server assigns first five-digit reference
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: reference remains identical on retries
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: retries create one reference only
+ assert_true 
+-------------
+ 
+(1 row)
+
+ setval 
+--------
+  10000
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: sequence collision skips already assigned reference safely
+NOTICE:  PASS: database rejects duplicate numeric references
+ denied 
+--------
+ 
+(1 row)
+
+ setval 
+--------
+  99999
+(1 row)
+
+NOTICE:  PASS: last five-digit reference can be assigned
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: namespace exhaustion fails closed instead of wrapping/reusing references
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: exhaustion does not create a false reference
+ assert_true 
+-------------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: anonymous cannot read private numeric reference mappings
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: anonymous cannot generate numeric references
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+              set_config              
+--------------------------------------
+ 00000000-0000-0000-0000-000000000005
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: even owner JWT cannot enumerate private reference mappings
+NOTICE:  PASS: even owner JWT cannot bypass future trusted order service
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: authenticated callers cannot exhaust the order-number sequence
+RESET
+RESET
+ set_config 
+------------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: anonymous admin snapshot denied
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","aal":"aal1"}
+(1 row)
+
+NOTICE:  PASS: owner needs MFA
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000011","role":"authenticated","aal":"aal2"}
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: MFA customer cannot read admin snapshot
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: MFA owner sees actual intake
+ assert_true 
+-------------
+ 
+(1 row)
+
+ admin_save_thrift_draft 
+-------------------------
+ 
+(1 row)
+
+NOTICE:  PASS: draft save audited
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: unknown size stays blank and unpublished
+ assert_true 
+-------------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: stale editor cannot overwrite
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: intake cannot invent quantity
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: staff cannot forge audit logs
+ admin_save_thrift_draft 
+-------------------------
+ 
+(1 row)
+
+NOTICE:  PASS: measurements persist without automatic verification
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+CREATE FUNCTION
+CREATE TRIGGER
+SET
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: audit failure rolls back draft write
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+NOTICE:  PASS: audit failure preserves original draft
+DROP TRIGGER
+SET
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: MFA owner creates an audited draft
+      admin_create_product_draft      
+--------------------------------------
+ 90000000-0000-4000-8000-000000000001
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: duplicate creation creates one record and one audit
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000011","role":"authenticated","aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: idempotency keys cannot be reused for a changed request
+NOTICE:  PASS: MFA customer cannot create a product
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000009","role":"authenticated","aal":"aal2"}
+(1 row)
+
+ admin_save_thrift_draft 
+-------------------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+NOTICE:  PASS: compatible attributes and SEO persist without verification
+RESET
+NOTICE:  PASS: draft bucket is private with size limit
+ assert_true 
+-------------
+ 
+(1 row)
+
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1"}
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: staff without MFA cannot upload
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}
+(1 row)
+
+INSERT 0 1
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: MFA product manager can upload and read
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot upload into another user folder
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"00000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: cannot move object into another user folder
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot read draft images
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+SET
+NOTICE:  PASS: customer cannot upload draft images
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: anonymous cannot read draft images
+RESET
+RESET
+ set_config 
+------------
+ 
+(1 row)
+
+ set_config 
+------------
+ 
+(1 row)
+
+ set_config 
+------------
+ 
+(1 row)
+
+INSERT 0 4
+INSERT 0 3
+INSERT 0 4
+INSERT 0 1
+SELECT 1
+GRANT
+SET
+NOTICE:  PASS: anonymous cannot invoke draft update
+ denied 
+--------
+ 
+(1 row)
+
+SET
+                                                     set_config                                                      
+---------------------------------------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2","user_metadata":{"role":"owner"}}
+(1 row)
+
+NOTICE:  PASS: customer metadata cannot grant draft editing
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: analyst cannot edit generic drafts
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}
+(1 row)
+
+NOTICE:  PASS: Owner still requires MFA
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}
+(1 row)
+
+  admin_update_product_draft  
+------------------------------
+ 2026-10-30 18:04:51.15862+00
+(1 row)
+
+NOTICE:  PASS: only intended draft metadata changes
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: draft update records actual actor and before/after audit
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: stale write cannot overwrite another editor
+ denied 
+--------
+ 
+(1 row)
+
+  admin_update_product_draft  
+------------------------------
+ 2026-10-30 18:04:51.15862+00
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: unchanged payload does not create duplicate audit rows
+NOTICE:  PASS: published product edits require a separate workflow
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: archived product stays archived
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: intake cannot bypass its dedicated audit and verification workflow
+NOTICE:  PASS: blank name rejected
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: whitespace-only direct RPC name rejected
+NOTICE:  PASS: missing version rejected
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: oversized description rejected
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: nonexistent product rejected
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}
+(1 row)
+
+  admin_update_product_draft  
+------------------------------
+ 2026-10-30 18:04:51.16454+00
+(1 row)
+
+NOTICE:  PASS: product manager has audited edit permission
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+CREATE FUNCTION
+CREATE TRIGGER
+SET
+NOTICE:  PASS: audit failure aborts the mutation
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: audit failure leaves previous draft unchanged
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+DROP TRIGGER
+RESET
+INSERT 0 2
+SET
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}
+(1 row)
+
+NOTICE:  PASS: customer cannot attach gallery image
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: AAL1 Owner cannot change gallery
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}
+(1 row)
+
+  admin_edit_product_gallery   
+-------------------------------
+ 2026-10-30 18:04:51.169765+00
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: uploaded object attached to real product
+  admin_edit_product_gallery   
+-------------------------------
+ 2026-10-30 18:04:51.171253+00
+(1 row)
+
+NOTICE:  PASS: linked bytes protected from deletion
+ assert_true 
+-------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: linked bytes protected from replacement
+NOTICE:  PASS: gallery rejects stale version
+ denied 
+--------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot attach another account object
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot omit images when reordering
+  admin_edit_product_gallery   
+-------------------------------
+ 2026-10-30 18:04:51.176265+00
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: gallery cover order persists
+  admin_edit_product_gallery   
+-------------------------------
+ 2026-10-30 18:04:51.177822+00
+(1 row)
+
+NOTICE:  PASS: removal compacts gallery ordering
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: every real gallery mutation audited
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+RESET
+DROP TRIGGER
+SET
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: customer cannot create SKU
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}
+(1 row)
+
+NOTICE:  PASS: Owner without MFA cannot create SKU
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}
+(1 row)
+
+  admin_save_product_variant   
+-------------------------------
+ 2026-10-30 18:04:51.181216+00
+(1 row)
+
+NOTICE:  PASS: exact SKU pricing and actual submitted size persist
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: SKU creation never invents stock
+ assert_true 
+-------------
+ 
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: unknown actual size refused
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: sale above regular refused
+NOTICE:  PASS: generic variant editor cannot manufacture thrift variants
+ denied 
+--------
+ 
+(1 row)
+
+  admin_adjust_product_stock  
+------------------------------
+ 2026-10-30 18:04:51.18449+00
+(1 row)
+
+NOTICE:  PASS: stock addition persists through transactional inventory function
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+UPDATE 1
+SET
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot reduce on-hand below reservations
+  admin_adjust_product_stock   
+-------------------------------
+ 2026-10-30 18:04:51.186491+00
+(1 row)
+
+NOTICE:  PASS: successful stock adjustments each have inventory movement
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: stock updates have actual staff audit
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: stock editor rejects stale version
+ denied 
+--------
+ 
+(1 row)
+
+RESET
+RESET
+SET
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}
+(1 row)
+
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}
+(1 row)
+
+NOTICE:  PASS: customer cannot create taxonomy
+NOTICE:  PASS: taxonomy requires Owner MFA
+ denied 
+--------
+ 
+(1 row)
+
+                                     set_config                                     
+------------------------------------------------------------------------------------
+ {"sub":"20000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal2"}
+(1 row)
+
+   admin_save_catalogue_term   
+-------------------------------
+ 2026-10-30 18:04:51.072996+00
+(1 row)
+
+   admin_save_catalogue_term   
+-------------------------------
+ 2026-10-30 18:04:51.072996+00
+(1 row)
+
+   admin_save_catalogue_term   
+-------------------------------
+ 2026-10-30 18:04:51.072996+00
+(1 row)
+
+   admin_save_catalogue_term   
+-------------------------------
+ 2026-10-30 18:04:51.072996+00
+(1 row)
+
+NOTICE:  PASS: manager creates actual persisted brand and collection records
+ assert_true 
+-------------
+ 
+(1 row)
+
+SET
+ assert_true 
+-------------
+ 
+(1 row)
+
+SET
+NOTICE:  PASS: published brand without offered published products remains hidden publicly
+  admin_set_product_taxonomy   
+-------------------------------
+ 2026-10-30 18:04:51.193948+00
+(1 row)
+
+NOTICE:  PASS: category assignment persists
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: brand and collection assignment persist
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: cannot assign multiple brands to a product
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: assigned category cannot be deleted
+ denied 
+--------
+ 
+(1 row)
+
+NOTICE:  PASS: term deletion rejects stale version
+ denied 
+--------
+ 
+(1 row)
+
+ admin_delete_catalogue_term 
+-----------------------------
+ 
+(1 row)
+
+ assert_true 
+-------------
+ 
+(1 row)
+
+NOTICE:  PASS: unused unpublished record deletion persists
+NOTICE:  PASS: taxonomy deletion is audited
+ assert_true 
+-------------
+ 
+(1 row)
+
+RESET
+ROLLBACK
+PASS: concurrent stock adjustments serialize; exactly one succeeds, one fails, stock stays zero and one movement is recorded
+PASS: overlapping draft edits serialize; stale waiting editor gets PT409; winning values and one audit row persist
+Database migration and RLS tests passed. Container will be removed.

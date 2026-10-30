@@ -8,10 +8,12 @@ export function AdminShell({
   children,
   roles,
   stagingTools=false,
+  taxonomyTools=false,
 }: {
   children: React.ReactNode;
   roles: string[];
   stagingTools?:boolean;
+  taxonomyTools?:boolean;
 }) {
   const path = usePathname();
   const drawer = useRef<HTMLDialogElement>(null);
@@ -19,7 +21,7 @@ export function AdminShell({
   const canManage=roles.some(r=>r==='owner'||r==='product_manager');
   const groups=[
     {title:'Overview',links:[['/admin','Dashboard']]},
-    ...(canRead?[{title:'Catalog',links:[['/admin/products','Products & intake'],...(stagingTools?[['/admin/products/library','Product library']]:[])]}]:[]),
+    ...(canRead?[{title:'Catalog',links:[['/admin/products','Products & intake'],...(stagingTools?[['/admin/products/library','Product library']]:[]),...(stagingTools&&taxonomyTools?[['/admin/taxonomy','Catalogue taxonomy']]:[])]}]:[]),
     ...(canManage?[{title:'Settings',links:[['/admin/audit','Security & audit logs'],...(stagingTools?[['/admin/media','Private draft media']]:[])]}]:[]),
   ];
   const upcoming=[

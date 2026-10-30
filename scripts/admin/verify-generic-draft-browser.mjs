@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
-import {mkdir} from 'node:fs/promises';
+import {mkdir,readFile} from 'node:fs/promises';
 import {totpCode} from './verify-browser.mjs';
 export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,password,secret,product}){
  const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,...(proxy?{proxy}:{})});
@@ -24,6 +24,24 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await page.getByRole('button',{name:'Save draft details',exact:true}).click();
   await page.getByRole('heading',{name:'Hosted audited product edit',exact:true}).waitFor();
   await page.reload();assert.equal(await page.getByLabel('Product name',{exact:true}).inputValue(),'Hosted audited product edit');
+  if(process.argv.includes('--taxonomy')){
+   const name='Hosted QA brand '+product.slice(0,8);
+   await page.goto('/admin/taxonomy?kind=brand');
+   const creation=page.locator('details').filter({has:page.getByText('Create brand',{exact:true})});
+   await creation.locator('summary').click();
+   await creation.getByLabel('Name',{exact:true}).fill(name);await creation.getByLabel('URL slug',{exact:true}).fill('qa-hosted-brand-'+product);
+   await creation.getByRole('button',{name:'Create catalogue record',exact:true}).click();
+   const record=page.locator('article').filter({has:page.getByRole('heading',{name,exact:true})});await record.waitFor();
+   await record.locator('summary').click();await record.getByLabel('Name',{exact:true}).fill(name+' updated');await record.getByRole('button',{name:'Save catalogue record',exact:true}).click();
+   await page.getByRole('heading',{name:name+' updated',exact:true}).waitFor();
+   await page.goto('/admin/products/'+product);
+   const brand=page.getByLabel('Brand',{exact:true});await brand.selectOption({label:name+' updated'});
+   const selected=await brand.inputValue();
+   await page.getByRole('button',{name:'Save product taxonomy',exact:true}).click();
+   await page.getByText('Product category and terms saved.',{exact:true}).waitFor();
+   await page.reload();assert.equal(await page.getByLabel('Brand',{exact:true}).inputValue(),selected);
+   console.log('BROWSER: taxonomy creation/edit and product-brand assignment persist after reload');
+  }
   if(process.argv.includes('--variants')){
    const sku='HOSTED-QA-'+product.slice(0,8);
    const form=page.locator('form').filter({has:page.getByRole('button',{name:'Create SKU',exact:true})});
@@ -41,10 +59,9 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
    console.log('BROWSER: exact pricing/SKU creation, zero initial stock, genuine audited stock addition and negative-stock rejection');
   }
   if(process.argv.includes('--gallery')){
-   const {testImage}=await import('./check-gallery-staging.mjs');
    await page.getByLabel('Product images',{exact:true}).setInputFiles([
-    {name:'front.png',mimeType:'image/png',buffer:testImage},
-    {name:'back.png',mimeType:'image/png',buffer:testImage},
+    {name:'shirt-16.jpg',mimeType:'image/jpeg',buffer:await readFile('frontend/claude/public/inventory/thrift-shirts/AA-SHIRT-016-front.jpg')},
+    {name:'shirt-17.jpg',mimeType:'image/jpeg',buffer:await readFile('frontend/claude/public/inventory/thrift-shirts/AA-SHIRT-017-front.jpg')},
    ]);
    await page.getByRole('button',{name:'Upload product images',exact:true}).click();
    await page.getByText('2/20 images. Gallery changes remain unpublished.',{exact:true}).waitFor();
