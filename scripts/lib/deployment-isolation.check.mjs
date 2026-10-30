@@ -1,24 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { assertIsolatedBindings } from './deployment-isolation.mjs';
-const domains = [{ name: 'www.attiresarena.com' }];
-const origin = 'https://staging.supabase.co';
-const binding = (value, target = ['production']) => ({ key: 'SUPABASE_URL', value, target });
-test('blocks the current shared Preview/Production database', () => {
-  assert.throws(() => assertIsolatedBindings(domains, [binding(origin, ['preview', 'production'])], origin), /share Supabase/);
-});
-test('blocks identical origins with different trailing slashes', () => {
-  assert.throws(() => assertIsolatedBindings(domains, [binding(origin + '/')], origin), /share Supabase/);
-});
-test('allows a separately configured staging database', () => {
-  assert.doesNotThrow(() => assertIsolatedBindings(domains, [binding('https://production.supabase.co'), binding(origin, ['preview'])], origin));
-});
-test('fails closed when production binding is absent or unreadable', () => {
-  for (const bindings of [[], [binding(undefined)]]) assert.throws(() => assertIsolatedBindings(domains, bindings, origin), /Cannot verify/);
-});
-test('recognizes public Supabase URL bindings and apex domain', () => {
-  assert.throws(() => assertIsolatedBindings([{name:'attiresarena.com'}], [{...binding(origin),key:'NEXT_PUBLIC_SUPABASE_URL'}], origin), /share Supabase/);
-});
-test('a preview-only project without the live domain is permitted', () => {
-  assert.doesNotThrow(() => assertIsolatedBindings([{name:'example.vercel.app'}], [], origin));
-});
+import {assertIsolatedBindings} from './deployment-isolation.mjs';
+const domains=[{name:'www.attiresarena.com'}],origin='https://staging.supabase.co';
+const binding=(value,target=['production'])=>({key:'SUPABASE_URL',value,target});
+const isolated=[binding('https://production.supabase.co'),binding(origin,['preview'])];
+test('blocks a shared Preview/Production database',()=>assert.throws(()=>assertIsolatedBindings(domains,[binding(origin,['preview','production'])],origin),/share Supabase/));
+test('compares origins despite trailing slashes',()=>assert.throws(()=>assertIsolatedBindings(domains,[binding(origin+'/'),binding(origin,['preview'])],origin),/share Supabase/));
+test('allows the explicitly isolated staging target',()=>assert.doesNotThrow(()=>assertIsolatedBindings(domains,isolated,origin)));
+test('fails closed on missing or unreadable settings',()=>{for(const values of [[],[binding(undefined)], [binding('https://production.supabase.co')]])assert.throws(()=>assertIsolatedBindings(domains,values,origin),/Cannot verify/);});
+test('does not authorize an arbitrary third database',()=>assert.throws(()=>assertIsolatedBindings(domains,isolated,'https://other.supabase.co'),/does not match/));
+test('a preview project name/domain is not sufficient authorization',()=>assert.throws(()=>assertIsolatedBindings([{name:'example.vercel.app'}],[],origin),/Cannot verify/));
+test('rejects conflicting branch bindings',()=>assert.throws(()=>assertIsolatedBindings(domains,[...isolated,{...binding('https://other.supabase.co',['preview']),gitBranch:'another-branch'}],origin),/branch-specific/));

@@ -6,6 +6,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import {
   projectUrl,
   getTestAdminKey,
+  getStagingPublishableKey,
   query,
   uuid,
   literal,
@@ -56,7 +57,7 @@ const users = [],
 const product = randomUUID();
 const createdProducts=[];
 
-const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const key = await getStagingPublishableKey();
 const operator = createClient(projectUrl, await getTestAdminKey(), options);
 const password = randomBytes(32).toString("base64url");
 const client = () => createClient(projectUrl, key, options);

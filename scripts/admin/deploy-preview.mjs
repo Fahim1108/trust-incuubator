@@ -1,3 +1,4 @@
+import projects from '../../frontend/claude/src/config/supabase-projects.json' with {type:'json'};
 import { assertRemoteDatabaseIsolation } from '../lib/deployment-isolation.mjs';
 // Deploy an exact pushed commit to the existing separate Preview project only.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -41,7 +42,7 @@ if (codeOnly) {
     throw new Error('Code-only release contains database changes; refusing shared-database deployment');
   console.log('Code-only Preview release: no database migrations or hosted mutation tests authorized.');
 } else {
-  await assertRemoteDatabaseIsolation('https://euoannuvovsbwxjqnriw.supabase.co');
+  await assertRemoteDatabaseIsolation(`https://${projects.staging}.supabase.co`);
 }
 const response = await fetch(
   `https://api.vercel.com/v13/deployments?teamId=${team}`,
