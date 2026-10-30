@@ -1,0 +1,19 @@
+{
+  "projectRef": "jwccyndyaamodxjtjtfo",
+  "success": true,
+  "checks": [
+    "anonymous edit denied",
+    "customer AAL1 edit denied",
+    "customer signed session logout and direct-write rejection",
+    "analyst AAL1 edit denied",
+    "analyst signed session logout and direct-write rejection",
+    "product_manager AAL1 edit denied",
+    "product_manager real AAL2 audited edit, persistence, no-op, validation and stale-edit rejection",
+    "product_manager signed session logout and direct-write rejection",
+    "owner AAL1 edit denied",
+    "owner real AAL2 audited edit, persistence, no-op, validation and stale-edit rejection",
+    "owner signed session logout and direct-write rejection",
+    "generated fixtures removed; permanent Owner and verified MFA factors unchanged"
+  ],
+  "productionAccessed": false
+}

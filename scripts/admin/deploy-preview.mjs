@@ -1,6 +1,6 @@
 import projects from '../../frontend/claude/src/config/supabase-projects.json' with {type:'json'};
 import { assertRemoteDatabaseIsolation } from '../lib/deployment-isolation.mjs';
-import {getStagingPublishableKey} from '../lib/supabase-development.mjs';
+import {getStagingPublishableKey,query} from '../lib/supabase-development.mjs';
 // Deploy an exact pushed commit to the existing separate Preview project only.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -49,6 +49,12 @@ if (codeOnly) {
 // No project-wide variables or Production configuration are changed.
 const stagingUrl=`https://${projects.staging}.supabase.co`;
 const stagingKey=await getStagingPublishableKey();
+const genericDrafts=process.argv.includes('--generic-drafts');
+if(genericDrafts){
+ if(codeOnly)throw new Error('Editor activation requires isolated Staging');
+ const installed=await query("select to_regprocedure('public.admin_update_product_draft(uuid,timestamp with time zone,text,text)') is not null as present");
+ if(!installed[0]?.present)throw new Error('Approved draft editor migration is not installed');
+}
 const settings=await fetch(stagingUrl+'/auth/v1/settings',{headers:{apikey:stagingKey},signal:AbortSignal.timeout(20000)});
 if(!settings.ok)throw new Error('Staging public key failed gateway verification: HTTP '+settings.status);
 const response = await fetch(
@@ -63,7 +69,7 @@ const response = await fetch(
       name: "attires-arena-frontend-preview",
       project,
       target: "staging",
-      env:{SUPABASE_URL:stagingUrl,SUPABASE_PUBLISHABLE_KEY:stagingKey,CLAUDE_DESIGN_PREVIEW:"1"},
+      env:{SUPABASE_URL:stagingUrl,SUPABASE_PUBLISHABLE_KEY:stagingKey,CLAUDE_DESIGN_PREVIEW:"1",...(genericDrafts?{STAGING_GENERIC_DRAFT_EDITOR:'1'}:{})},
       gitSource: { type: "github", repoId: 1233834845, ref: sha },
       projectSettings: {
         rootDirectory: "frontend/claude",
