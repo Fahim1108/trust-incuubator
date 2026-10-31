@@ -117,7 +117,7 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   }
   await capture('images');
   await mkdir('artifacts/admin/generic-draft',{recursive:true});
-  for(const width of [360,390,430,768,1440]){
+  for(const width of [360,390,430,768,1024,1440]){
    await page.setViewportSize({width,height:900});await page.evaluate(()=>document.fonts.ready);
    await page.waitForFunction(()=>Array.from(document.images).filter(i=>i.getBoundingClientRect().width>0).every(i=>i.complete&&i.naturalWidth>0));
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -134,6 +134,18 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await page.getByRole('navigation',{name:'Mobile admin navigation'}).getByRole('button',{name:'More',exact:true}).click();
   await page.getByRole('dialog',{name:'Administration menu'}).waitFor();await page.getByRole('button',{name:'Close menu',exact:true}).click();
   await page.setViewportSize({width:1440,height:900});
+  const touchContext=await browser.newContext({baseURL,storageState:await context.storageState(),viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  try{
+   const touch=await touchContext.newPage();await touch.goto('/admin/products/'+product);
+   await touch.getByRole('tab',{name:'Variants',exact:true}).tap();assert.equal(await touch.getByRole('tab',{name:'Variants',exact:true}).getAttribute('aria-selected'),'true');
+   await touch.getByRole('tab',{name:'Details',exact:true}).tap();await touch.getByLabel('Product name',{exact:true}).tap();
+   assert(await touch.getByLabel('Product name',{exact:true}).evaluate(input=>document.activeElement===input));
+   await touch.getByRole('navigation',{name:'Mobile admin navigation'}).getByRole('button',{name:'More',exact:true}).tap();
+   await touch.getByRole('dialog',{name:'Administration menu'}).waitFor();await touch.getByRole('button',{name:'Close menu',exact:true}).tap();
+   assert(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   await touch.screenshot({path:'artifacts/admin/experience/touch-390.png',fullPage:true});
+   console.log('BROWSER: touch-emulated tab navigation, field focus and mobile drawer passed');
+  }finally{await touchContext.close();}
   await page.getByRole('button',{name:'Sign out',exact:true}).click();await page.waitForURL('**/admin/sign-in');
   await page.goto('/admin/products/'+product);await page.waitForURL('**/admin/sign-in');
  }catch(error){

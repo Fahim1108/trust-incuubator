@@ -3,6 +3,8 @@ import {notFound} from 'next/navigation';
 import {staffSession} from './access';
 import {isProductionStorefront} from '../storefront-policy';
 import {productRecordSchema,variantRecordSchema,inventoryRecordSchema,libraryFilters,literalSearch,type LibraryParams} from './library-validation';
+import {libraryVariant,summarizeVariants} from './product-summary';
+import {z} from 'zod';
 export async function librarySession(){
  if(isProductionStorefront())notFound();
  const session=await staffSession();
@@ -11,13 +13,21 @@ export async function librarySession(){
 }
 export async function readProductLibrary(params:LibraryParams){
  const session=await librarySession();const filters=libraryFilters(params);
- let query=session.client.from('products').select('id,name,slug,description,status,category_id,created_at,updated_at',{count:'exact'});
+ const imagesEnabled=process.env.STAGING_PRODUCT_GALLERY==='1';
+ let query=session.client.from('products').select('id,name,slug,description,status,category_id,created_at,updated_at,product_variants(price_minor,sale_price_minor,inventory(available))'+(imagesEnabled?',product_media(storage_path,alt_text,position)':''),{count:'exact'}).limit(101,{referencedTable:'product_variants'});
+ if(imagesEnabled)query=query.order('position',{referencedTable:'product_media'}).limit(1,{referencedTable:'product_media'});
  if(filters.q)query=query.ilike('name',literalSearch(filters.q));
  if(filters.status)query=query.eq('status',filters.status);
  const field=filters.sort==='name'?'name':filters.sort==='newest'?'created_at':'updated_at';
  const result=await query.order(field,{ascending:filters.sort==='name'}).order('id',{ascending:true}).range((filters.page-1)*24,filters.page*24-1);
  if(result.error)throw new Error('Product library could not be read. No changes were made.');
- return {items:productRecordSchema.array().parse(result.data),count:result.count||0,filters,canManage:session.roles.some(r=>r==='owner'||r==='product_manager')};
+ const rows=productRecordSchema.extend({product_variants:libraryVariant.array(),product_media:z.array(z.object({storage_path:z.string(),alt_text:z.string(),position:z.number().int()})).optional()}).array().parse(result.data);
+ const items=await Promise.all(rows.map(async row=>{
+  const media=row.product_media?.[0];let coverUrl:string|null=null;
+  if(media){const signed=await session.client.storage.from('attires-product-drafts').createSignedUrl(media.storage_path,120);if(!signed.error)coverUrl=signed.data.signedUrl;}
+  return {...row,summary:summarizeVariants(row.product_variants),coverUrl,coverAlt:media?.alt_text||row.name};
+ }));
+ return {items,count:result.count||0,filters,canManage:session.roles.some(r=>r==='owner'||r==='product_manager')};
 }
 export async function readProductRecord(id:string){
  const session=await librarySession();
@@ -33,7 +43,6 @@ export async function readProductRecord(id:string){
  if(inventory?.error)throw new Error('Product inventory could not be read.');
  const intake=await session.client.from('thrift_intake').select('source_id,actual_size,actual_color,size_verified,details_verified,price_minor,stock_quantity').eq('product_id',id).maybeSingle();
  if(intake.error)throw new Error('Product intake could not be read.');
- const {z}=await import('zod');
  const facts=z.object({source_id:z.string(),actual_size:z.string().nullable(),actual_color:z.string().nullable(),size_verified:z.boolean(),details_verified:z.boolean(),price_minor:z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),stock_quantity:z.number().int().nonnegative()}).nullable().parse(intake.data);
  return {product:productRecordSchema.parse(product.data),variants:rows,hasMoreVariants:parsed.length>100,inventory:inventoryRecordSchema.array().parse(inventory?.data||[]),intake:facts,canManage:session.roles.some(r=>r==='owner'||r==='product_manager')};
 }

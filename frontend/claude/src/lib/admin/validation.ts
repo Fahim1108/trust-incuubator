@@ -81,6 +81,7 @@ export const snapshotSchema = z.object({
 });
 export type IntakeItem = z.infer<typeof snapshotSchema>["items"][number];
 export type AdminActionState = {
+  productId?:string;
   error?: string;
   success?: string;
   qr?: string;

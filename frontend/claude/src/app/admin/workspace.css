@@ -1,15 +1,18 @@
 /* Staging-only composition. Matches the storefront's real maroon, white and Inter. */
 .aa-admin.aa-admin--workspace{--admin-burgundy:#6b0202;background:#fff;color:#171717;font-family:var(--font-inter),Inter,system-ui,sans-serif}
-.aa-admin--workspace .aa-shell{grid-template-columns:224px minmax(0,1fr);align-items:start}
-.aa-admin--workspace .aa-content{min-width:0}
+.aa-admin--workspace .aa-shell{grid-template-columns:224px minmax(0,1fr);align-items:start;background:#400000}
+.aa-admin--workspace .aa-content{min-width:0;background:#fff;min-height:100svh}
 .aa-admin--workspace .aa-sidebar,.aa-admin--workspace .aa-drawer{background:#400000;color:#fff;border-color:#400000}
-.aa-admin--workspace .aa-sidebar{width:224px;position:sticky;top:0;height:100svh;overflow-y:auto;padding:24px 18px;gap:20px}
+.aa-admin--workspace .aa-sidebar{width:224px;position:sticky;top:0;height:100svh;overflow-y:auto;padding:20px 18px;gap:12px}
+.aa-admin--workspace .aa-sidebar>a:first-child img{width:70px;height:64px}
+.aa-admin--workspace .aa-sidebar>.aa-eyebrow{display:none}
+.aa-admin--workspace .aa-sidebar nav{gap:6px}
 .aa-admin--workspace .aa-sidebar>a:first-child{align-self:center}
 .aa-admin--workspace .aa-sidebar p,.aa-admin--workspace .aa-drawer p{color:#d6c8c8}
 .aa-admin--workspace .aa-sidebar a:focus-visible,.aa-admin--workspace .aa-sidebar summary:focus-visible,.aa-admin--workspace .aa-drawer a:focus-visible,.aa-admin--workspace .aa-drawer summary:focus-visible{outline-color:#fff}
 .aa-admin--workspace .aa-date-label{font-size:11px;color:#74706c;border:1px solid #eaeaea;padding:8px 10px;border-radius:6px}
-.aa-admin--workspace .aa-nav-group summary{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#d6c8c8;cursor:pointer;padding:12px 10px 8px;min-height:36px}
-.aa-admin--workspace .aa-nav-group>a{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 12px;margin:3px 0;border-radius:7px;color:inherit}
+.aa-admin--workspace .aa-nav-group summary{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#d6c8c8;cursor:pointer;padding:8px 10px 4px;min-height:28px}
+.aa-admin--workspace .aa-nav-group>a{display:flex;align-items:center;gap:10px;min-height:40px;padding:8px 12px;margin:2px 0;border-radius:7px;color:inherit;font-size:13px}
 .aa-admin--workspace .aa-sidebar nav a[aria-current=page],.aa-admin--workspace .aa-drawer nav a[aria-current=page]{background:rgba(255,255,255,.15);color:#fff}
 .aa-admin--workspace .aa-sidebar a:hover,.aa-admin--workspace .aa-drawer a:hover{background:rgba(255,255,255,.08);text-decoration:none}
 .aa-admin--workspace .aa-sidebar .aa-eyebrow{color:#d6c8c8;align-self:center}
@@ -65,18 +68,26 @@
 .aa-admin--workspace thead th{font-size:11px;font-weight:500;color:#74706c}
 .aa-admin--workspace tbody th{font-weight:500;max-width:400px;overflow-wrap:anywhere}
 .aa-admin--workspace tbody small{display:block;color:#74706c;font-size:11px;margin-top:4px}
+.aa-admin--workspace .aa-product-identity{display:flex;align-items:center;gap:12px;min-width:0}
+.aa-admin--workspace .aa-product-thumb{display:flex;align-items:center;justify-content:center;width:48px;height:60px;flex-shrink:0;border:1px solid #eaeaea;border-radius:5px;color:#74706c;background:#fff;overflow:hidden}
+.aa-admin--workspace .aa-product-thumb img{object-fit:contain;width:100%;height:100%}
+.aa-admin--workspace .aa-mobile-product-facts{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;margin:12px 0}
+.aa-admin--workspace .aa-product-table td{font-size:12px}
 .aa-admin--workspace tbody tr:last-child>*{border-bottom:0}
 .aa-admin--workspace .aa-row-action{display:inline-flex;align-items:center;gap:6px;color:#6b0202;min-height:44px;font-size:12px;white-space:nowrap}
 .aa-admin--workspace .aa-mobile-products{display:none}
+.aa-admin--workspace .aa-mobile-product{border:1px solid #eaeaea;border-radius:9px;padding:18px}
+.aa-admin--workspace .aa-mobile-product h2{font-size:17px;margin:12px 0 6px}.aa-admin--workspace .aa-mobile-product p{font-size:12px}
 .aa-admin--workspace .aa-empty-state{text-align:center;padding:36px 20px}
 .aa-admin--workspace .aa-empty-state>svg{margin:0 auto 14px;color:#6b0202}
 .aa-admin--workspace .aa-pagination{display:flex;justify-content:flex-end;align-items:center;gap:18px;font-size:12px;margin:24px 0;min-height:44px}
 .aa-admin--workspace .aa-admin-bottom{display:none}
 .aa-admin--workspace .aa-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:1100px){.aa-admin--workspace .aa-product-filters{grid-template-columns:1fr 1fr}.aa-admin--workspace .aa-shell{grid-template-columns:200px minmax(0,1fr)}.aa-admin--workspace .aa-sidebar{width:200px}.aa-admin--workspace .aa-main{padding:24px}.aa-admin--workspace .aa-global-search{width:60%}}
+@media(min-width:768px) and (max-width:1100px){.aa-admin--workspace .aa-product-table{display:none}.aa-admin--workspace .aa-mobile-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
 @media(max-width:767px){
- .aa-admin--workspace .aa-shell{display:block}.aa-admin--workspace .aa-content{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
- .aa-admin--workspace .aa-sidebar{display:none}.aa-admin--workspace .aa-top{padding:12px 16px;min-height:68px;gap:8px}
+ .aa-admin--workspace .aa-shell{display:block;background:#fff}.aa-admin--workspace .aa-content{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+ .aa-admin--workspace .aa-sidebar{display:none}.aa-admin--workspace .aa-top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:12px 16px;min-height:68px;gap:8px}.aa-admin--workspace .aa-top>.aa-mobile-toggle{justify-self:start}.aa-admin--workspace .aa-environment{justify-self:end}
  .aa-admin--workspace .aa-global-search{display:none}.aa-admin--workspace .aa-environment{font-size:10px}.aa-admin--workspace .aa-main{padding:22px 16px}
  .aa-admin--workspace .aa-page-heading{align-items:flex-start;gap:14px}.aa-admin--workspace .aa-page-heading h1{font-size:26px}.aa-admin--workspace .aa-page-heading .aa-button{min-height:44px}
  .aa-admin--workspace .aa-panel{padding:18px}.aa-admin--workspace .aa-workspace-tabs{gap:20px;margin-bottom:18px}.aa-admin--workspace .aa-workspace-tabs button{font-size:12px}

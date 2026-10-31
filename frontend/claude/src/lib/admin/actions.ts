@@ -153,6 +153,7 @@ export async function createProductDraft(_:AdminActionState,form:FormData):Promi
  const d=parsed.data;const client=await adminClient(true);
  const result=await client.rpc('admin_create_product_draft',{request_id:d.request_id,product_name:d.name,product_description:d.description});
  if(result.error)return {error:'Draft creation could not be confirmed. Reload the product list before retrying.'};
+ if(result.data!==d.request_id)return {error:'Saved product reference could not be confirmed. Reload the product list before retrying.'};
  revalidatePath('/admin');revalidatePath('/admin/products');
- return {success:'Product draft saved. It remains unpublished.'};
+ return {success:'Product draft saved. It remains unpublished.',productId:d.request_id};
 }
