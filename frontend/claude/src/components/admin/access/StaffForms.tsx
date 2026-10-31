@@ -1,39 +1,60 @@
 "use client";
 import Image from "next/image";
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useState, useTransition,useSyncExternalStore,useId } from "react";
+import {Mail,LockKeyhole,Eye,EyeOff,ArrowRight} from 'lucide-react';
 import {
   signInStaff,
   verifyStaffMfa,
   enrollStaffMfa,
 } from "@/lib/admin/actions";
 import type { AdminActionState } from "@/lib/admin/validation";
+const rememberedEmailKey='aa-admin-remembered-email';
+function readRememberedEmail(){try{const value=localStorage.getItem(rememberedEmailKey)||'';return value.length<=254&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)?value:'';}catch{return '';}}
+function subscribeRememberedEmail(callback:()=>void){window.addEventListener('storage',callback);window.addEventListener('aa-admin-email-change',callback);return ()=>{window.removeEventListener('storage',callback);window.removeEventListener('aa-admin-email-change',callback);};}
+function storeRememberedEmail(value:string){try{if(value)localStorage.setItem(rememberedEmailKey,value);else localStorage.removeItem(rememberedEmailKey);window.dispatchEvent(new Event('aa-admin-email-change'));return true;}catch{return false;}}
 export function StaffSignIn() {
   const [state, action, pending] = useActionState(signInStaff, {});
+  const storedEmail=useSyncExternalStore(subscribeRememberedEmail,readRememberedEmail,()=> '');
+  const [typedEmail,setTypedEmail]=useState<string|null>(null);const [remember,setRemember]=useState<boolean|null>(null);
+  const [visible,setVisible]=useState(false);const [help,setHelp]=useState(false);const [storageError,setStorageError]=useState('');const fieldId=useId();
+  const email=typedEmail??storedEmail;const rememberEmail=remember??Boolean(storedEmail);
   return (
-    <form action={action} className="aa-form">
-      <label>
-        Email
+    <form action={action} className="aa-form aa-login-form" onSubmit={()=>{if(!storeRememberedEmail(rememberEmail?email.trim():''))setStorageError('This browser could not save your email preference. You can still sign in.');}}>
+      <div><label htmlFor={fieldId+'-email'}>Email</label><div className="aa-login-input"><Mail size={18} strokeWidth={1.5} aria-hidden="true"/>
         <input
+          id={fieldId+'-email'}
           name="email"
           type="email"
+          value={email}
+          onChange={event=>setTypedEmail(event.target.value)}
+          placeholder="Enter your email address"
+          autoCapitalize="none"
+          spellCheck={false}
           required
           autoComplete="username"
           maxLength={254}
+          disabled={pending}
         />
-      </label>
-      <label>
-        Password
+      </div></div>
+      <div><label htmlFor={fieldId+'-password'}>Password</label><div className="aa-login-input"><LockKeyhole size={18} strokeWidth={1.5} aria-hidden="true"/>
         <input
+          id={fieldId+'-password'}
           name="password"
-          type="password"
+          type={visible?'text':'password'}
+          placeholder="Enter your password"
           required
           autoComplete="current-password"
           maxLength={256}
+          disabled={pending}
         />
-      </label>
+        <button type="button" className="aa-login-eye" aria-label={visible?'Hide password':'Show password'} aria-pressed={visible} onClick={()=>setVisible(value=>!value)} disabled={pending}>{visible?<EyeOff size={18} strokeWidth={1.5}/>:<Eye size={18} strokeWidth={1.5}/>}</button>
+      </div></div>
+      <div className="aa-login-options"><label><input type="checkbox" checked={rememberEmail} onChange={event=>{setTypedEmail(email);setRemember(event.target.checked);if(!event.target.checked&&!storeRememberedEmail(''))setStorageError('Your browser could not clear the email preference.');}}/>Remember email</label><button type="button" className="aa-login-help-trigger" aria-expanded={help} aria-controls={fieldId+'-help'} onClick={()=>setHelp(value=>!value)}>Forgot password?</button></div>
+      {help&&<p id={fieldId+'-help'} className="aa-login-help">Contact your store Owner to start the approved account-recovery process. Password recovery does not remove authenticator requirements. Never share your password or authenticator codes.</p>}
+      {storageError&&<p role="status" className="aa-login-help">{storageError}</p>}
       {state.error && <p role="alert">{state.error}</p>}
-      <button disabled={pending}>
-        {pending ? "Signing in…" : "Sign in securely"}
+      <button className="aa-login-submit" disabled={pending}>
+        {pending ? "Signing in…" : <>Sign in securely <ArrowRight size={16} aria-hidden="true"/></>}
       </button>
     </form>
   );

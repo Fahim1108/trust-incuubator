@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./admin.css";
 import "./workspace.css";
+import "./login.css";
 import {isProductionStorefront} from '@/lib/storefront-policy';
 export const metadata: Metadata = {
   title: "Administration | Attires Arena",

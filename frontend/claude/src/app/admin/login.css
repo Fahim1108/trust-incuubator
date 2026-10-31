@@ -1,0 +1,32 @@
+.aa-admin .aa-login-layout{min-height:calc(100svh - 34px);display:grid;place-items:center;padding:38px 20px;background:#fff}
+.aa-admin .aa-login-panel{position:relative;isolation:isolate;width:100%;max-width:488px;padding:28px 40px 30px;background:#fff;border:1px solid #eaeaea;border-radius:20px;box-shadow:0 16px 60px rgba(64,0,0,.06);overflow:hidden}
+.aa-admin .aa-login-panel::before{content:'';position:absolute;z-index:-1;pointer-events:none;top:200px;right:-260px;width:370px;height:370px;border:1px solid rgba(107,2,2,.07);border-radius:50%}
+.aa-admin .aa-login-access{display:flex;align-items:center;justify-content:flex-end;gap:7px;font-size:11px;color:#74706c;margin-bottom:24px}
+.aa-admin .aa-login-access svg{color:#6b0202}
+.aa-admin .aa-login-logo{display:block;margin:0 auto 14px;object-fit:contain}
+.aa-admin .aa-login-heading{text-align:center;margin-bottom:30px}
+.aa-admin .aa-login-heading h1{font-size:31px;line-height:1.25;font-weight:600;margin:0 0 8px;letter-spacing:-.035em;color:#171717}
+.aa-admin .aa-login-heading p{font-size:13px;line-height:1.6;margin:0;color:#74706c}
+.aa-admin .aa-login-form{gap:20px}
+.aa-admin .aa-login-form label{font-size:13px;font-weight:500;color:#171717}
+.aa-admin .aa-login-input{display:flex;align-items:center;gap:10px;border:1px solid #eaeaea;border-radius:8px;background:#fff;padding-left:13px;margin-top:7px;color:#74706c;min-width:0}
+.aa-admin .aa-login-input>svg{flex-shrink:0}
+.aa-admin .aa-login-input input{min-width:0;width:100%;height:46px;border:0;background:transparent;padding:10px 0;font-size:14px;box-shadow:none;color:#171717}
+.aa-admin .aa-login-input input:focus{outline:0}
+.aa-admin .aa-login-input:focus-within{outline:2px solid #6b0202;outline-offset:2px}
+.aa-admin .aa-login-form .aa-login-eye{flex-shrink:0;background:transparent;border:0;border-radius:6px;min-height:44px;width:44px;padding:0;color:#74706c}
+.aa-admin .aa-login-form .aa-login-eye:not(:disabled):hover{background:#f6eaea;color:#6b0202}
+.aa-admin .aa-login-options{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:-3px}
+.aa-admin .aa-login-options label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;min-height:44px}
+.aa-admin .aa-login-options input[type=checkbox]{width:16px;height:16px;min-height:16px;accent-color:#6b0202;margin:0}
+.aa-admin .aa-login-form .aa-login-help-trigger{border:0;background:transparent;color:#6b0202;font-size:12px;font-weight:400;padding:0;min-height:44px}
+.aa-admin .aa-login-form .aa-login-help-trigger:not(:disabled):hover{background:transparent;color:#4c0101;text-decoration:underline;text-underline-offset:4px}
+.aa-admin .aa-login-form .aa-login-help{font-size:12px;color:#74706c;line-height:1.7;margin:0;padding:12px;border:1px solid #eaeaea;border-radius:7px;background:#fff}
+.aa-admin .aa-login-form .aa-login-submit{width:100%;min-height:46px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:-6px;background:#6b0202;border-color:#6b0202;font-size:14px}
+.aa-admin .aa-login-form [role=alert]{margin:0;font-size:13px;line-height:1.5;color:#a42121}
+.aa-admin .aa-login-security{display:flex;align-items:flex-start;gap:12px;padding:16px;margin-top:26px;border-top:1px solid #eaeaea;color:#6b0202}
+.aa-admin .aa-login-security>svg{flex-shrink:0;margin-top:2px}
+.aa-admin .aa-login-security p{margin:0;color:#74706c;font-size:11px;line-height:1.7}
+.aa-admin .aa-login-return{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#74706c;min-height:44px}
+@media(max-width:540px){.aa-admin .aa-login-layout{padding:20px 14px;align-items:center}.aa-admin .aa-login-panel{padding:22px 24px;border-radius:16px;box-shadow:0 8px 32px rgba(64,0,0,.04)}.aa-admin .aa-login-logo{width:112px;height:108px}.aa-admin .aa-login-heading h1{font-size:29px}.aa-admin .aa-login-input input{font-size:16px}.aa-admin .aa-login-security{padding:16px 0}.aa-admin .aa-login-access{margin-bottom:22px}.aa-admin .aa-login-heading{margin-bottom:26px}}
+@media(max-height:760px){.aa-admin .aa-login-layout{align-items:start}}
