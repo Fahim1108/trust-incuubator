@@ -142,27 +142,28 @@ export async function verifyAdminBrowser({
     await page.getByLabel('Product name',{exact:true}).fill('Disposable browser created product');
     await page.getByLabel('Description',{exact:true}).fill('QA draft creation only');
     await page.getByRole('button',{name:'Create draft',exact:true}).click();
-    await page.getByRole('status').filter({hasText:'Basic product draft saved.'}).waitFor();
+    await page.getByRole('status').filter({hasText:'Product draft saved.'}).waitFor();
     console.log('BROWSER: persisted library filters and product details');
     await page.goto('/admin/products/library?q=Disposable%20browser%20created%20product&status=draft&sort=name');
     await page.getByRole('link',{name:'Disposable browser created product',exact:true}).click();
     await page.getByRole('heading',{name:'Disposable browser created product',exact:true}).waitFor();
-    await page.getByText('QA draft creation only',{exact:true}).waitFor();
-    await page.getByText('No SKU variants configured.',{exact:false}).waitFor();
+    await page.getByText('QA draft creation only',{exact:true}).first().waitFor();
+    await page.getByRole('tab',{name:'Variants',exact:true}).click();
+    await page.getByRole('heading',{name:'No variants yet',exact:true}).waitFor();
     for(const width of [390,1440]){
       await page.setViewportSize({width,height:900});
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Product detail overflow');
       await capture({path:`artifacts/admin/library-detail-${width}.png`,fullPage:true});
     }
     await page.goto('/admin/products/library?status=draft&sort=name');
-    await page.getByRole('heading',{name:'Product library',exact:true}).waitFor();
+    await page.getByRole('heading',{name:'Products',exact:true}).waitFor();
     for(const width of [390,1440]){
       await page.setViewportSize({width,height:900});
       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Product library overflow');
       await capture({path:`artifacts/admin/library-${width}.png`,fullPage:true});
     }
     await page.goto('/admin/products/library?q=Disposable%20browser%20created%20product&status=published');
-    await page.getByText('No products match these filters.',{exact:true}).waitFor();
+    await page.getByRole('heading',{name:'No products found',exact:true}).waitFor();
     await page.setViewportSize({width:390,height:844});
 
     await page.goto("/admin/products?q=one&q=two");

@@ -154,5 +154,5 @@ export async function createProductDraft(_:AdminActionState,form:FormData):Promi
  const result=await client.rpc('admin_create_product_draft',{request_id:d.request_id,product_name:d.name,product_description:d.description});
  if(result.error)return {error:'Draft creation could not be confirmed. Reload the product list before retrying.'};
  revalidatePath('/admin');revalidatePath('/admin/products');
- return {success:'Basic product draft saved. Images, garment details and publication are not configured for this draft yet.'};
+ return {success:'Product draft saved. It remains unpublished.'};
 }

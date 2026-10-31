@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./admin.css";
+import "./workspace.css";
 import {isProductionStorefront} from '@/lib/storefront-policy';
 export const metadata: Metadata = {
   title: "Administration | Attires Arena",
@@ -10,5 +11,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className={'aa-admin'+(isProductionStorefront()?'':' aa-admin--dark')}>{children}</div>;
+  return <div className={'aa-admin'+(isProductionStorefront()?'':' aa-admin--workspace')}>{children}</div>;
 }

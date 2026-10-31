@@ -18,6 +18,7 @@ const password=randomBytes(32).toString('base64url');
 const ok=r=>{if(r.error)throw new Error('Staging operation rejected: '+r.error.code);return r.data;};
 const pass=s=>{checks.push(s);console.log('PASS: '+s);};
 const permanent=await query("select u.id, array(select id::text from auth.mfa_factors where user_id=u.id and status='verified' order by id) as factors from auth.users u where email='attiresarena664@gmail.com'");
+const existingProducts=await query('select id,updated_at from public.products order by id');
 let success=false;
 try{
  const p=randomUUID();products.push(p);
@@ -74,7 +75,7 @@ try{
    if(role==='owner'&&process.env.ADMIN_VERCEL_DEPLOYMENT_FILE){
     const {verifyHostedPreview}=await import('./hosted-preview-browser.mjs');
     const {verifyGenericDraftBrowser}=await import('./verify-generic-draft-browser.mjs');
-    await verifyHostedPreview({email,password,secret:factor.totp.secret,product:p},verifyGenericDraftBrowser);
+    await verifyHostedPreview({email,password,secret:factor.totp.secret,product:p,onCreatedId:id=>products.push(id)},verifyGenericDraftBrowser);
     pass('hosted browser password/TOTP login, actual edit, reload persistence, 390/1440 screenshots, logout protection');
     if(process.argv.includes('--gallery'))pass('hosted browser original-photo multi-upload, persisted alt text, cover order and gallery removal');
     if(process.argv.includes('--variants'))pass('hosted browser SKU/pricing creation, zero initial stock, actual stock adjustment and negative-stock rejection');
@@ -101,6 +102,8 @@ try{
  if(storagePaths.length)ok(await admin.storage.from('attires-product-drafts').remove([...new Set(storagePaths)]));
  for(const id of users)ok(await admin.auth.admin.deleteUser(id));
  assert.deepEqual(await query("select u.id, array(select id::text from auth.mfa_factors where user_id=u.id and status='verified' order by id) as factors from auth.users u where email='attiresarena664@gmail.com'"),permanent);
+ assert.deepEqual(await query('select id,updated_at from public.products order by id'),existingProducts);
+ pass('existing business product records and saved versions unchanged');
  pass('generated fixtures removed; permanent Owner and verified MFA factors unchanged');
  await mkdir('artifacts/admin/generic-draft',{recursive:true});
  await writeFile('artifacts/admin/generic-draft/staging-results.json',JSON.stringify({projectRef,success,checks,productionAccessed:false},null,2)+'\n');
