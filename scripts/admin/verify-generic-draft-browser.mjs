@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
 import {mkdir,readFile} from 'node:fs/promises';
 import {totpCode} from './verify-browser.mjs';
-export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,password,secret,product,onCreatedId}){
+export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,password,secret,product,onCreatedId,expectedStockTotal=5}){
  const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,...(proxy?{proxy}:{})});
  const context=await browser.newContext({baseURL,viewport:{width:1440,height:900}});
  context.setDefaultTimeout(30000);context.setDefaultNavigationTimeout(45000);
@@ -41,6 +41,7 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await page.locator('textarea[name="description"]').fill('Saved through the actual Staging product editor.');
   await page.getByRole('button',{name:'Save draft details',exact:true}).click();
   await page.getByRole('heading',{name:'Hosted audited product edit',exact:true}).waitFor();
+  await page.getByRole('status').filter({hasText:'Draft details saved.'}).waitFor();
   await page.reload();assert.equal(await page.getByLabel('Product name',{exact:true}).inputValue(),'Hosted audited product edit');
   await capture('details');
   if(process.argv.includes('--taxonomy')){
@@ -87,10 +88,11 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
    const summary=page.getByRole('tabpanel',{name:'Stock',exact:true}).locator('article').filter({has:page.getByRole('heading',{name:sku,exact:true})});
    await summary.getByText('On hand: 0 · Reserved: 0 · Available: 0',{exact:true}).waitFor();
    const stock=summary.locator('details');await stock.locator('summary').click();
-   await stock.getByLabel('Quantity change').fill('1');await stock.getByLabel('Adjustment reason').fill('Hosted synthetic inventory count');
+   await stock.getByLabel('Quantity',{exact:true}).fill('1');await stock.getByLabel('Adjustment reason').fill('Hosted synthetic inventory count');
    await stock.getByRole('button',{name:'Record stock adjustment',exact:true}).click();
    await summary.getByText('On hand: 1 · Reserved: 0 · Available: 1',{exact:true}).waitFor();
-   await stock.getByLabel('Quantity change').fill('-2');await stock.getByLabel('Adjustment reason').fill('Invalid negative inventory check');await stock.getByRole('button',{name:'Record stock adjustment',exact:true}).click();
+   await capture('stock');
+   await stock.getByLabel('Remove stock',{exact:true}).check();await stock.getByLabel('Quantity',{exact:true}).fill('2');await stock.getByLabel('Adjustment reason').fill('Invalid negative inventory check');await stock.getByRole('button',{name:'Record stock adjustment',exact:true}).click();
    await stock.getByRole('alert').waitFor();assert(await summary.getByText('On hand: 1 · Reserved: 0 · Available: 1',{exact:true}).count());
    console.log('BROWSER: exact pricing/SKU creation, zero initial stock, genuine audited stock addition and negative-stock rejection');
   }
@@ -130,6 +132,10 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await page.getByLabel('Status',{exact:true}).selectOption('draft');await page.getByRole('button',{name:'Apply filters',exact:true}).click();
   await page.waitForURL(url=>url.searchParams.get('status')==='draft');
   await capture('products');
+  const productRow=page.locator('.aa-product-table tbody tr').filter({has:page.locator('a[href="/admin/products/'+product+'"]')});
+  if(process.argv.includes('--variants')){assert.equal(await productRow.getByText('৳500.00',{exact:true}).count(),1);assert.match(await productRow.locator('td').nth(1).innerText(),new RegExp('^'+expectedStockTotal+'\\s'));}
+  if(process.argv.includes('--gallery'))assert(await productRow.locator('.aa-product-thumb img').evaluate(image=>image.complete&&image.naturalWidth>0));
+  console.log('BROWSER: catalogue list uses the saved private cover, exact SKU price and derived inventory total');
   await page.setViewportSize({width:390,height:900});
   await page.getByRole('navigation',{name:'Mobile admin navigation'}).getByRole('button',{name:'More',exact:true}).click();
   await page.getByRole('dialog',{name:'Administration menu'}).waitFor();await page.getByRole('button',{name:'Close menu',exact:true}).click();

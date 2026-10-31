@@ -6,6 +6,9 @@ import {createClient} from '@supabase/supabase-js';
 import {projectUrl,projectRef,getTestAdminKey,getStagingPublishableKey,query,uuid,literal} from '../lib/supabase-development.mjs';
 import {assertRemoteDatabaseIsolation} from '../lib/deployment-isolation.mjs';
 import {totpCode} from './verify-browser.mjs';
+const ownerUiOnly=process.argv.includes('--owner-ui-only');
+if(ownerUiOnly&&!process.env.ADMIN_VERCEL_DEPLOYMENT_FILE)throw new Error('Owner UI subset requires an exact hosted deployment record');
+const rolesToTest=ownerUiOnly?['owner']:['customer','analyst','product_manager','owner'];
 await assertRemoteDatabaseIsolation(projectUrl);
 const options={auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}};
 const admin=createClient(projectUrl,await getTestAdminKey(),options);
@@ -27,7 +30,7 @@ try{
  let savedVersion=await version();
  const payload=()=>({target_id:p,expected_updated_at:savedVersion,product_name:'Audited staging edit',product_description:'Temporary verification fixture'});
  assert((await client().rpc('admin_update_product_draft',payload())).error);pass('anonymous edit denied');
- for(const role of ['customer','analyst','product_manager','owner']){
+ for(const role of rolesToTest){
   const email='qa-draft-'+randomUUID()+'@example.com';
   const user=ok(await admin.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{role:'owner'}})).user;users.push(user.id);
   if(role==='owner')await query(`select private.provision_owner(${uuid(user.id)},${literal(email)},'Disposable staging draft integration verification')`,false);
@@ -75,7 +78,7 @@ try{
    if(role==='owner'&&process.env.ADMIN_VERCEL_DEPLOYMENT_FILE){
     const {verifyHostedPreview}=await import('./hosted-preview-browser.mjs');
     const {verifyGenericDraftBrowser}=await import('./verify-generic-draft-browser.mjs');
-    await verifyHostedPreview({email,password,secret:factor.totp.secret,product:p,onCreatedId:id=>products.push(id)},verifyGenericDraftBrowser);
+    await verifyHostedPreview({email,password,secret:factor.totp.secret,product:p,onCreatedId:id=>products.push(id),expectedStockTotal:rolesToTest.includes('product_manager')?5:3},verifyGenericDraftBrowser);
     pass('hosted browser password/TOTP login, actual edit, reload persistence, 390/1440 screenshots, logout protection');
     if(process.argv.includes('--gallery'))pass('hosted browser original-photo multi-upload, persisted alt text, cover order and gallery removal');
     if(process.argv.includes('--variants'))pass('hosted browser SKU/pricing creation, zero initial stock, actual stock adjustment and negative-stock rejection');
@@ -106,5 +109,5 @@ try{
  pass('existing business product records and saved versions unchanged');
  pass('generated fixtures removed; permanent Owner and verified MFA factors unchanged');
  await mkdir('artifacts/admin/generic-draft',{recursive:true});
- await writeFile('artifacts/admin/generic-draft/staging-results.json',JSON.stringify({projectRef,success,checks,productionAccessed:false},null,2)+'\n');
+ await writeFile('artifacts/admin/generic-draft/'+(ownerUiOnly?'owner-ui-results.json':'staging-results.json'),JSON.stringify({projectRef,success,rolesTested:rolesToTest,checks,productionAccessed:false},null,2)+'\n');
 }

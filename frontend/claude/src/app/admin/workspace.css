@@ -50,6 +50,11 @@
 .aa-admin--workspace .aa-stock-counts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
 .aa-admin--workspace .aa-stock-counts span{display:block;font-size:11px;color:#74706c}
 .aa-admin--workspace .aa-stock-counts strong{font-size:24px;font-weight:600}
+.aa-admin--workspace .aa-stock-direction{display:flex;gap:10px;flex-wrap:wrap}
+.aa-admin--workspace .aa-stock-direction legend{font-size:12px;color:#74706c;margin-bottom:8px}
+.aa-admin--workspace .aa-stock-direction label{display:flex;align-items:center;gap:8px;flex:1;min-height:44px;border:1px solid #eaeaea;border-radius:6px;padding:10px;font-size:12px}
+.aa-admin--workspace .aa-stock-direction input[type=radio]{display:inline-block;width:18px;height:18px;min-height:18px;accent-color:#6b0202}
+.aa-admin--workspace .aa-stock-direction label:has(input:checked){color:#6b0202;border-color:#6b0202;background:#f6eaea}
 .aa-admin--workspace .aa-stock-sentence{font-size:11px}
 .aa-admin--workspace .aa-workspace-note{border-top:1px solid #eaeaea;margin:24px 0;padding:18px 0;font-size:12px}
 .aa-admin--workspace .aa-workspace-note p{font-size:12px}

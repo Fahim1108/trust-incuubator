@@ -1,5 +1,5 @@
 'use client';
-import {useActionState} from 'react';
+import {useActionState,useState} from 'react';
 import {saveVariant,adjustProductStock} from '@/lib/admin/variant-actions';
 import {editablePrice} from '@/lib/admin/variant-management';
 import type {z} from 'zod';
@@ -19,5 +19,9 @@ export function VariantEditor({target,variant,newId}:{target:Target;variant?:z.i
 }
 export function StockEditor({target,variantId}:{target:Target;variantId:string}){
  const [state,action,pending]=useActionState(adjustProductStock,{});
- return <form action={action} className="aa-form"><TargetFields target={target} variantId={variantId}/><label>Quantity change<input name="delta" inputMode="numeric" placeholder="For example: 1 or -1" required/></label><label>Adjustment reason<input name="reason" minLength={3} maxLength={500} required/></label><button disabled={pending}>{pending?'Recording adjustment…':'Record stock adjustment'}</button>{state.error&&<p role="alert">{state.error}</p>}{state.success&&<p role="status">{state.success}</p>}</form>;
+ const [direction,setDirection]=useState<'add'|'remove'>('add');const [quantity,setQuantity]=useState('');
+ const delta=/^[1-9]\d{0,8}$/.test(quantity)?(direction==='remove'?'-':'')+quantity:'';
+ return <form action={action} className="aa-form"><TargetFields target={target} variantId={variantId}/><input type="hidden" name="delta" value={delta}/>
+ <fieldset className="aa-stock-direction" disabled={pending}><legend>Adjustment type</legend><label><input type="radio" name="adjustment_type" value="add" checked={direction==='add'} onChange={()=>setDirection('add')}/>Add stock</label><label><input type="radio" name="adjustment_type" value="remove" checked={direction==='remove'} onChange={()=>setDirection('remove')}/>Remove stock</label></fieldset>
+ <label>Quantity<input name="quantity" inputMode="numeric" pattern="[1-9][0-9]*" maxLength={9} value={quantity} onChange={event=>setQuantity(event.target.value)} required disabled={pending}/></label><label>Adjustment reason<input name="reason" minLength={3} maxLength={500} required disabled={pending}/></label><button disabled={pending}>{pending?'Recording adjustment…':'Record stock adjustment'}</button>{state.error&&<p role="alert">{state.error}</p>}{state.success&&<p role="status">{state.success}</p>}</form>;
 }
