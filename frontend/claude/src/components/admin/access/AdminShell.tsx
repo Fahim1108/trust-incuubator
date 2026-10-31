@@ -72,7 +72,7 @@ export function AdminShell({
           >
             Menu
           </button>
-          <Image className="aa-mobile-brand" src="/brand/logo-maroon.png" alt="Attires Arena" width={46} height={44}/>
+          <Image className="aa-mobile-brand" src={stagingTools?'/brand/logo-white.png':'/brand/logo-maroon.png'} alt="Attires Arena" width={46} height={44}/>
           {canRead&&stagingTools?<form className="aa-global-search" action="/admin/products/library"><Search size={16} strokeWidth={1.6} aria-hidden="true"/><input name="q" type="search" aria-label="Search products" placeholder="Search products…" maxLength={120}/></form>:<span className="aa-admin-title">Administration</span>}
           <span className="aa-environment"><ShieldCheck size={14} aria-hidden="true"/>{stagingTools?'Staging workspace':'Store management'}</span>
         </header>

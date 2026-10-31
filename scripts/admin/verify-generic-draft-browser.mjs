@@ -12,7 +12,7 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await mkdir('artifacts/admin/experience',{recursive:true});
   await page.evaluate(()=>document.fonts.ready);
   await page.waitForFunction(()=>Array.from(document.images).filter(i=>i.getBoundingClientRect().width>0).every(i=>i.complete&&i.naturalWidth>0));
-  for(const width of [390,1440]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`artifacts/admin/experience/${name}-${width}.png`,fullPage:true});}
+  for(const width of [390,1440]){await page.setViewportSize({width,height:900});await page.evaluate(()=>window.scrollTo(0,0));await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`artifacts/admin/experience/${name}-${width}.png`,fullPage:width!==390});}
  }
  try{
   console.log('BROWSER: deployment access and protected product');
@@ -24,6 +24,9 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await page.getByLabel('Authenticator code').fill(totpCode(secret));
   await page.getByRole('button',{name:'Verify and continue'}).click();await page.waitForURL(url=>url.pathname==='/admin');
   await capture('dashboard');
+  await page.setViewportSize({width:390,height:900});
+  assert(await page.locator('.aa-mobile-brand').evaluate(logo=>{const r=logo.getBoundingClientRect();return r.width>0&&Math.abs(r.x+r.width/2-innerWidth/2)<=1&&getComputedStyle(logo).backgroundColor==='rgb(107, 2, 2)';}));
+  await page.setViewportSize({width:1440,height:900});
   if(onCreatedId){
    await page.goto('/admin/products/new');const id=await page.locator('input[name=request_id]').inputValue();onCreatedId(id);
    await page.getByLabel('Product name',{exact:true}).fill('Disposable guided creation');
@@ -92,6 +95,7 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
    await stock.getByRole('button',{name:'Record stock adjustment',exact:true}).click();
    await summary.getByText('On hand: 1 · Reserved: 0 · Available: 1',{exact:true}).waitFor();
    await capture('stock');
+   await page.setViewportSize({width:390,height:900});await stock.getByLabel('Quantity',{exact:true}).scrollIntoViewIfNeeded();await page.screenshot({path:'artifacts/admin/experience/stock-controls-390.png'});await page.setViewportSize({width:1440,height:900});
    await stock.getByLabel('Remove stock',{exact:true}).check();await stock.getByLabel('Quantity',{exact:true}).fill('2');await stock.getByLabel('Adjustment reason').fill('Invalid negative inventory check');await stock.getByRole('button',{name:'Record stock adjustment',exact:true}).click();
    await stock.getByRole('alert').waitFor();assert(await summary.getByText('On hand: 1 · Reserved: 0 · Available: 1',{exact:true}).count());
    console.log('BROWSER: exact pricing/SKU creation, zero initial stock, genuine audited stock addition and negative-stock rejection');
@@ -140,16 +144,24 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
   await page.getByRole('navigation',{name:'Mobile admin navigation'}).getByRole('button',{name:'More',exact:true}).click();
   await page.getByRole('dialog',{name:'Administration menu'}).waitFor();await page.getByRole('button',{name:'Close menu',exact:true}).click();
   await page.setViewportSize({width:1440,height:900});
-  const touchContext=await browser.newContext({baseURL,storageState:await context.storageState(),viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const touchContext=await browser.newContext({baseURL,storageState:await context.storageState(),viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});
   try{
    const touch=await touchContext.newPage();await touch.goto('/admin/products/'+product);
    await touch.getByRole('tab',{name:'Variants',exact:true}).tap();assert.equal(await touch.getByRole('tab',{name:'Variants',exact:true}).getAttribute('aria-selected'),'true');
+   if(process.argv.includes('--variants')){
+    await touch.getByRole('tab',{name:'Stock',exact:true}).tap();
+    const card=touch.getByRole('tabpanel',{name:'Stock',exact:true}).locator('article').filter({has:touch.getByRole('heading',{name:'HOSTED-QA-'+product.slice(0,8),exact:true})});
+    await card.locator('summary').tap();await card.getByLabel('Remove stock',{exact:true}).tap();assert(await card.getByLabel('Remove stock',{exact:true}).isChecked());
+    await card.getByLabel('Quantity',{exact:true}).tap();assert.equal(await card.getByLabel('Quantity',{exact:true}).getAttribute('inputmode'),'numeric');
+   }
    await touch.getByRole('tab',{name:'Details',exact:true}).tap();await touch.getByLabel('Product name',{exact:true}).tap();
    assert(await touch.getByLabel('Product name',{exact:true}).evaluate(input=>document.activeElement===input));
+   assert(await touch.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches));
+   assert.equal(await touch.getByRole('button',{name:'Save draft details',exact:true}).evaluate(button=>getComputedStyle(button).transitionDuration),'0s');
    await touch.getByRole('navigation',{name:'Mobile admin navigation'}).getByRole('button',{name:'More',exact:true}).tap();
    await touch.getByRole('dialog',{name:'Administration menu'}).waitFor();await touch.getByRole('button',{name:'Close menu',exact:true}).tap();
    assert(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   await touch.screenshot({path:'artifacts/admin/experience/touch-390.png',fullPage:true});
+   await touch.screenshot({path:'artifacts/admin/experience/touch-390.png'});
    console.log('BROWSER: touch-emulated tab navigation, field focus and mobile drawer passed');
   }finally{await touchContext.close();}
   await page.getByRole('button',{name:'Sign out',exact:true}).click();await page.waitForURL('**/admin/sign-in');
@@ -157,6 +169,7 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
  }catch(error){
   console.log('BROWSER safe form errors:',JSON.stringify(await page.getByRole('alert').allTextContents().catch(()=>[])));
   await mkdir('artifacts/admin/generic-draft',{recursive:true});
+  await page.locator('input[type=password],input[autocomplete=one-time-code]').evaluateAll(inputs=>inputs.forEach(input=>{input.value='';})).catch(()=>{});
   await page.screenshot({path:'artifacts/admin/generic-draft/browser-failure.png',fullPage:true}).catch(()=>{});
   // Playwright errors may contain the temporary access URL. Never log it.
   throw new Error('Hosted draft browser verification failed: '+String(error.message).replace(/https?:\/\/[^\s"']+/g,'[URL withheld]').slice(0,500));
