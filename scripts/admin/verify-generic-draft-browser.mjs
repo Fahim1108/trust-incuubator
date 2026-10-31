@@ -157,7 +157,9 @@ export async function verifyGenericDraftBrowser({baseURL,accessURL,proxy,email,p
    await touch.getByRole('tab',{name:'Details',exact:true}).tap();await touch.getByLabel('Product name',{exact:true}).tap();
    assert(await touch.getByLabel('Product name',{exact:true}).evaluate(input=>document.activeElement===input));
    assert(await touch.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches));
-   assert.equal(await touch.getByRole('button',{name:'Save draft details',exact:true}).evaluate(button=>getComputedStyle(button).transitionDuration),'0s');
+   // The existing storefront reduced-motion rule uses 0.01ms, not literal 0s.
+   const durations=await touch.getByRole('button',{name:'Save draft details',exact:true}).evaluate(button=>getComputedStyle(button).transitionDuration.split(',').map(value=>parseFloat(value)/(value.trim().endsWith('ms')?1000:1)));
+   assert(durations.every(seconds=>Number.isFinite(seconds)&&seconds<=0.00001));
    await touch.getByRole('navigation',{name:'Mobile admin navigation'}).getByRole('button',{name:'More',exact:true}).tap();
    await touch.getByRole('dialog',{name:'Administration menu'}).waitFor();await touch.getByRole('button',{name:'Close menu',exact:true}).tap();
    assert(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));

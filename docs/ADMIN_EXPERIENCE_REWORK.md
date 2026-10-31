@@ -33,4 +33,23 @@ Bangladesh conventions apply throughout: exact integer-poisha money displayed as
 
 ## Verification status
 
-Implementation in progress. Local and hosted results will be recorded in PROGRESS.md after execution. This document does not sign off complete Product Management or the full admin system.
+**Experience increment verified on Staging.** Application source: `ae768fc6704fa122f8e3f4ab62f1e49a90fc04c7`.
+
+Preview: https://attires-arena-frontend-preview-jz54oieg4-fahim-s-projects1.vercel.app/admin/login
+
+- Root/frontend lint and TypeScript, optimized frontend build and **210 automated tests** passed (58 root, 143 frontend, 9 operator/security tests).
+- Full real signed-session role matrix passed on `f2a581ec428393f34f99f863c7daf4f9d7fd1508`: Owner/Product Manager allowed; customer/analyst mutations and AAL1 admin access rejected. The subsequent changes are touch-form/branding presentation; database functions, RLS and authorization are unchanged.
+- Final exact-source Owner browser regression passed password/TOTP, persisted creation with a database-confirmed destination, details edits, keyboard tabs, unsaved Details retention across another-tab save, stale-write rejection, taxonomy, multi-image upload/cover/removal, SKU pricing, Add/Remove stock, negative-stock rejection, actual photo/price/derived-inventory list data, header search, filters and logout/protected routes.
+- Overflow checked at 360, 390, 430, 768, 1024 and 1440px. Desktop uses a table; tablet/mobile use dedicated cards. Screenshots at 390/1440px were visually compared with the supplied reference. Final mobile logo is original white artwork on a centered maroon badge; its original wordmark and aspect ratio remain intact.
+- Touch-emulated Chrome verified tab navigation, quantity input focus, Add/Remove selection, More/drawer controls and reduced motion. Existing global reduced-motion suppression is 0.01ms; the test checks that effectively-zero duration. No storefront global CSS was changed. Physical iOS/Android keyboard testing remains a release check, not a claimed executed test.
+- Initial hosted testing found and fixed the regenerated draft-ID navigation bug. Visual review found and fixed the invisible mobile derivative logo. A literal-zero reduced-motion test was corrected to match the existing global rule; the complete final regression passed.
+- Temporary accounts, products, terms and image bytes were removed. Permanent Owner/MFA and the existing product IDs/saved versions compared unchanged. Read-only foundation verification retains sixteen migrations, fifteen RLS tables and 94 validated constraints. No schema change, reset, Production modification, paid service or production deployment.
+- Deployment-only automation access revoked; project-wide protection unchanged. Screenshots contain isolated QA records, subsequently removed.
+
+Evidence: `artifacts/admin/experience/security-matrix/` (full role run), `artifacts/admin/experience/final/` (final Owner run/deployment identity), and the dashboard/details/images/products/stock screenshots in `artifacts/admin/experience/`.
+
+The list's price ranges and unreserved units come from the same variant/inventory rows edited in the workspace. Missing inventory is not displayed as zero. A bounded read over 100 variants suppresses incomplete totals. Private thumbnails use short-lived signed URLs and an explicit no-preview icon when unavailable; no replacement product photos are fabricated. Stock adjustments offer Add/Remove plus a positive numeric quantity for mobile keyboards.
+
+This signs off the current experience rework only. Full product CRUD/publishing, multi-attribute variants, cost/SEO/size-chart fields, staging public-storefront synchronization and the other business modules remain incomplete. Imported garment editing still uses the verified intake editor. Existing upload and taxonomy-picker limits in PRODUCT_MANAGEMENT_OPERATIONAL_REPORT.md remain. Next is the integrated product-to-storefront lifecycle in roadmap step 2.
+
+Reproduce: `npm run check:claude`, `npm run test:claude`, root `lint`/`typecheck`/`test`, operator checks and `npm run build:claude`. Full hosted role/workflow run: `ADMIN_VERCEL_DEPLOYMENT_FILE=... node --use-env-proxy scripts/admin/test-generic-draft-staging.mjs --gallery --variants --taxonomy`. A subsequent presentation-only Owner regression adds `--owner-ui-only` and records that restricted scope explicitly.

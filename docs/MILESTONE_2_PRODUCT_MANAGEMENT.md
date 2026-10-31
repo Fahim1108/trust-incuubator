@@ -1,5 +1,7 @@
 # Milestone 2 — Full Product Management
 
+**Approach update, 31 October 2026:** Feature expansion paused in favor of the supplied maroon-and-white mockup, minimal icons, mobile navigation, real-data product tables/cards and a task-based product workspace. Final hosted source ae768fc6704fa122f8e3f4ab62f1e49a90fc04c7 passed its Owner experience regression; the unchanged backend role matrix was verified separately. See ADMIN_EXPERIENCE_REWORK.md. No migration or Production deployment in this increment. Next: one complete product-to-staging-storefront lifecycle. Full Product Management remains incomplete; earlier checkpoint descriptions below are historical.
+
 **Current checkpoint, 31 October 2026 (Bangladesh):** Permanent Staging access is verified. Draft metadata, private gallery, generic SKU/pricing, inventory and category/brand/collection/tag management passed real API and hosted-browser verification at `e3a3f4972e40d890e04ea4d68c1ceb4f091d5609`; current evidence is in `artifacts/admin/taxonomy/`. Staging contains 16 migrations. See `PRODUCT_MANAGEMENT_OPERATIONAL_REPORT.md` and the latest PROGRESS entry for verified scope and remaining limitations. Full Product Management is not signed off. Earlier sections below are historical checkpoints, not the current migration/access state.
 
 Milestone 1 staging security foundation passed before implementation started. Production is unchanged. Budget remains $0. No existing migrations are rerun; no new migration has been applied in this increment.

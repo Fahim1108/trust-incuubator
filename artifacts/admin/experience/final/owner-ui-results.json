@@ -1,0 +1,23 @@
+{
+  "projectRef": "jwccyndyaamodxjtjtfo",
+  "success": true,
+  "rolesTested": [
+    "owner"
+  ],
+  "checks": [
+    "anonymous edit denied",
+    "owner AAL1 edit denied",
+    "owner real taxonomy CRUD, assignment, version conflict and referenced-delete protection",
+    "owner actual SKU/pricing, zero initial stock, audited adjustments and negative/stale rejection",
+    "owner private binary gallery linkage and Storage protection",
+    "owner real AAL2 audited edit, persistence, no-op, validation and stale-edit rejection",
+    "hosted browser password/TOTP login, actual edit, reload persistence, 390/1440 screenshots, logout protection",
+    "hosted browser original-photo multi-upload, persisted alt text, cover order and gallery removal",
+    "hosted browser SKU/pricing creation, zero initial stock, actual stock adjustment and negative-stock rejection",
+    "hosted browser brand creation/edit, taxonomy screenshots and persisted product-brand assignment",
+    "owner signed session logout and direct-write rejection",
+    "existing business product records and saved versions unchanged",
+    "generated fixtures removed; permanent Owner and verified MFA factors unchanged"
+  ],
+  "productionAccessed": false
+}

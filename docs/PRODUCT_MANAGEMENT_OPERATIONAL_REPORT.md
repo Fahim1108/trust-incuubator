@@ -1,5 +1,7 @@
 # Product Management operational increments
 
+**Current UI direction:** The dark theme in historical increments is superseded by the user's 31 October maroon-and-white mockup. ADMIN_EXPERIENCE_REWORK.md records the implemented mobile-first experience and final exact-source browser verification. Backend capabilities below are retained; full product-to-storefront publishing and the complete business system are not signed off.
+
 All implementation and database changes in this report target **Staging `jwccyndyaamodxjtjtfo`**. Production database, Owner/MFA, storefront, DNS and environment settings remain unchanged. No paid services or external payment/courier integration enabled.
 
 ## Verified hosted product core
