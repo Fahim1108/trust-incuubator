@@ -2,8 +2,8 @@ import {describe,it,expect} from 'vitest';
 import {libraryFilters,literalSearch,libraryLink,minorPrice,productRecordSchema} from '../src/lib/admin/library-validation';
 describe('trusted product library filters',()=>{
  it('normalizes repeated params, unknown sorts/statuses and invalid paging',()=>{
-  expect(libraryFilters({q:['secret','other'],sort:'name;drop table products',status:'owner',page:'-1'})).toEqual({q:'',sort:'updated',status:'',page:1});
-  expect(libraryFilters({q:'  Shirt  ',sort:'name',status:'draft',page:'2'})).toEqual({q:'Shirt',sort:'name',status:'draft',page:2});
+  expect(libraryFilters({q:['secret','other'],sort:'name;drop table products',status:'owner',page:'-1'})).toEqual({q:'',sort:'updated',status:'',type:'',page:1});
+  expect(libraryFilters({q:'  Shirt  ',sort:'name',status:'draft',page:'2'})).toEqual({q:'Shirt',sort:'name',status:'draft',type:'',page:2});
  });
  it('treats SQL LIKE wildcard characters as literal search content',()=>{
   expect(literalSearch('50%_off\\')).toBe('%50\\%\\_off\\\\%');

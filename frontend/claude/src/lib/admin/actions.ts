@@ -87,6 +87,24 @@ export async function verifyStaffMfa(
     };
   redirect("/admin");
 }
+const draftFieldLabels: Record<string, string> = {
+  id: "the product reference", updated_at: "the saved version", name: "Product name",
+  description: "Description", price: "Price", stock_quantity: "Physical quantity",
+  actual_size: "Actual size", actual_color: "Actual color", chest_inches: "Chest",
+  length_inches: "Length", condition: "Condition", attributes: "Attributes",
+  seo_title: "SEO title", seo_description: "SEO description",
+};
+const draftFieldHints: Record<string, string> = {
+  "Product name": "enter 1–200 characters.", Description: "use up to 20,000 characters.",
+  Price: "enter BDT with up to two decimals, for example 1250 or 1250.50.",
+  "Physical quantity": "choose 0 or 1.", "Actual color": "use up to 80 characters.",
+  "Actual size": "use up to 40 characters, or leave blank if unknown.",
+  Chest: "enter inches above 0 and up to 100, with at most two decimals.",
+  Length: "enter inches above 0 and up to 100, with at most two decimals.",
+  Condition: "choose a listed condition.", Attributes: "choose listed attributes only.",
+  "SEO title": "use up to 70 characters.", "SEO description": "use up to 160 characters.",
+  "the product reference": "reload the page.", "the saved version": "reload the page.",
+};
 export async function saveThriftDraft(
   _: AdminActionState,
   form: FormData,
@@ -95,10 +113,15 @@ export async function saveThriftDraft(
   if (!session.roles.some((r) => r === "owner" || r === "product_manager"))
     return { error: "You do not have catalogue editing permission." };
   const parsed = draftSchema.safeParse({...Object.fromEntries(form),attributes:form.getAll("attributes")});
-  if (!parsed.success)
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const field = issue ? draftFieldLabels[String(issue.path[0])] : undefined;
     return {
-      error: parsed.error.issues[0]?.message || "Check the product fields.",
+      error: field
+        ? `Check ${field}: ${draftFieldHints[field] || issue!.message}`
+        : "Check the product fields. Reload if the saved version is missing.",
     };
+  }
   const d = parsed.data;
   const client = await adminClient(true);
   const result = await client.rpc("admin_save_thrift_draft", {
@@ -128,6 +151,9 @@ export async function saveThriftDraft(
     };
   revalidatePath("/admin");
   revalidatePath("/admin/products");
+  revalidatePath("/admin/products/library");
+  revalidatePath("/admin/products/" + d.id);
+  revalidatePath("/admin/audit");
   revalidatePath("/", "layout");
   if(form.get('save_next')==='1'){
    const next=await client.rpc('admin_catalogue_snapshot');

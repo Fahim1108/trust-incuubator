@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {shirtAttributes} from "@/lib/admin/validation";
+import {shirtAttributes,garmentSizes,garmentConditions} from "@/lib/admin/validation";
 import {missingProductFacts} from "@/lib/admin/product-review";
 import {useUnsavedDraft} from "./useUnsavedDraft";
 import Image from "next/image";
@@ -12,11 +12,13 @@ export function IntakeEditor({
   editable,
   initiallyOpen=false,
   previewEnabled=false,
+  workspaceHref,
 }: {
   item: IntakeItem;
   editable: boolean;
   initiallyOpen?:boolean;
   previewEnabled?:boolean;
+  workspaceHref?:string;
 }) {
   const [dirty,setDirty]=useState(false);
   useUnsavedDraft(dirty);
@@ -41,6 +43,7 @@ export function IntakeEditor({
         </div>
       </div>
       <p>{missingProductFacts(item).join(" · ")||"Facts entered — verification and publication pending"}</p>
+      {workspaceHref&&<Link href={workspaceHref} className="aa-button aa-secondary">Open product workspace</Link>}
       {previewEnabled&&editable&&item.status!=="archived"&&<Link href={"/product/"+item.slug} target="_blank" rel="noopener noreferrer" prefetch={false} className="aa-button aa-secondary">Preview saved product</Link>}
       <details open={initiallyOpen||undefined}>
         <summary>
@@ -106,7 +109,7 @@ export function IntakeEditor({
                 </label>
                 <label>
                   Actual size
-                  <select name="actual_size" defaultValue={item.actual_size||""}><option value="">Not recorded</option>{Array.from(new Set([...(item.actual_size?[item.actual_size]:[]),'S','M','L','XL','2XL','3XL','Over Size'])).map(size=><option key={size} value={size}>{size}</option>)}</select>
+                  <select name="actual_size" defaultValue={item.actual_size||""}><option value="">Not recorded</option>{Array.from(new Set([...(item.actual_size?[item.actual_size]:[]),...garmentSizes])).map(size=><option key={size} value={size}>{size}</option>)}</select>
                 </label>
                 <label>
                   Actual color
@@ -117,7 +120,7 @@ export function IntakeEditor({
                   />
                 </label>
               </div>
-              <div className="aa-fields"><label>Actual chest (inches)<input name="chest_inches" inputMode="decimal" type="number" min="0.01" max="100" step="0.01" defaultValue={item.chest_inches??''}/></label><label>Actual length (inches)<input name="length_inches" inputMode="decimal" type="number" min="0.01" max="100" step="0.01" defaultValue={item.length_inches??''}/></label><label>Condition<select name="condition" defaultValue={item.condition||''}><option value="">Not recorded</option><option value="excellent">Excellent</option><option value="very_good">Very good</option><option value="good">Good</option><option value="fair">Fair — describe flaws</option></select></label></div>
+              <div className="aa-fields"><label>Actual chest (inches)<input name="chest_inches" inputMode="decimal" type="number" min="0.01" max="100" step="0.01" defaultValue={item.chest_inches??''}/></label><label>Actual length (inches)<input name="length_inches" inputMode="decimal" type="number" min="0.01" max="100" step="0.01" defaultValue={item.length_inches??''}/></label><label>Condition<select name="condition" defaultValue={item.condition||''}><option value="">Not recorded</option>{garmentConditions.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label></div>
               <p>
                 Leave unknown measurements blank. This form never creates
                 artificial size variants.

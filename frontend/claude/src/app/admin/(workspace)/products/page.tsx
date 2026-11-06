@@ -1,4 +1,4 @@
-import {reviewInventoryEnabled} from "@/lib/storefront-policy";
+import {reviewInventoryEnabled,isProductionStorefront} from "@/lib/storefront-policy";
 import Link from "next/link";
 import {z} from "zod";
 import {matchesProductFilter} from "@/lib/admin/product-review";
@@ -14,6 +14,7 @@ export default async function ProductsPage({
   const { q: rawQuery } = params;
   const filter=typeof params.filter==='string'?params.filter:'';
   const review=typeof params.review==='string'?params.review:'';
+  const workspace=!isProductionStorefront();
   const canManage=session.roles.some(r=>r==='owner'||r==='product_manager');
   const extra= snapshot?await session.client.from('products').select('id,name,status').order('created_at',{ascending:false}).limit(100):null;
   if(extra?.error)throw new Error('Unable to read product drafts.');
@@ -59,6 +60,7 @@ export default async function ProductsPage({
             key={item.id}
             initiallyOpen={Boolean(review)}
             previewEnabled={reviewInventoryEnabled()}
+            workspaceHref={workspace?"/admin/products/"+item.id:undefined}
             item={item}
             editable={session.roles.some(
               (r) => r === "owner" || r === "product_manager",
@@ -69,7 +71,7 @@ export default async function ProductsPage({
       ) : (
         <div className="aa-panel">No matching product drafts.</div>
       )}
-      {basic.length>0&&<section className="aa-panel"><h2>Basic product drafts</h2><p>These real records are not yet in the garment intake workflow. Image, price and measurement setup is still required before publication.</p>{basic.filter(p=>p.name.toLowerCase().includes(search)).map(p=><article key={p.id}><strong>{p.name}</strong><p>{p.status} · Details not configured</p></article>)}</section>}
+      {basic.length>0&&<section className="aa-panel"><h2>Basic product drafts</h2><p>These real records are not yet in the garment intake workflow. Image, price and measurement setup is still required before publication.</p>{basic.filter(p=>p.name.toLowerCase().includes(search)).map(p=><article key={p.id}><strong>{workspace?<Link href={"/admin/products/"+p.id}>{p.name}</Link>:p.name}</strong><p>{p.status} · Details not configured</p></article>)}</section>}
     </main>
   );
 }
